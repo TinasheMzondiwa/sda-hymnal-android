@@ -1,0 +1,24 @@
+package com.tinashe.sdah.model
+
+import com.google.gson.annotations.SerializedName
+
+import java.io.Serializable
+
+/**
+ * Created by tinashe on 2017/07/02.
+ */
+
+class Hymn : Serializable {
+
+    @SerializedName("number")
+    var number: Int = 0
+
+    @SerializedName("title")
+    var title: String? = null
+
+    @SerializedName("content")
+    var content: String? = null
+
+    @SerializedName("edited")
+    var edited: String? = null
+}
