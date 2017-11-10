@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SDAH</string>
+
+    <string name="blank" />
 </resources>

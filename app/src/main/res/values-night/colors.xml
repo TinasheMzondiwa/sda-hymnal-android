@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright (c) 2017. Tinashe Mzondiwa (www.tinashemzondiwa.co.za)
   ~
@@ -15,9 +17,5 @@
   -->
 
 <resources>
-
-    <style name="Hymnal.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Hymnal.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
+    <color name="windowBackground">#303030</color>
 </resources>

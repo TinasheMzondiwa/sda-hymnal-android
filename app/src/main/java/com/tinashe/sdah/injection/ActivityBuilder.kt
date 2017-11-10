@@ -14,28 +14,20 @@
  *   limitations under the License.
  */
 
-package com.tinashe.sdah.db.dao;
+package com.tinashe.sdah.injection
 
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Query;
-
-import com.tinashe.sdah.model.HymnBook;
-import com.tinashe.sdah.model.constants.Hymnal;
-
-import java.util.List;
-
-import io.reactivex.Flowable;
+import com.tinashe.sdah.ui.MainActivity
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
 
 /**
- * Created by tinashe on 2017/11/09.
+ * Created by tinashe on 2017/11/10.
  */
 
-@Dao
-public interface HymnsDao extends BaseDao<HymnBook> {
+@Module
+abstract class ActivityBuilder {
 
-    @Query("SELECT * FROM " + Companion.getTABLE_NAME())
-    Flowable<List<HymnBook>> listAllBooks();
+    @ContributesAndroidInjector
+    abstract fun bindMainActivity(): MainActivity
 
-    @Query("SELECT * FROM " + Companion.getTABLE_NAME() + " WHERE " + Companion.getCOLUMN_TYPE() + " = :type LIMIT 1")
-    Flowable<HymnBook> findByType(@Hymnal int type);
 }

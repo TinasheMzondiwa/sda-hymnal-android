@@ -14,29 +14,17 @@
  *   limitations under the License.
  */
 
-package com.tinashe.sdah.db.dao;
+package com.tinashe.sdah.prefs
 
+import com.tinashe.sdah.model.constants.UiPref
 
-import android.arch.persistence.room.Delete;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.OnConflictStrategy;
+/**
+ * Created by tinashe on 2017/11/10.
+ */
+interface HymnalPrefs {
 
-import java.util.List;
+    @UiPref
+    fun getUiPref(): String
 
-interface BaseDao<T> {
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(T object);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(T... objects);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(List<T> objects);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void update(T object);
-
-    @Delete
-    void delete(T object);
+    fun setUiPref(pref: UiPref)
 }

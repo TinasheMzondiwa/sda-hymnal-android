@@ -15,37 +15,34 @@
  *  limitations under the License.
  */
 
-package com.tinashe.sdah.db.converters;
+package com.tinashe.sdah.db.converters
 
-import android.arch.persistence.room.TypeConverter;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.tinashe.sdah.model.Hymn;
-
-import java.lang.reflect.Type;
-import java.util.List;
+import android.arch.persistence.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.tinashe.sdah.model.Hymn
 
 /**
  * Created by tinashe on 2017/07/02.
  */
 
-public class HymnConverter {
+object HymnConverter {
 
     @TypeConverter
-    public static List<Hymn> jsonToHymns(String jsonString) {
+    fun jsonToHymns(jsonString: String): List<Hymn>? {
 
-        Gson gson = new Gson();
-        Type type = new TypeToken<List<Hymn>>() {
-        }.getType();
+        val gson = Gson()
+        val type = object : TypeToken<List<Hymn>>() {
 
-        return gson.fromJson(jsonString, type);
+        }.type
+
+        return gson.fromJson<List<Hymn>>(jsonString, type)
     }
 
     @TypeConverter
-    public static String hymnsToJson(List<Hymn> hymns) {
-        Gson gson = new Gson();
+    fun hymnsToJson(hymns: List<Hymn>): String {
+        val gson = Gson()
 
-        return gson.toJson(hymns);
+        return gson.toJson(hymns)
     }
 }

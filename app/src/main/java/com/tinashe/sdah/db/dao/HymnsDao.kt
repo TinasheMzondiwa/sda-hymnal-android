@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2017. Tinashe Mzondiwa (www.tinashemzondiwa.co.za)
  *
@@ -15,22 +14,32 @@
  *   limitations under the License.
  */
 
-package com.tinashe.sdah.db;
+package com.tinashe.sdah.db.dao
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Query
 
-import com.tinashe.sdah.db.dao.HymnsDao;
-import com.tinashe.sdah.model.HymnBook;
+import com.tinashe.sdah.model.HymnBook
+import com.tinashe.sdah.model.constants.Hymnal
+
+import io.reactivex.Flowable
 
 /**
  * Created by tinashe on 2017/11/09.
  */
 
-@Database(entities = {HymnBook.class}, version = 1)
-public abstract class HymnalDatabase extends RoomDatabase {
+@Dao
+interface HymnsDao : BaseDao<HymnBook> {
 
-    public static final String DB_NAME = "hymnal-db";
+    @Query("SELECT * FROM " + TABLE_NAME)
+    fun listAllBooks(): Flowable<List<HymnBook>>
 
-    public abstract HymnsDao hymnsDao();
+    @Query("SELECT * FROM $TABLE_NAME WHERE $COLUMN_TYPE = :type LIMIT 1")
+    fun findByType(@Hymnal type: Int): Flowable<HymnBook>
+
+    companion object {
+
+        const val TABLE_NAME = "hymnbooks"
+        const val COLUMN_TYPE = "type"
+    }
 }

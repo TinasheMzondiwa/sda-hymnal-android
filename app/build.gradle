@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 apply from: "$rootDir/gradle/helpers/common-methods.gradle"
@@ -27,13 +26,8 @@ ant.propertyfile(file: "version.properties") {
 android {
     compileSdkVersion 27
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
     defaultConfig {
-        applicationId "com.tinashe.sdah"
+        applicationId "com.tinashe.sdah.beta"
         minSdkVersion 19
         targetSdkVersion 27
         versionCode buildVersionCode
@@ -47,6 +41,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    dexOptions {
+        javaMaxHeapSize "2048M"
+    }
+    compileOptions.incremental = false
 }
 
 dependencies {
@@ -61,12 +60,8 @@ dependencies {
     annotationProcessor "android.arch.persistence.room:compiler:${versions.arch_comp}"
     implementation "com.google.dagger:dagger-android:${versions.dagger}"
     implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
-    annotationProcessor "com.google.dagger:dagger-compiler:${versions.dagger}"
-    annotationProcessor "com.google.dagger:dagger-android-processor:${versions.dagger}"
-    implementation("com.jakewharton:butterknife:${versions.butter_knife}") {
-        exclude module: 'support-annotations'
-    }
-    annotationProcessor "com.jakewharton:butterknife-compiler:${versions.butter_knife}"
+    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
     implementation "com.github.bumptech.glide:glide:${versions.glide}"
     implementation "com.github.bumptech.glide:recyclerview-integration:${versions.glide}"
     annotationProcessor "com.github.bumptech.glide:compiler:${versions.glide}"

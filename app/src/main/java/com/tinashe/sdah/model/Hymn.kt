@@ -16,9 +16,21 @@ class Hymn : Serializable {
     @SerializedName("title")
     var title: String? = null
 
-    @SerializedName("content")
+    @SerializedName("lyrics")
     var content: String? = null
 
     @SerializedName("edited")
     var edited: String? = null
+
+    @SerializedName("composer")
+    val composer: String? = null
+
+    @SerializedName("author")
+    val author: String? = null
+
+    @SerializedName("tempo")
+    val tempo: String? = null
+
+    @SerializedName("key")
+    val key: String? = null
 }
