@@ -86,6 +86,8 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
     implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
 
+    implementation "com.google.android.gms:play-services-location:${versions.firebase}"
+
     implementation "com.luckycatlabs:SunriseSunsetCalculator:${versions.sunrise_calc}"
 
     testImplementation 'junit:junit:4.12'

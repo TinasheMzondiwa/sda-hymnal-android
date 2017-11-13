@@ -18,10 +18,13 @@ package com.tinashe.sdah.ui.home
 
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
+import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator
+import com.luckycatlabs.sunrisesunset.dto.Location
 import com.tinashe.sdah.BuildConfig
 import com.tinashe.sdah.retrofit.UnSplashApi
 import com.tinashe.sdah.ui.base.RxAwareViewModel
 import com.tinashe.sdah.util.RxSchedulers
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -33,6 +36,7 @@ class HomeViewModel
                     private val unSplashApi: UnSplashApi) : RxAwareViewModel() {
 
     var urlData: MutableLiveData<String> = MutableLiveData()
+    val sabbathDate: MutableLiveData<Calendar> = MutableLiveData()
 
     init {
         fetchBackdrop()
@@ -57,5 +61,14 @@ class HomeViewModel
 
         disposables.add(disposable)
 
+    }
+
+    fun calculateSunset(latitude: Double, longitude: Double) {
+        val calculator = SunriseSunsetCalculator(Location(latitude, longitude), TimeZone.getDefault())
+        val nextSabbath = Calendar.getInstance(TimeZone.getDefault())
+        nextSabbath.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY)
+
+        val officialSunset = calculator.getOfficialSunsetCalendarForDate(nextSabbath)
+        sabbathDate.value = officialSunset
     }
 }

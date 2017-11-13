@@ -16,30 +16,48 @@
 
 package com.tinashe.sdah.ui.home
 
+import android.Manifest
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.text.Html
+import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
+import android.widget.TextView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.location.LocationServices
 import com.tinashe.sdah.R
+import com.tinashe.sdah.model.constants.DateType
 import com.tinashe.sdah.ui.base.BaseThemedActivity
+import com.tinashe.sdah.util.DateUtils
+import com.tinashe.sdah.util.VersionUtils
 import com.tinashe.sdah.util.glide.GlideApp
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.header_layout.*
+import java.util.*
 import javax.inject.Inject
 
-class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelectedListener {
+class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelectedListener,
+        GoogleApiClient.ConnectionCallbacks {
+
+    private val RQ_LOCATION: Int = 23
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: HomeViewModel
+
+    private var googleApiClient: GoogleApiClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -59,6 +77,7 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
                 .get(HomeViewModel::class.java)
 
         viewModel.urlData.observe(this, Observer { loadBackdrop(it.orEmpty()) })
+        viewModel.sabbathDate.observe(this, Observer { setSabbathTime(it) })
 
     }
 
@@ -91,5 +110,91 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
                 .load(url) //TODO: error & placeholder resource from theme
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(view)
+    }
+
+    private fun setSabbathTime(date: Calendar?) {
+        if (date == null) {
+            return
+        }
+
+        var view: TextView? = headerSabbathText
+        if (view == null) {
+            view = navigationView.getHeaderView(0)
+                    .findViewById(R.id.headerSabbathText)
+        }
+
+        val day = DateUtils.getFormattedDate(date.time, DateType.DATE)
+        val time = DateUtils.getFormattedDate(date.time, DateType.TIME)
+        val res = resources
+        val text = res.getString(R.string.sabbath_date_time, day, time)
+
+        if (VersionUtils.isAtLeastN()) {
+            view?.text = Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
+        } else {
+            view?.text = Html.fromHtml(text)
+        }
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val locPerm = Manifest.permission.ACCESS_FINE_LOCATION
+
+        if (ActivityCompat.checkSelfPermission(this, locPerm) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, locPerm)) {
+
+                Snackbar.make(toolbar, R.string.permission_location_rationale, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(android.R.string.ok, {
+                            ActivityCompat.requestPermissions(this, arrayOf(locPerm), RQ_LOCATION)
+                        })
+
+            } else {
+                ActivityCompat.requestPermissions(this, arrayOf(locPerm), RQ_LOCATION)
+            }
+
+        } else {
+            fetchLocation()
+        }
+
+    }
+
+    private fun fetchLocation() {
+        googleApiClient = GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .build()
+
+        googleApiClient?.connect()
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
+                                            grantResults: IntArray) {
+        Log.d(javaClass.name, "onRequestPermissionsResult: " + grantResults[0] + grantResults.toString())
+
+        if (requestCode == RQ_LOCATION) {
+            if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Location permission has been granted
+                fetchLocation()
+            }
+        }
+    }
+
+    override fun onConnected(p0: Bundle?) {
+        try {
+            val lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
+
+            viewModel.calculateSunset(lastLocation.latitude, lastLocation.longitude)
+
+        } catch (ex: SecurityException) {
+            //requestLocationPermission()
+        }
+
+    }
+
+    override fun onConnectionSuspended(p0: Int) {
+        TODO("not implemented")
     }
 }

@@ -12,7 +12,7 @@ buildscript {
             'retrofit'       : '2.3.0',
             'okhttp3'        : '3.8.1',
             'glide'          : '4.1.1',
-            'firebase'       : '11.4.2',
+            'firebase'       : '11.6.0',
             'butter_knife'   : '8.8.1',
             'gson'           : '2.8.1',
             'sunrise_calc'   : '1.2'

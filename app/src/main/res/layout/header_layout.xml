@@ -18,6 +18,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/drawer_header_height"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/colorPrimary">
 
     <ImageView
@@ -40,15 +41,17 @@
         <ImageView
             android:layout_width="54dp"
             android:layout_height="54dp"
-            app:srcCompat="@drawable/ic_account_circle" />
+            app:srcCompat="@drawable/ic_account_circle"
+            android:contentDescription="@string/blank" />
 
         <TextView
+            android:id="@+id/headerSabbathText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/advent_sans_logo"
             android:gravity="end"
-            android:text="Friday, March 23\nSabbath starts at\n6:10pm"
+            tools:text="Friday, March 23\nSabbath starts at\n6:10pm"
             android:textColor="@android:color/white"
             android:textSize="@dimen/text_size_body" />
     </LinearLayout>
