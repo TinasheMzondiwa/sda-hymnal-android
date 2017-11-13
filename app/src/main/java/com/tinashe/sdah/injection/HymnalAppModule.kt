@@ -24,6 +24,9 @@ import com.tinashe.sdah.db.HymnalDatabase.Companion.DB_NAME
 import com.tinashe.sdah.db.dao.HymnsDao
 import com.tinashe.sdah.prefs.HymnalPrefs
 import com.tinashe.sdah.prefs.HymnalPrefsImpl
+import com.tinashe.sdah.retrofit.RestClient
+import com.tinashe.sdah.retrofit.UnSplashApi
+import com.tinashe.sdah.util.RxSchedulers
 import dagger.Module
 import dagger.Provides
 
@@ -37,6 +40,11 @@ internal class HymnalAppModule {
     @Provides
     fun provideContext(application: HymnalApp): Context {
         return application
+    }
+
+    @Provides
+    fun provideRxSchedulers(): RxSchedulers {
+        return RxSchedulers()
     }
 
     @Provides
@@ -55,4 +63,11 @@ internal class HymnalAppModule {
     fun provideHymnsDao(database: HymnalDatabase): HymnsDao {
         return database.hymnsDao()
     }
+
+    @Provides
+    fun provideUnsSplashApi(): UnSplashApi {
+        return RestClient.createService(UnSplashApi::class.java,
+                "https://api.unsplash.com")
+    }
+
 }

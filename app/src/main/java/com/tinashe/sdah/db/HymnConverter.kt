@@ -16,25 +16,32 @@
 
 package com.tinashe.sdah.db
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
-
-import com.tinashe.sdah.db.dao.HymnsDao
-import com.tinashe.sdah.model.HymnBook
+import android.arch.persistence.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.tinashe.sdah.model.Hymn
 
 /**
- * Created by tinashe on 2017/11/09.
+ * Created by tinashe on 2017/07/02.
  */
 
-@Database(entities = arrayOf(HymnBook::class), version = 1)
-@TypeConverters(HymnConverter::class)
-abstract class HymnalDatabase : RoomDatabase() {
+class HymnConverter {
 
-    abstract fun hymnsDao(): HymnsDao
+    @TypeConverter
+    fun jsonToHymns(jsonString: String): List<Hymn>? {
 
-    companion object {
+        val gson = Gson()
+        val type = object : TypeToken<List<Hymn>>() {
 
-        const val DB_NAME = "hymnal-db"
+        }.type
+
+        return gson.fromJson<List<Hymn>>(jsonString, type)
+    }
+
+    @TypeConverter
+    fun hymnsToJson(hymns: List<Hymn>): String {
+        val gson = Gson()
+
+        return gson.toJson(hymns)
     }
 }

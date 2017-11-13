@@ -14,27 +14,22 @@
  *   limitations under the License.
  */
 
-package com.tinashe.sdah.db
+package com.tinashe.sdah.retrofit
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
+import com.tinashe.sdah.model.Backdrop
 
-import com.tinashe.sdah.db.dao.HymnsDao
-import com.tinashe.sdah.model.HymnBook
+import io.reactivex.Observable
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 /**
- * Created by tinashe on 2017/11/09.
+ * Created by tinashe on 2017/11/12.
  */
 
-@Database(entities = arrayOf(HymnBook::class), version = 1)
-@TypeConverters(HymnConverter::class)
-abstract class HymnalDatabase : RoomDatabase() {
+interface UnSplashApi {
 
-    abstract fun hymnsDao(): HymnsDao
-
-    companion object {
-
-        const val DB_NAME = "hymnal-db"
-    }
+    @GET("photos/random")
+    fun getBackdrop(@Query("client_id") clientId: String,
+                    @Query("query") query: String): Observable<Response<Backdrop>>
 }

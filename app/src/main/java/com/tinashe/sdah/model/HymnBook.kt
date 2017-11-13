@@ -20,9 +20,7 @@ package com.tinashe.sdah.model
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import android.arch.persistence.room.TypeConverters
 
-import com.tinashe.sdah.db.converters.HymnConverter
 import com.tinashe.sdah.model.HymnBook.Companion.TABLE_NAME
 import com.tinashe.sdah.model.constants.Hymnal
 
@@ -33,7 +31,6 @@ import java.io.Serializable
  */
 
 @Entity(tableName = TABLE_NAME)
-@TypeConverters(HymnConverter::class)
 class HymnBook : Serializable {
 
     @Hymnal
@@ -43,6 +40,8 @@ class HymnBook : Serializable {
     var type: Int = 0
 
     var name: String? = null
+
+    var language: String = ""
 
     var hymns: List<Hymn>? = null
 

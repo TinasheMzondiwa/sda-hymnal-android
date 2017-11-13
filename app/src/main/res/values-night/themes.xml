@@ -16,14 +16,7 @@
 
 <resources>
 
-    <color name="theme_green_primary">#0B6138</color>
-    <color name="theme_green_primary_dark">#08492a</color>
-    <color name="theme_green_accent">#CD9B1D</color>
-
-    <color name="windowBackground">#f5f5f5</color>
-
-    <color name="scrim">#99323232</color>
-
-    <color name="text">#333333</color>
-
+    <style name="BaseTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/windowBackground</item>
+    </style>
 </resources>

@@ -22,7 +22,7 @@ import android.support.v7.app.AppCompatDelegate
 import com.tinashe.sdah.R
 import com.tinashe.sdah.model.constants.UiPref.*
 import com.tinashe.sdah.prefs.HymnalPrefs
-import com.tinashe.sdah.ui.MainActivity
+import com.tinashe.sdah.ui.home.HomeActivity
 import javax.inject.Inject
 
 /**
@@ -42,7 +42,7 @@ abstract class BaseThemedActivity : AppCompatActivity() {
             DAY_NIGHT -> delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_AUTO)
         }
 
-        if (this is MainActivity) {
+        if (this is HomeActivity) {
             setTheme(R.style.Hymnal_Theme_Main_Green)
         }
 

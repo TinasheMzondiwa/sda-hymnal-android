@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2017. Tinashe Mzondiwa (www.tinashemzondiwa.co.za)
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~         http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_new_hymnal"
+            android:icon="@drawable/ic_book"
+            android:title="@string/menu_new_hymnal">
+            <!--<menu>
+                <group
+                    android:id="@+id/inline"
+                    android:checkableBehavior="none">
+                    <item
+                        android:id="@+id/nav_old_hymnal"
+                        android:icon="@drawable/ic_book_plus"
+                        android:title="@string/menu_old_hymnal" />
+                </group>
+
+            </menu>-->
+        </item>
+
+        <item
+            android:id="@+id/nav_favorites"
+            android:icon="@drawable/ic_favorite"
+            android:title="@string/menu_favorites" />
+
+        <item
+            android:id="@+id/nav_list"
+            android:icon="@drawable/ic_list"
+            android:title="@string/menu_topical_index" />
+
+        <item
+            android:id="@+id/nav_featured"
+            android:icon="@drawable/ic_featured_play_list"
+            android:title="@string/menu_featured" />
+
+    </group>
+
+    <group
+        android:id="@+id/non_check"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_switch"
+            android:title="@string/menu_night_mode"
+            app:actionLayout="@layout/menu_switch" />
+
+        <item
+            android:id="@+id/nav_settings"
+            android:title="@string/menu_settings" />
+
+        <item
+            android:id="@+id/nav_feedback"
+            android:title="@string/menu_help_feedback" />
+
+        <item
+            android:id="@+id/nav_donate"
+            android:title="@string/menu_donate" />
+    </group>
+
+</menu>

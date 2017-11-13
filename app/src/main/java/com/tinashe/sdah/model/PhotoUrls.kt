@@ -14,27 +14,25 @@
  *   limitations under the License.
  */
 
-package com.tinashe.sdah.db
+package com.tinashe.sdah.model
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
-
-import com.tinashe.sdah.db.dao.HymnsDao
-import com.tinashe.sdah.model.HymnBook
+import java.io.Serializable
 
 /**
- * Created by tinashe on 2017/11/09.
+ * Created by tinashe on 2017/11/12.
  */
 
-@Database(entities = arrayOf(HymnBook::class), version = 1)
-@TypeConverters(HymnConverter::class)
-abstract class HymnalDatabase : RoomDatabase() {
+class PhotoUrls : Serializable {
 
-    abstract fun hymnsDao(): HymnsDao
+    val raw: String? = null
 
-    companion object {
+    val full: String? = null
 
-        const val DB_NAME = "hymnal-db"
-    }
+    val regular: String? = null
+
+    val small: String? = null
+
+    val thumb: String? = null
+
+
 }

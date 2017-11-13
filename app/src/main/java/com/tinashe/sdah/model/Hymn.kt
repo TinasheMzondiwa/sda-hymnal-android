@@ -1,7 +1,6 @@
 package com.tinashe.sdah.model
 
 import com.google.gson.annotations.SerializedName
-
 import java.io.Serializable
 
 /**
@@ -33,4 +32,6 @@ class Hymn : Serializable {
 
     @SerializedName("key")
     val key: String? = null
+
+    val favorite: Boolean? = false
 }

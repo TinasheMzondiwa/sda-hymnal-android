@@ -14,27 +14,26 @@
  *   limitations under the License.
  */
 
-package com.tinashe.sdah.db
+package com.tinashe.sdah.injection
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
 
-import com.tinashe.sdah.db.dao.HymnsDao
-import com.tinashe.sdah.model.HymnBook
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 
-/**
- * Created by tinashe on 2017/11/09.
- */
+import com.tinashe.sdah.ui.home.HomeViewModel
 
-@Database(entities = arrayOf(HymnBook::class), version = 1)
-@TypeConverters(HymnConverter::class)
-abstract class HymnalDatabase : RoomDatabase() {
+import dagger.Binds
+import dagger.Module
+import dagger.multibindings.IntoMap
 
-    abstract fun hymnsDao(): HymnsDao
+@Module
+internal abstract class ViewModelModule {
 
-    companion object {
+    @Binds
+    @IntoMap
+    @ViewModelKey(HomeViewModel::class)
+    internal abstract fun bindHomeViewModel(homeViewModel: HomeViewModel): ViewModel
 
-        const val DB_NAME = "hymnal-db"
-    }
+    @Binds
+    internal abstract fun bindViewModelFractory(factory: ViewModelFactory): ViewModelProvider.Factory
 }
