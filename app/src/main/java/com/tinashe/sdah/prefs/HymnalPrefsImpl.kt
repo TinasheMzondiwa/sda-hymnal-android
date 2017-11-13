@@ -31,13 +31,14 @@ class HymnalPrefsImpl constructor(private val context: Context) : HymnalPrefs {
         const val KEY_UI_THEME = "pref_ui_theme"
     }
 
+    @UiPref
     override fun getUiPref(): String {
         return getPrefs().getString(KEY_UI_THEME, UiPref.DAY_NIGHT)
     }
 
-    override fun setUiPref(pref: UiPref) {
+    override fun setUiPref(@UiPref pref: String) {
         getPrefs().edit()
-                .putString(KEY_UI_THEME, pref.toString())
+                .putString(KEY_UI_THEME, pref)
                 .apply()
     }
 

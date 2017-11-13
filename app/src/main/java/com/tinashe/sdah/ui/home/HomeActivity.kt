@@ -17,6 +17,7 @@
 package com.tinashe.sdah.ui.home
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -33,7 +34,7 @@ import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.tinashe.sdah.R
 import com.tinashe.sdah.model.constants.DateType
@@ -47,8 +48,7 @@ import kotlinx.android.synthetic.main.header_layout.*
 import java.util.*
 import javax.inject.Inject
 
-class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelectedListener,
-        GoogleApiClient.ConnectionCallbacks {
+class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val RQ_LOCATION: Int = 23
 
@@ -56,8 +56,6 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: HomeViewModel
-
-    private var googleApiClient: GoogleApiClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -123,6 +121,12 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
                     .findViewById(R.id.headerSabbathText)
         }
 
+        if (date.before(Calendar.getInstance())) {
+            //Its Sabbath Day
+            view?.setText(R.string.sabbath_greeting)
+            return
+        }
+
         val day = DateUtils.getFormattedDate(date.time, DateType.DATE)
         val time = DateUtils.getFormattedDate(date.time, DateType.TIME)
         val res = resources
@@ -160,13 +164,14 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
 
     }
 
+    @SuppressLint("MissingPermission")
     private fun fetchLocation() {
-        googleApiClient = GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addApi(LocationServices.API)
-                .build()
 
-        googleApiClient?.connect()
+        val fusedLocationClient: FusedLocationProviderClient =
+                LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.lastLocation.addOnSuccessListener {
+            viewModel.calculateSunset(it.latitude, it.longitude)
+        }
 
     }
 
@@ -180,21 +185,5 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
                 fetchLocation()
             }
         }
-    }
-
-    override fun onConnected(p0: Bundle?) {
-        try {
-            val lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
-
-            viewModel.calculateSunset(lastLocation.latitude, lastLocation.longitude)
-
-        } catch (ex: SecurityException) {
-            //requestLocationPermission()
-        }
-
-    }
-
-    override fun onConnectionSuspended(p0: Int) {
-        TODO("not implemented")
     }
 }

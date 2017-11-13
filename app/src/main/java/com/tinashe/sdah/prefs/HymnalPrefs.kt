@@ -26,5 +26,5 @@ interface HymnalPrefs {
     @UiPref
     fun getUiPref(): String
 
-    fun setUiPref(pref: UiPref)
+    fun setUiPref(@UiPref pref: String)
 }
