@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.tinashe.sdah.ui.home.HomeActivity"
-    tools:openDrawer="start">
+    tools:context="com.tinashe.sdah.ui.home.HomeActivity">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -25,6 +24,24 @@
                 app:popupTheme="@style/Hymnal.PopupOverlay" />
 
         </android.support.design.widget.AppBarLayout>
+
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?android:windowContentOverlay"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/spacing_medium"
+            app:srcCompat="@drawable/ic_add"
+            app:backgroundTint="?attr/colorAccent"
+            app:layout_behavior="com.tinashe.sdah.ui.custom.FloatingActionBehaviour" />
     </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView

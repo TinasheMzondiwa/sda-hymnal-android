@@ -26,6 +26,7 @@ import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.text.Html
@@ -39,6 +40,10 @@ import com.google.android.gms.location.LocationServices
 import com.tinashe.sdah.R
 import com.tinashe.sdah.model.constants.DateType
 import com.tinashe.sdah.ui.base.BaseThemedActivity
+import com.tinashe.sdah.ui.home.favorites.FavoritesFragment
+import com.tinashe.sdah.ui.home.featured.FeaturedFragment
+import com.tinashe.sdah.ui.home.hymns.HymnsFragment
+import com.tinashe.sdah.ui.home.index.IndexListFragment
 import com.tinashe.sdah.util.DateUtils
 import com.tinashe.sdah.util.VersionUtils
 import com.tinashe.sdah.util.glide.GlideApp
@@ -76,7 +81,32 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
 
         viewModel.urlData.observe(this, Observer { loadBackdrop(it.orEmpty()) })
         viewModel.sabbathDate.observe(this, Observer { setSabbathTime(it) })
+        viewModel.navigation.observe(this, Observer { switchToFragment(it) })
 
+    }
+
+    private fun switchToFragment(navigation: Int?) {
+
+        val fragment: Fragment = when (navigation) {
+            Navigation.HYMNS -> HymnsFragment()
+            Navigation.FAVORITES -> FavoritesFragment()
+            Navigation.INDEX -> IndexListFragment()
+            Navigation.FEATURED -> FeaturedFragment()
+            else -> return
+        }
+
+        val item = navigationView.menu.findItem(navigation)
+        item?.isChecked = true
+
+        if (fragment is HymnsFragment && !fab.isShown) {
+            fab.show()
+        } else if (fab.isShown) {
+            fab.hide()
+        }
+
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .commit()
     }
 
     override fun onBackPressed() {
@@ -89,9 +119,29 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        //TODO: Implement
-
         drawerLayout.closeDrawers()
+
+        if (item.isChecked) {
+            return false
+        }
+
+        when (item.itemId) {
+            Navigation.HYMNS,
+            Navigation.FAVORITES,
+            Navigation.INDEX,
+            Navigation.FEATURED -> viewModel.navigationSelected(item.itemId)
+            R.id.nav_settings -> {
+                //TODO Implement
+            }
+            R.id.nav_feedback -> {
+                //TODO Implement
+            }
+            R.id.nav_donate -> {
+                //TODO Implement
+            }
+            else -> return false
+        }
+
         return true
     }
 
@@ -129,8 +179,7 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
 
         val day = DateUtils.getFormattedDate(date.time, DateType.DATE)
         val time = DateUtils.getFormattedDate(date.time, DateType.TIME)
-        val res = resources
-        val text = res.getString(R.string.sabbath_date_time, day, time)
+        val text = resources.getString(R.string.sabbath_date_time, day, time)
 
         if (VersionUtils.isAtLeastN()) {
             view?.text = Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)

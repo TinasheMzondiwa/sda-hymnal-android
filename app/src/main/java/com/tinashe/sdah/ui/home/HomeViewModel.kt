@@ -35,11 +35,18 @@ class HomeViewModel
 @Inject constructor(private val schedulers: RxSchedulers,
                     private val unSplashApi: UnSplashApi) : RxAwareViewModel() {
 
+    var navigation: MutableLiveData<Int> = MutableLiveData()
     var urlData: MutableLiveData<String> = MutableLiveData()
     val sabbathDate: MutableLiveData<Calendar> = MutableLiveData()
 
     init {
+        navigation.value = Navigation.HYMNS
+
         fetchBackdrop()
+    }
+
+    fun navigationSelected(selectedId: Int) {
+        navigation.value = selectedId
     }
 
     private fun fetchBackdrop() {
