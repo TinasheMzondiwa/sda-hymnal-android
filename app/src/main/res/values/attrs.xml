@@ -14,4 +14,9 @@
   ~   limitations under the License.
   -->
 
-<resources></resources>
+<resources>
+
+    <declare-styleable name="HymnalTheme">
+        <attr name="navStyle" format="reference" />
+    </declare-styleable>
+</resources>

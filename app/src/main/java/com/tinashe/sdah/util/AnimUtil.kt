@@ -14,25 +14,25 @@
  *   limitations under the License.
  */
 
-package com.tinashe.sdah.ui.home;
+package com.tinashe.sdah.util
 
-import android.support.annotation.IntDef;
-
-import com.tinashe.sdah.R;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import android.graphics.Point
+import android.view.View
 
 /**
  * Created by tinashe on 2017/11/14.
  */
+object AnimUtil {
 
-@IntDef({Navigation.HYMNS, Navigation.FAVORITES, Navigation.INDEX, Navigation.FEATURED})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Navigation {
-
-    int HYMNS = R.id.nav_hymnal;
-    int FAVORITES = R.id.nav_favorites;
-    int INDEX = R.id.nav_list;
-    int FEATURED = R.id.nav_featured;
+    /**
+     * Get the center of a given view.
+     *
+     * @param view The view to get coordinates from.
+     * @return The center of the given view.
+     */
+    fun getCenterForView(view: View): Point {
+        val centerX = (view.left + view.right) / 2
+        val centerY = (view.top + view.bottom) / 2
+        return Point(centerX, centerY)
+    }
 }

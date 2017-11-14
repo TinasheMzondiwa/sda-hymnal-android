@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2017. Tinashe Mzondiwa (www.tinashemzondiwa.co.za)
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~         http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  -->
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorAccent"
+    android:paddingBottom="@dimen/spacing_medium"
+    android:paddingTop="@dimen/spacing_medium">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            style="@style/FabItem"
+            app:layout_constraintEnd_toStartOf="@+id/imageButton2"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_share_" />
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            style="@style/FabItem"
+            app:layout_constraintEnd_toStartOf="@+id/imageButton3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imageButton"
+            app:srcCompat="@drawable/ic_favorite_border" />
+
+        <ImageButton
+            android:id="@+id/imageButton3"
+            style="@style/FabItem"
+            app:layout_constraintEnd_toStartOf="@+id/imageButton4"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imageButton2"
+            app:srcCompat="@drawable/presentation_play" />
+
+        <ImageButton
+            android:id="@+id/imageButton4"
+            style="@style/FabItem"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imageButton3"
+            app:srcCompat="@drawable/guitar_acoustic" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+
+        <ImageButton
+            android:id="@+id/imageButton5"
+            style="@style/FabItem"
+            app:layout_constraintEnd_toStartOf="@+id/imageButton6"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_edit" />
+
+        <ImageButton
+            android:id="@+id/imageButton6"
+            style="@style/FabItem"
+            app:layout_constraintEnd_toStartOf="@+id/imageButton7"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imageButton5"
+            app:srcCompat="@drawable/music_note" />
+
+        <ImageButton
+            android:id="@+id/imageButton7"
+            style="@style/FabItem"
+            app:layout_constraintEnd_toStartOf="@+id/imageButton8"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imageButton6"
+            app:srcCompat="@drawable/ic_insert_comment" />
+
+        <ImageButton
+            android:id="@+id/imageButton8"
+            style="@style/FabItem"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imageButton7"
+            app:srcCompat="@drawable/ic_dialpad" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

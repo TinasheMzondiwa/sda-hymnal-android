@@ -26,7 +26,6 @@ import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.text.Html
@@ -39,6 +38,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.tinashe.sdah.R
 import com.tinashe.sdah.model.constants.DateType
+import com.tinashe.sdah.ui.base.BaseDrawerFragment
 import com.tinashe.sdah.ui.base.BaseThemedActivity
 import com.tinashe.sdah.ui.home.favorites.FavoritesFragment
 import com.tinashe.sdah.ui.home.featured.FeaturedFragment
@@ -62,6 +62,8 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
 
     private lateinit var viewModel: HomeViewModel
 
+    private var currentFragment: BaseDrawerFragment? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
@@ -76,6 +78,12 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
 
         navigationView.setNavigationItemSelectedListener(this)
 
+        fab.setOnClickListener({
+            if (currentFragment is HymnsFragment) {
+                (currentFragment as HymnsFragment).fabClicked(fab)
+            }
+        })
+
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(HomeViewModel::class.java)
 
@@ -83,11 +91,15 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
         viewModel.sabbathDate.observe(this, Observer { setSabbathTime(it) })
         viewModel.navigation.observe(this, Observer { switchToFragment(it) })
 
+        if (savedInstanceState == null) {
+            viewModel.navigationSelected(Navigation.HYMNS)
+        }
+
     }
 
     private fun switchToFragment(navigation: Int?) {
 
-        val fragment: Fragment = when (navigation) {
+        currentFragment = when (navigation) {
             Navigation.HYMNS -> HymnsFragment()
             Navigation.FAVORITES -> FavoritesFragment()
             Navigation.INDEX -> IndexListFragment()
@@ -98,14 +110,14 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
         val item = navigationView.menu.findItem(navigation)
         item?.isChecked = true
 
-        if (fragment is HymnsFragment && !fab.isShown) {
+        if (currentFragment is HymnsFragment) {
             fab.show()
         } else if (fab.isShown) {
             fab.hide()
         }
 
         supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
+                .replace(R.id.fragmentContainer, currentFragment)
                 .commit()
     }
 

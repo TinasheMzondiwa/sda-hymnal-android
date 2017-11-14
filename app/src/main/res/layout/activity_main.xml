@@ -39,9 +39,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/spacing_medium"
-            app:srcCompat="@drawable/ic_add"
             app:backgroundTint="?attr/colorAccent"
-            app:layout_behavior="com.tinashe.sdah.ui.custom.FloatingActionBehaviour" />
+            app:layout_behavior="com.tinashe.sdah.ui.custom.FloatingActionBehaviour"
+            app:srcCompat="@drawable/ic_add" />
     </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView
@@ -50,6 +50,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:theme="?attr/navStyle"
         app:headerLayout="@layout/header_layout"
         app:menu="@menu/menu_navigation" />
 

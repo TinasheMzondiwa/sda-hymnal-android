@@ -20,9 +20,11 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.view.View
 import com.tinashe.sdah.R
 import com.tinashe.sdah.ui.base.BaseDrawerFragment
+import com.tinashe.sdah.util.AnimUtil
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_hymns.*
 import javax.inject.Inject
@@ -56,5 +58,11 @@ class HymnsFragment : BaseDrawerFragment() {
                 .get(HymnsViewModel::class.java)
 
         viewModel.hymnsList.observe(this, Observer { })
+    }
+
+    fun fabClicked(fab: FloatingActionButton) {
+        val fragment = FabMenuFragment()
+        fragment.point = AnimUtil.getCenterForView(fab)
+        fragment.show(childFragmentManager, fragment.tag)
     }
 }

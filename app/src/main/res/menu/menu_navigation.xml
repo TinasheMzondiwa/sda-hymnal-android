@@ -20,21 +20,9 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/nav_new_hymnal"
-            android:icon="@drawable/ic_book"
-            android:title="@string/menu_new_hymnal">
-            <!--<menu>
-                <group
-                    android:id="@+id/inline"
-                    android:checkableBehavior="none">
-                    <item
-                        android:id="@+id/nav_old_hymnal"
-                        android:icon="@drawable/ic_book_plus"
-                        android:title="@string/menu_old_hymnal" />
-                </group>
-
-            </menu>-->
-        </item>
+            android:id="@+id/nav_hymnal"
+            android:icon="@drawable/audiobook"
+            android:title="@string/menu_hymnal" />
 
         <item
             android:id="@+id/nav_favorites"

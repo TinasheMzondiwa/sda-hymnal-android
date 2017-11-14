@@ -17,6 +17,9 @@
   -->
 
 <resources>
+
+    <color name="theme_green_nav_color">@color/theme_green_accent</color>
+
     <color name="windowBackground">#303030</color>
     <color name="text">#fff</color>
 </resources>

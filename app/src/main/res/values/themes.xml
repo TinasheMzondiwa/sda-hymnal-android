@@ -24,6 +24,16 @@
 
     <style name="Hymnal.Theme.Main" />
 
+    <style name="Hymnal.Theme.Green.Translucent">
+        <item name="android:windowBackground">@color/scrim</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
     <style name="Hymnal.Theme.Green">
         <item name="colorPrimary">@color/theme_green_primary</item>
         <item name="colorPrimaryDark">@color/theme_green_primary_dark</item>
@@ -34,6 +44,7 @@
         <item name="colorPrimary">@color/theme_green_primary</item>
         <item name="colorPrimaryDark">@color/theme_green_primary_dark</item>
         <item name="colorAccent">@color/theme_green_accent</item>
+        <item name="navStyle">@style/Hymnal.Theme.Green.NavigationView</item>
     </style>
 
 </resources>
