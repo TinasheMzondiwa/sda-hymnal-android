@@ -18,6 +18,7 @@ package com.tinashe.sdah.ui.base
 
 import android.os.Bundle
 import android.support.annotation.StringRes
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 
 /**
@@ -32,4 +33,6 @@ abstract class BaseDrawerFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         activity?.setTitle(titleRes())
     }
+
+    open fun fabClicked(fab: FloatingActionButton) {}
 }

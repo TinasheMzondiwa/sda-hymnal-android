@@ -23,7 +23,6 @@ import com.tinashe.sdah.ui.base.BaseDrawerFragment
  * Created by tinashe on 2017/11/14.
  */
 class FavoritesFragment : BaseDrawerFragment() {
-    override fun titleRes(): Int {
-        return R.string.menu_favorites
-    }
+
+    override fun titleRes(): Int = R.string.menu_favorites
 }

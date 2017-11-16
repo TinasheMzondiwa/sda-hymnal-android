@@ -50,13 +50,9 @@ class HymnalApp : Application(), HasActivityInjector, HasSupportFragmentInjector
 
     }
 
-    override fun activityInjector(): AndroidInjector<Activity> {
-        return activityInjector
-    }
+    override fun activityInjector(): AndroidInjector<Activity> = activityInjector
 
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
-        return fragmentInjector
-    }
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentInjector
 
     object AppInjector {
 

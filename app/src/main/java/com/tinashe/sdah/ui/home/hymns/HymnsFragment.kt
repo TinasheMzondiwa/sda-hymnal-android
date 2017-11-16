@@ -21,10 +21,12 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import com.tinashe.sdah.R
 import com.tinashe.sdah.ui.base.BaseDrawerFragment
-import com.tinashe.sdah.util.AnimUtil
+import com.tinashe.sdah.ui.custom.extensions.getCenter
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_hymns.*
 import javax.inject.Inject
@@ -39,9 +41,12 @@ class HymnsFragment : BaseDrawerFragment() {
 
     private lateinit var viewModel: HymnsViewModel
 
-    override fun titleRes(): Int {
-        return R.string.app_name
-    }
+    private var pagerAdapter: HymnsPagerAdapter? = null
+
+    override fun titleRes(): Int = R.string.app_name
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.fragment_hymns, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,12 +58,15 @@ class HymnsFragment : BaseDrawerFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(HymnsViewModel::class.java)
 
-        viewModel.hymnsList.observe(this, Observer { })
+        viewModel.hymnsList.observe(this, Observer {
+            pagerAdapter = it?.let { it1 -> HymnsPagerAdapter(it1) }
+            pagerAdapter?.let { pager.adapter = it }
+        })
     }
 
-    fun fabClicked(fab: FloatingActionButton) {
+    override fun fabClicked(fab: FloatingActionButton) {
         val fragment = FabMenuFragment()
-        fragment.point = AnimUtil.getCenterForView(fab)
+        fragment.point = fab.getCenter()
         fragment.show(childFragmentManager, fragment.tag)
     }
 }

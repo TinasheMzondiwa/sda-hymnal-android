@@ -22,6 +22,7 @@ import android.arch.lifecycle.ViewModelProvider
 
 import com.tinashe.sdah.ui.home.HomeViewModel
 import com.tinashe.sdah.ui.home.featured.FeaturedViewModel
+import com.tinashe.sdah.ui.home.hymns.HymnsViewModel
 
 import dagger.Binds
 import dagger.Module
@@ -34,6 +35,11 @@ internal abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(HomeViewModel::class)
     internal abstract fun bindHomeViewModel(homeViewModel: HomeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(HymnsViewModel::class)
+    internal abstract fun bindHymnsViewModel(hymnsViewModel: HymnsViewModel): ViewModel
 
     @Binds
     @IntoMap

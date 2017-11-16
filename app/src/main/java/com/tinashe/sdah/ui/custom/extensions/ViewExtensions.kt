@@ -16,10 +16,17 @@
 
 package com.tinashe.sdah.ui.custom.extensions
 
+import android.graphics.Point
 import android.support.annotation.LayoutRes
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.tinashe.sdah.util.VersionUtils
+import com.tinashe.sdah.util.glide.GlideApp
 
 /**
  * Created by tinashe on 2017/11/15.
@@ -34,4 +41,28 @@ fun View.hide() {
 
 fun View.show() {
     visibility = View.VISIBLE
+}
+
+fun ImageView.loadFromUrl(imageUrl: String?, error: Int) {
+    GlideApp.with(this).load(imageUrl).error(error)
+            .transition(DrawableTransitionOptions.withCrossFade()).into(this)
+}
+
+fun ImageView.loadAvatar(imageUrl: String?, error: Int) {
+    GlideApp.with(this).load(imageUrl).placeholder(error).error(error).circleCrop()
+            .transition(DrawableTransitionOptions.withCrossFade()).into(this)
+}
+
+fun View.getCenter(): Point {
+    val centerX = (left + right) / 2
+    val centerY = (top + bottom) / 2
+    return Point(centerX, centerY)
+}
+
+fun TextView.renderHtml(string: String) {
+    if (VersionUtils.isAtLeastN()) {
+        text = Html.fromHtml(string, Html.FROM_HTML_MODE_COMPACT)
+    } else {
+        text = Html.fromHtml(string)
+    }
 }

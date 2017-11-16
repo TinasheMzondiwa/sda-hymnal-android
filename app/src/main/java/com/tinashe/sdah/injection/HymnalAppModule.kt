@@ -16,12 +16,10 @@
 
 package com.tinashe.sdah.injection
 
-import android.arch.persistence.room.Room
 import android.content.Context
 import com.google.firebase.database.FirebaseDatabase
 import com.tinashe.sdah.HymnalApp
 import com.tinashe.sdah.db.HymnalDatabase
-import com.tinashe.sdah.db.HymnalDatabase.Companion.DB_NAME
 import com.tinashe.sdah.db.dao.HymnsDao
 import com.tinashe.sdah.prefs.HymnalPrefs
 import com.tinashe.sdah.prefs.HymnalPrefsImpl
@@ -39,36 +37,22 @@ import dagger.Provides
 internal class HymnalAppModule {
 
     @Provides
-    fun provideContext(application: HymnalApp): Context {
-        return application
-    }
+    fun provideContext(application: HymnalApp): Context = application
 
     @Provides
-    fun provideRxSchedulers(): RxSchedulers {
-        return RxSchedulers()
-    }
+    fun provideRxSchedulers(): RxSchedulers = RxSchedulers()
 
     @Provides
-    fun providePrefs(context: Context): HymnalPrefs {
-        return HymnalPrefsImpl(context)
-    }
+    fun providePrefs(context: Context): HymnalPrefs = HymnalPrefsImpl(context)
 
     @Provides
-    fun provideDatabase(context: Context): HymnalDatabase {
-        return Room.databaseBuilder(context, HymnalDatabase::class.java, DB_NAME)
-                .fallbackToDestructiveMigration()
-                .build()
-    }
+    fun provideDatabase(context: Context): HymnalDatabase = HymnalDatabase.getInstance(context)
 
     @Provides
-    fun provideFirebaseDb(): FirebaseDatabase {
-        return FirebaseDatabase.getInstance()
-    }
+    fun provideFirebaseDb(): FirebaseDatabase = FirebaseDatabase.getInstance()
 
     @Provides
-    fun provideHymnsDao(database: HymnalDatabase): HymnsDao {
-        return database.hymnsDao()
-    }
+    fun provideHymnsDao(database: HymnalDatabase): HymnsDao = database.hymnsDao()
 
     @Provides
     fun provideUnsSplashApi(): UnSplashApi {

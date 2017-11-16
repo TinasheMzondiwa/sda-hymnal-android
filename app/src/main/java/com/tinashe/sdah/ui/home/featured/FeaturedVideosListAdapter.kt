@@ -24,7 +24,7 @@ import android.view.ViewGroup
 import com.tinashe.sdah.R
 import com.tinashe.sdah.model.FeaturedVideo
 import com.tinashe.sdah.ui.custom.extensions.inflateView
-import com.tinashe.sdah.util.glide.GlideApp
+import com.tinashe.sdah.ui.custom.extensions.loadFromUrl
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.featured_video.*
 
@@ -34,6 +34,10 @@ import kotlinx.android.synthetic.main.featured_video.*
 class FeaturedVideosListAdapter : RecyclerView.Adapter<FeaturedVideosListAdapter.VideoHolder>() {
 
     var videosList: List<FeaturedVideo> = mutableListOf()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoHolder =
             VideoHolder(inflateView(R.layout.featured_video, parent, false))
@@ -51,11 +55,7 @@ class FeaturedVideosListAdapter : RecyclerView.Adapter<FeaturedVideosListAdapter
             videoTitle?.text = video.title
             videoOwner?.text = video.owner
 
-            GlideApp.with(containerView.context)
-                    .load(video.imgUrl)
-                    .error(R.color.windowBackgroundDark)
-                    .error(R.color.windowBackgroundDark)
-                    .into(videoImg)
+            videoImg.loadFromUrl(video.imgUrl, R.color.windowBackgroundDark)
 
             itemView?.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW)

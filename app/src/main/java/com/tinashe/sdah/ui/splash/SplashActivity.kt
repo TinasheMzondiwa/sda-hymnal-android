@@ -14,25 +14,23 @@
  *   limitations under the License.
  */
 
-package com.tinashe.sdah.util
+package com.tinashe.sdah.ui.splash
 
-import android.graphics.Point
-import android.view.View
+import android.content.Intent
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import com.tinashe.sdah.ui.home.HomeActivity
 
 /**
- * Created by tinashe on 2017/11/14.
+ * Created by tinashe on 2017/11/16.
  */
-object AnimUtil {
+class SplashActivity : AppCompatActivity() {
 
-    /**
-     * Get the center of a given view.
-     *
-     * @param view The view to get coordinates from.
-     * @return The center of the given view.
-     */
-    fun getCenterForView(view: View): Point {
-        val centerX = (view.left + view.right) / 2
-        val centerY = (view.top + view.bottom) / 2
-        return Point(centerX, centerY)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        startActivity(Intent(this, HomeActivity::class.java))
+
+        finish()
     }
 }

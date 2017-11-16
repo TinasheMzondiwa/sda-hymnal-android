@@ -11,6 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 
 @IntDef({
         Hymnal.ENGLISH,
+        Hymnal.ENGLISH_OLD,
         Hymnal.SPANISH
 })
 @Retention(RetentionPolicy.RUNTIME)
@@ -18,5 +19,7 @@ public @interface Hymnal {
 
     int ENGLISH = 1;
 
-    int SPANISH = 2;
+    int ENGLISH_OLD = 2;
+
+    int SPANISH = 3;
 }

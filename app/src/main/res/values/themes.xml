@@ -40,6 +40,11 @@
         <item name="colorAccent">@color/theme_green_accent</item>
     </style>
 
+    <style name="Hymnal.Theme.Green.Splash">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
     <style name="Hymnal.Theme.Main.Green">
         <item name="colorPrimary">@color/theme_green_primary</item>
         <item name="colorPrimaryDark">@color/theme_green_primary_dark</item>

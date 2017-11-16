@@ -20,30 +20,27 @@ package com.tinashe.sdah.model
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-
 import com.tinashe.sdah.model.HymnBook.Companion.TABLE_NAME
 import com.tinashe.sdah.model.constants.Hymnal
-
-import java.io.Serializable
 
 /**
  * Created by tinashe on 2017/07/02.
  */
 
 @Entity(tableName = TABLE_NAME)
-class HymnBook : Serializable {
+class HymnBook(
+        @Hymnal
+        @PrimaryKey
+        @ColumnInfo(name = COLUMN_TYPE)
+        @get:Hymnal
+        var type: Int = 0,
 
-    @Hymnal
-    @PrimaryKey
-    @ColumnInfo(name = COLUMN_TYPE)
-    @get:Hymnal
-    var type: Int = 0
+        var name: String? = null,
 
-    var name: String? = null
+        var language: String = "",
 
-    var language: String = ""
-
-    var hymns: List<Hymn>? = null
+        var hymns: List<Hymn>? = null
+) {
 
     companion object {
 

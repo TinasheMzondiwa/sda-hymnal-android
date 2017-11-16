@@ -17,6 +17,7 @@
 package com.tinashe.sdah.injection
 
 import com.tinashe.sdah.ui.home.featured.FeaturedFragment
+import com.tinashe.sdah.ui.home.hymns.HymnsFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -26,6 +27,9 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class FragmentBuilder {
+
+    @ContributesAndroidInjector
+    abstract fun bindHymnsFragment(): HymnsFragment
 
     @ContributesAndroidInjector
     abstract fun bindFeaturedFragment(): FeaturedFragment

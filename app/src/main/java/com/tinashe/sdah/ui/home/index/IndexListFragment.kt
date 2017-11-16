@@ -24,7 +24,5 @@ import com.tinashe.sdah.ui.base.BaseDrawerFragment
  */
 class IndexListFragment : BaseDrawerFragment() {
 
-    override fun titleRes(): Int {
-        return R.string.menu_topical_index
-    }
+    override fun titleRes(): Int = R.string.menu_topical_index
 }

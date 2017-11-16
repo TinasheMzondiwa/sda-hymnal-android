@@ -20,12 +20,14 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.tinashe.sdah.R
 import com.tinashe.sdah.ui.base.BaseDrawerFragment
+import com.tinashe.sdah.ui.custom.extensions.hide
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_featured.*
 import javax.inject.Inject
@@ -42,13 +44,10 @@ class FeaturedFragment : BaseDrawerFragment() {
 
     private var adapter: FeaturedVideosListAdapter = FeaturedVideosListAdapter()
 
-    override fun titleRes(): Int {
-        return R.string.menu_featured
-    }
+    override fun titleRes(): Int = R.string.menu_featured
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_featured, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.fragment_featured, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,10 +61,13 @@ class FeaturedFragment : BaseDrawerFragment() {
 
         viewModel.featuredVideoList.observe(this, Observer {
 
-            progressBar.visibility = View.GONE
+            progressBar.hide()
 
             adapter.videosList = it!!
-            adapter.notifyDataSetChanged()
         })
+    }
+
+    override fun fabClicked(fab: FloatingActionButton) {
+        //TODO
     }
 }

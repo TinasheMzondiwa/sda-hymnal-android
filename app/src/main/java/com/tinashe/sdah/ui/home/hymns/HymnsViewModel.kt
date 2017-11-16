@@ -44,11 +44,9 @@ class HymnsViewModel
                 .subscribeOn(schedulers.database)
                 .observeOn(schedulers.main)
                 .subscribe({
-                    Log.d(javaClass.name, "List: " + it?.toString())
-                },
-                        {
-                            Log.e(javaClass.name, it.message, it)
-                        })
+                    it?.let { hymnsList.value = it[0].hymns }
+
+                }, { Log.e(javaClass.name, it.message, it) })
 
         disposables.add(disposable)
     }

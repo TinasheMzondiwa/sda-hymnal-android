@@ -5,3 +5,7 @@
 /build
 /app/version.properties
 /gradle.properties
+app/fabric.properties
+app/google-services.json
+app/libs/
+app/src/main/assets/

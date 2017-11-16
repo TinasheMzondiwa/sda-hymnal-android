@@ -13,15 +13,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Hymnal.Theme">
+
         <activity
-            android:name=".ui.home.HomeActivity"
-            android:theme="@style/Hymnal.Theme.Main">
+            android:name=".ui.splash.SplashActivity"
+            android:theme="@style/Hymnal.Theme.Green.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.home.HomeActivity"
+            android:theme="@style/Hymnal.Theme.Main" />
+
     </application>
 
 </manifest>

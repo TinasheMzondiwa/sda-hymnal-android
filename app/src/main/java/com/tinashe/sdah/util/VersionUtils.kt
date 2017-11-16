@@ -23,19 +23,11 @@ import android.os.Build
  */
 object VersionUtils {
 
-    fun isAtLeastL(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-    }
+    fun isAtLeastL(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
 
-    fun isAtLeastM(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-    }
+    fun isAtLeastM(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 
-    fun isAtLeastN(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-    }
+    fun isAtLeastN(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
 
-    fun isAtLeastO(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-    }
+    fun isAtLeastO(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 }

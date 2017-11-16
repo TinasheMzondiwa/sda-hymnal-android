@@ -28,25 +28,24 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
-import android.text.Html
 import android.util.Log
+import android.util.TypedValue
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.tinashe.sdah.R
 import com.tinashe.sdah.model.constants.DateType
 import com.tinashe.sdah.ui.base.BaseDrawerFragment
 import com.tinashe.sdah.ui.base.BaseThemedActivity
+import com.tinashe.sdah.ui.custom.extensions.loadFromUrl
+import com.tinashe.sdah.ui.custom.extensions.renderHtml
 import com.tinashe.sdah.ui.home.favorites.FavoritesFragment
 import com.tinashe.sdah.ui.home.featured.FeaturedFragment
 import com.tinashe.sdah.ui.home.hymns.HymnsFragment
 import com.tinashe.sdah.ui.home.index.IndexListFragment
 import com.tinashe.sdah.util.DateUtils
-import com.tinashe.sdah.util.VersionUtils
-import com.tinashe.sdah.util.glide.GlideApp
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.header_layout.*
@@ -78,11 +77,7 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
 
         navigationView.setNavigationItemSelectedListener(this)
 
-        fab.setOnClickListener({
-            if (currentFragment is HymnsFragment) {
-                (currentFragment as HymnsFragment).fabClicked(fab)
-            }
-        })
+        fab.setOnClickListener({ currentFragment?.fabClicked(fab) })
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(HomeViewModel::class.java)
@@ -166,10 +161,13 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
                     .findViewById(R.id.headerBackdrop)
         }
 
-        GlideApp.with(this)
-                .load(url) //TODO: error & placeholder resource from theme
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(view)
+        val outValue = TypedValue()
+        var res: Int = R.color.windowBackgroundDark
+
+        if (theme.resolveAttribute(R.attr.colorPrimary, outValue, true)) {
+            res = outValue.resourceId
+        }
+        view?.loadFromUrl(url, res)
     }
 
     private fun setSabbathTime(date: Calendar?) {
@@ -191,13 +189,7 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
 
         val day = DateUtils.getFormattedDate(date.time, DateType.DATE)
         val time = DateUtils.getFormattedDate(date.time, DateType.TIME)
-        val text = resources.getString(R.string.sabbath_date_time, day, time)
-
-        if (VersionUtils.isAtLeastN()) {
-            view?.text = Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
-        } else {
-            view?.text = Html.fromHtml(text)
-        }
+        view?.renderHtml(resources.getString(R.string.sabbath_date_time, day, time))
 
     }
 

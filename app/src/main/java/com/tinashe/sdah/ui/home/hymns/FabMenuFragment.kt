@@ -17,7 +17,6 @@
 package com.tinashe.sdah.ui.home.hymns
 
 import android.graphics.Point
-import android.util.Log
 import android.widget.ImageButton
 import com.tinashe.sdah.R
 import com.tinashe.sdah.ui.base.BaseBottomSheetDialogFragment
@@ -29,12 +28,9 @@ class FabMenuFragment : BaseBottomSheetDialogFragment() {
 
     var point: Point? = null
 
-    override fun layoutRes(): Int {
-        return R.layout.fragment_fab_menu
-    }
+    override fun layoutRes(): Int = R.layout.fragment_fab_menu
 
     override fun initialize() {
-        Log.d(tag, "Started")
 
         val btn1 = rootView?.findViewById<ImageButton>(R.id.imageButton)
         val btn2 = rootView?.findViewById<ImageButton>(R.id.imageButton2)
