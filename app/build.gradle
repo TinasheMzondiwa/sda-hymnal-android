@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.fabric'
 
 apply from: "$rootDir/gradle/helpers/common-methods.gradle"
 
@@ -27,7 +28,7 @@ android {
     compileSdkVersion 27
 
     defaultConfig {
-        applicationId "com.tinashe.sdah.beta"
+        applicationId "com.tinashe.sdah"
         minSdkVersion 19
         targetSdkVersion 27
         versionCode buildVersionCode
@@ -48,12 +49,16 @@ android {
         javaMaxHeapSize "2048M"
     }
     compileOptions.incremental = false
+
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:${versions.kotlin}"
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation "com.android.support.constraint:constraint-layout:${versions.const_layout}"
 
     implementation "com.android.support:appcompat-v7:${versions.support_library}"
     implementation "com.android.support:cardview-v7:${versions.support_library}"
@@ -86,11 +91,18 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
     implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
 
+    implementation "com.google.firebase:firebase-database:${versions.firebase}"
     implementation "com.google.android.gms:play-services-location:${versions.firebase}"
 
     implementation "com.luckycatlabs:SunriseSunsetCalculator:${versions.sunrise_calc}"
+
+    implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+        transitive = true
+    }
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

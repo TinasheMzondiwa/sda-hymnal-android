@@ -14,22 +14,23 @@
  *   limitations under the License.
  */
 
-package com.tinashe.sdah.ui.base
+package com.tinashe.sdah.ui.home.favorites
 
-import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.v4.app.Fragment
+import com.tinashe.sdah.ui.base.RxAwareViewModel
+import com.tinashe.sdah.util.RxSchedulers
+import javax.inject.Inject
 
 /**
- * Created by tinashe on 2017/11/14.
+ * Created by tinashe on 2017/11/15.
  */
-abstract class BaseDrawerFragment : Fragment() {
+class FavoritesViewModel
+@Inject constructor(private val schedulers: RxSchedulers) : RxAwareViewModel() {
 
-    @StringRes
-    abstract fun titleRes(): Int
+    init {
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        activity?.setTitle(titleRes())
+    }
+
+    private fun fetchList() {
+
     }
 }

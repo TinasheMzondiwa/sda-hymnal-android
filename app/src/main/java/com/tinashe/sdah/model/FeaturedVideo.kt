@@ -14,22 +14,25 @@
  *   limitations under the License.
  */
 
-package com.tinashe.sdah.ui.base
+package com.tinashe.sdah.model
 
-import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.v4.app.Fragment
+import com.google.firebase.database.IgnoreExtraProperties
 
 /**
- * Created by tinashe on 2017/11/14.
+ * Created by tinashe on 2015/09/11.
  */
-abstract class BaseDrawerFragment : Fragment() {
+@IgnoreExtraProperties
+class FeaturedVideo {
 
-    @StringRes
-    abstract fun titleRes(): Int
+    var key: String? = null
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        activity?.setTitle(titleRes())
-    }
+    var title: String? = null
+
+    var owner: String? = null
+
+    var imgUrl: String? = null
+
+    var link: String? = null
+
+    var isSuggestion: Boolean = false
 }

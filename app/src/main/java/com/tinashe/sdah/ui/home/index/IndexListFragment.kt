@@ -23,9 +23,6 @@ import com.tinashe.sdah.ui.base.BaseDrawerFragment
  * Created by tinashe on 2017/11/14.
  */
 class IndexListFragment : BaseDrawerFragment() {
-    override fun layoutRes(): Int {
-        return R.layout.fragment_hymns
-    }
 
     override fun titleRes(): Int {
         return R.string.menu_topical_index

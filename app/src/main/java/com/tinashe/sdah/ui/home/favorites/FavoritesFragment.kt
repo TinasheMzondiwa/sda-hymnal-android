@@ -26,8 +26,4 @@ class FavoritesFragment : BaseDrawerFragment() {
     override fun titleRes(): Int {
         return R.string.menu_favorites
     }
-
-    override fun layoutRes(): Int {
-        return R.layout.fragment_hymns
-    }
 }

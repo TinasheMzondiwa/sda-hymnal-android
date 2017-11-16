@@ -16,7 +16,8 @@ import javax.inject.Singleton
         AndroidInjectionModule::class,
         AndroidSupportInjectionModule::class,
         ViewModelModule::class,
-        ActivityBuilder::class))
+        ActivityBuilder::class,
+        FragmentBuilder::class))
 interface HymnalComponent {
 
     @Component.Builder

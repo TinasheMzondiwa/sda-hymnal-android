@@ -14,22 +14,24 @@
  *   limitations under the License.
  */
 
-package com.tinashe.sdah.ui.base
+package com.tinashe.sdah.ui.custom.extensions
 
-import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.v4.app.Fragment
+import android.support.annotation.LayoutRes
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 
 /**
- * Created by tinashe on 2017/11/14.
+ * Created by tinashe on 2017/11/15.
  */
-abstract class BaseDrawerFragment : Fragment() {
 
-    @StringRes
-    abstract fun titleRes(): Int
+fun inflateView(@LayoutRes layoutResId: Int, parent: ViewGroup, attachToRoot: Boolean): View =
+        LayoutInflater.from(parent.context).inflate(layoutResId, parent, attachToRoot)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        activity?.setTitle(titleRes())
-    }
+fun View.hide() {
+    visibility = View.GONE
+}
+
+fun View.show() {
+    visibility = View.VISIBLE
 }

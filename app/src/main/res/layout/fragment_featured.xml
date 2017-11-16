@@ -14,19 +14,22 @@
   ~   limitations under the License.
   -->
 
-<resources>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <color name="theme_green_primary">#0B6138</color>
-    <color name="theme_green_primary_dark">#08492a</color>
-    <color name="theme_green_accent">#CD9B1D</color>
-    <color name="theme_green_nav_color">@color/theme_green_primary</color>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/featuredList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/spacing_medium"
+        android:paddingTop="@dimen/spacing_medium" />
 
-    <color name="windowBackground">#f5f5f5</color>
-    <color name="windowBackgroundDark">#E0E0E0</color>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 
-    <color name="scrim">#99323232</color>
-
-    <color name="text">#333333</color>
-    <color name="secondary">#70333333</color>
-
-</resources>
+</FrameLayout>

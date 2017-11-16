@@ -18,6 +18,7 @@ package com.tinashe.sdah.injection
 
 import android.arch.persistence.room.Room
 import android.content.Context
+import com.google.firebase.database.FirebaseDatabase
 import com.tinashe.sdah.HymnalApp
 import com.tinashe.sdah.db.HymnalDatabase
 import com.tinashe.sdah.db.HymnalDatabase.Companion.DB_NAME
@@ -57,6 +58,11 @@ internal class HymnalAppModule {
         return Room.databaseBuilder(context, HymnalDatabase::class.java, DB_NAME)
                 .fallbackToDestructiveMigration()
                 .build()
+    }
+
+    @Provides
+    fun provideFirebaseDb(): FirebaseDatabase {
+        return FirebaseDatabase.getInstance()
     }
 
     @Provides

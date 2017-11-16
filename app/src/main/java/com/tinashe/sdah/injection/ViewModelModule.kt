@@ -21,6 +21,7 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 
 import com.tinashe.sdah.ui.home.HomeViewModel
+import com.tinashe.sdah.ui.home.featured.FeaturedViewModel
 
 import dagger.Binds
 import dagger.Module
@@ -33,6 +34,11 @@ internal abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(HomeViewModel::class)
     internal abstract fun bindHomeViewModel(homeViewModel: HomeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(FeaturedViewModel::class)
+    internal abstract fun bindFeaturedViewModel(featuredViewModel: FeaturedViewModel): ViewModel
 
     @Binds
     internal abstract fun bindViewModelFractory(factory: ViewModelFactory): ViewModelProvider.Factory

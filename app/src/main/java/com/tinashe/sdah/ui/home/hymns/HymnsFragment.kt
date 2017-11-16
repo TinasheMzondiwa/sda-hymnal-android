@@ -39,10 +39,6 @@ class HymnsFragment : BaseDrawerFragment() {
 
     private lateinit var viewModel: HymnsViewModel
 
-    override fun layoutRes(): Int {
-        return R.layout.fragment_hymns
-    }
-
     override fun titleRes(): Int {
         return R.string.app_name
     }
