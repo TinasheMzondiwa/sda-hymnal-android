@@ -22,6 +22,7 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -65,4 +66,12 @@ fun TextView.renderHtml(string: String) {
     } else {
         text = Html.fromHtml(string)
     }
+}
+
+fun Window.lowProfile() {
+    decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE
+}
+
+fun Window.visible() {
+    decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
 }

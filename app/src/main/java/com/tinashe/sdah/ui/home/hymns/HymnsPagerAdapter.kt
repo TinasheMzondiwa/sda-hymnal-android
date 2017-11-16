@@ -39,6 +39,8 @@ class HymnsPagerAdapter constructor(private var hymnsList: List<Hymn>) : PagerAd
 
     override fun getCount(): Int = hymnsList.size
 
+    fun getHymn(position: Int): Hymn? = hymnsList[position]
+
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
 
         val rootView = inflateView(R.layout.hymn_view, container, false)

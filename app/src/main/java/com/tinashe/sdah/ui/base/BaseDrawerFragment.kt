@@ -31,6 +31,7 @@ abstract class BaseDrawerFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        setHasOptionsMenu(true)
         activity?.setTitle(titleRes())
     }
 

@@ -21,9 +21,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.tinashe.sdah.R
 import com.tinashe.sdah.ui.base.BaseDrawerFragment
 import com.tinashe.sdah.ui.custom.extensions.getCenter
@@ -68,5 +66,10 @@ class HymnsFragment : BaseDrawerFragment() {
         val fragment = FabMenuFragment()
         fragment.point = fab.getCenter()
         fragment.show(childFragmentManager, fragment.tag)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_hymns, menu)
     }
 }
