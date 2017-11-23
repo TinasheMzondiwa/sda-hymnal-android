@@ -29,7 +29,6 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.util.Log
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
@@ -41,10 +40,7 @@ import com.tinashe.sdah.R
 import com.tinashe.sdah.model.constants.DateType
 import com.tinashe.sdah.ui.base.BaseDrawerFragment
 import com.tinashe.sdah.ui.base.BaseThemedActivity
-import com.tinashe.sdah.ui.custom.extensions.loadFromUrl
-import com.tinashe.sdah.ui.custom.extensions.lowProfile
-import com.tinashe.sdah.ui.custom.extensions.renderHtml
-import com.tinashe.sdah.ui.custom.extensions.visible
+import com.tinashe.sdah.ui.custom.extensions.*
 import com.tinashe.sdah.ui.home.favorites.FavoritesFragment
 import com.tinashe.sdah.ui.home.featured.FeaturedFragment
 import com.tinashe.sdah.ui.home.hymns.HymnsFragment
@@ -205,6 +201,9 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
             return
         }
 
+        headerAccountImg?.setOnClickListener { revealLayout?.circularReveal(it.getCenter()) }
+        revealClose?.setOnClickListener { revealLayout?.circularConceal(headerAccountImg.getCenter()) }
+
         var view: TextView? = headerSabbathText
         if (view == null) {
             view = navigationView.getHeaderView(0)
@@ -260,7 +259,6 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
-        Log.d(javaClass.name, "onRequestPermissionsResult: " + grantResults[0] + grantResults.toString())
 
         if (requestCode == RQ_LOCATION) {
             if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

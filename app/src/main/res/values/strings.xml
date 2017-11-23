@@ -17,6 +17,6 @@
     <string name="permission_location_rationale">Location permission is needed to show the Sabbath Times.</string>
     <string name="permissions_not_granted">Permissions were not granted.</string>
 
-    <string name="sabbath_date_time">%1$s&lt;br/&gt;Sabbath begins&lt;br/&gt;&lt;b>%2$s&lt;b></string>
+    <string name="sabbath_date_time">%1$s&lt;br/&gt;Sabbath begins&lt;br/&gt;&lt;b>%2$s&lt;/b></string>
     <string name="sabbath_greeting">Happy Sabbath!</string>
 </resources>

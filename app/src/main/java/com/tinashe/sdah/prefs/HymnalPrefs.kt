@@ -27,4 +27,8 @@ interface HymnalPrefs {
     fun getUiPref(): String
 
     fun setUiPref(@UiPref pref: String)
+
+    fun getLastOpenedPage(): Int
+
+    fun setLastOpenedPage(page: Int)
 }

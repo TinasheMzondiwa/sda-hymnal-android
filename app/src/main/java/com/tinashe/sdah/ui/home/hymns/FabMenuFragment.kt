@@ -28,6 +28,8 @@ class FabMenuFragment : BaseBottomSheetDialogFragment() {
 
     var point: Point? = null
 
+    var options: HymnOptions? = null
+
     override fun layoutRes(): Int = R.layout.fragment_fab_menu
 
     override fun initialize() {
@@ -39,7 +41,16 @@ class FabMenuFragment : BaseBottomSheetDialogFragment() {
         val btn5 = rootView?.findViewById<ImageButton>(R.id.imageButton5)
         val btn6 = rootView?.findViewById<ImageButton>(R.id.imageButton6)
         val btn7 = rootView?.findViewById<ImageButton>(R.id.imageButton7)
-        val btn8 = rootView?.findViewById<ImageButton>(R.id.imageButton8)
+        val dialer = rootView?.findViewById<ImageButton>(R.id.dialer)
 
+        dialer?.setOnClickListener {
+            options?.pickHymn()
+            dismiss()
+        }
+
+    }
+
+    interface HymnOptions {
+        fun pickHymn()
     }
 }

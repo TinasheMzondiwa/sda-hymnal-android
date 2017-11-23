@@ -60,16 +60,34 @@ class HymnsFragment : BaseDrawerFragment() {
             pagerAdapter = it?.let { it1 -> HymnsPagerAdapter(it1) }
             pagerAdapter?.let { pager.adapter = it }
         })
+
+        viewModel.currentPage.observe(this, Observer { it?.let { pager.currentItem = it } })
     }
 
     override fun fabClicked(fab: FloatingActionButton) {
         val fragment = FabMenuFragment()
         fragment.point = fab.getCenter()
+        fragment.options = object : FabMenuFragment.HymnOptions {
+            override fun pickHymn() {
+                val picker = PickerDialogFragment()
+                picker.mCallBack = object : PickerDialogFragment.OnPickerListener {
+                    override fun onHymnSelected(hymn: Int) {
+                        viewModel.hymnSelected(hymn)
+                    }
+                }
+                picker.show(childFragmentManager, picker.tag)
+            }
+        }
         fragment.show(childFragmentManager, fragment.tag)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_hymns, menu)
+    }
+
+    override fun onStop() {
+        pager?.let { viewModel.hymnSelected(it.currentItem + 1) }
+        super.onStop()
     }
 }

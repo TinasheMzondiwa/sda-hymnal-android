@@ -29,21 +29,32 @@ class HymnalPrefsImpl constructor(private val context: Context) : HymnalPrefs {
 
     companion object {
         const val KEY_UI_THEME = "pref_ui_theme"
+        const val KEY_LAST_PAGE = "pref_last_opened_page"
     }
 
     @UiPref
-    override fun getUiPref(): String {
-        return getPrefs().getString(KEY_UI_THEME, UiPref.DAY_NIGHT)
-    }
+    override fun getUiPref(): String = getPrefs().getString(KEY_UI_THEME, UiPref.DAY_NIGHT)
 
     override fun setUiPref(@UiPref pref: String) {
-        getPrefs().edit()
-                .putString(KEY_UI_THEME, pref)
-                .apply()
+        getPrefs().edit { putString(KEY_UI_THEME, pref) }
     }
 
-    private fun getPrefs(): SharedPreferences {
-        return PreferenceManager.getDefaultSharedPreferences(context)
+    override fun getLastOpenedPage(): Int = getPrefs().getInt(KEY_LAST_PAGE, 0)
+
+    override fun setLastOpenedPage(page: Int) {
+        getPrefs().edit { putInt(KEY_LAST_PAGE, page) }
     }
 
+    private fun getPrefs(): SharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(context)
+
+}
+
+/**
+ * SharedPreferences.edit extension
+ */
+inline fun SharedPreferences.edit(func: SharedPreferences.Editor.() -> Unit) {
+    val editor = edit()
+    editor.func()
+    editor.apply()
 }

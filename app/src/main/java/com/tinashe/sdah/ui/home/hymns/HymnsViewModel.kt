@@ -34,6 +34,7 @@ class HymnsViewModel
                     private val hymnsDao: HymnsDao) : RxAwareViewModel() {
 
     var hymnsList: MutableLiveData<List<Hymn>> = MutableLiveData()
+    val currentPage: MutableLiveData<Int> = MutableLiveData()
 
     init {
         fetchHymnList()
@@ -44,10 +45,23 @@ class HymnsViewModel
                 .subscribeOn(schedulers.database)
                 .observeOn(schedulers.main)
                 .subscribe({
-                    it?.let { hymnsList.value = it[0].hymns }
+                    it?.let {
+                        //TODO: Resolve which hymn to show
+                        if (it.isNotEmpty()) {
+                            hymnsList.value = it[0].hymns
+                        }
+
+                        currentPage.value = prefs.getLastOpenedPage()
+                    }
 
                 }, { Log.e(javaClass.name, it.message, it) })
 
         disposables.add(disposable)
+    }
+
+    fun hymnSelected(number: Int) {
+        val page = number - 1
+        prefs.setLastOpenedPage(page)
+        currentPage.value = page
     }
 }

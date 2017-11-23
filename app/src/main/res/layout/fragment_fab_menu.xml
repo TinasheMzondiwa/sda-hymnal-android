@@ -92,13 +92,13 @@
         <ImageButton
             android:id="@+id/imageButton7"
             style="@style/FabItem"
-            app:layout_constraintEnd_toStartOf="@+id/imageButton8"
+            app:layout_constraintEnd_toStartOf="@+id/dialer"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/imageButton6"
             app:srcCompat="@drawable/ic_insert_comment" />
 
         <ImageButton
-            android:id="@+id/imageButton8"
+            android:id="@+id/dialer"
             style="@style/FabItem"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

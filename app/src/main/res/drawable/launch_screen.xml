@@ -16,7 +16,7 @@
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@color/theme_green_primary" />
+    <item android:drawable="@color/theme_splash" />
 
     <!--<item>
         <bitmap

@@ -66,11 +66,17 @@ abstract class HymnalDatabase : RoomDatabase() {
                                 super.onCreate(db)
                                 // insert the data on the IO Thread
                                 ioThread {
-                                    readHymnBook(context, Hymnal.ENGLISH)?.let {
-                                        getInstance(context).hymnsDao().insertAll(it)
-                                    }
-                                    readHymnBook(context, Hymnal.ENGLISH_OLD)?.let {
-                                        getInstance(context).hymnsDao().insertAll(it)
+
+                                    val books = listOf(
+                                            readHymnBook(context, Hymnal.ENGLISH),
+                                            readHymnBook(context, Hymnal.ENGLISH_OLD),
+                                            readHymnBook(context, Hymnal.SPANISH)
+                                    )
+
+                                    for (book in books) {
+                                        book?.let {
+                                            getInstance(context).hymnsDao().insert(it)
+                                        }
                                     }
                                 }
                             }
@@ -81,7 +87,7 @@ abstract class HymnalDatabase : RoomDatabase() {
             val name = when (type) {
                 Hymnal.ENGLISH -> "SDA Hymnal"
                 Hymnal.ENGLISH_OLD -> "SDA hymnal (Old)"
-                Hymnal.SPANISH -> ""
+                Hymnal.SPANISH -> "Spanish Hymnal" //TODO Change name
                 else -> return null
             }
 
@@ -95,7 +101,7 @@ abstract class HymnalDatabase : RoomDatabase() {
             val path = when (type) {
                 Hymnal.ENGLISH -> "sdah"
                 Hymnal.ENGLISH_OLD -> "sdah_old"
-                Hymnal.SPANISH -> ""
+                Hymnal.SPANISH -> "spanish"
                 else -> return null
             }
 

@@ -16,7 +16,7 @@
 
         <activity
             android:name=".ui.splash.SplashActivity"
-            android:theme="@style/Hymnal.Theme.Green.Splash">
+            android:theme="@style/Hymnal.Theme.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

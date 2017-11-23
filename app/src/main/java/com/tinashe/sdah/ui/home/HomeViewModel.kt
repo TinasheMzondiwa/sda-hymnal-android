@@ -75,7 +75,19 @@ class HomeViewModel
         val nextSabbath = Calendar.getInstance(TimeZone.getDefault())
         nextSabbath.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY)
 
-        val officialSunset = calculator.getOfficialSunsetCalendarForDate(nextSabbath)
+        var officialSunset = calculator.getOfficialSunsetCalendarForDate(nextSabbath)
+
+        val now = Calendar.getInstance()
+
+        //Check if Sabbath has ended, calculate for next week
+        if (officialSunset.before(now) && now.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+            val sabbathEnd = calculator.getOfficialSunsetForDate(now)
+            if (now.after(sabbathEnd)) {
+                nextSabbath.set(Calendar.WEEK_OF_YEAR, nextSabbath.get(Calendar.WEEK_OF_YEAR) + 1)
+                officialSunset = calculator.getOfficialSunsetCalendarForDate(nextSabbath)
+            }
+        }
+
         sabbathDate.value = officialSunset
     }
 }

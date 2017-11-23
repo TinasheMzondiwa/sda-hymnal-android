@@ -16,13 +16,12 @@
 
 package com.tinashe.sdah.ui.custom.extensions
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.graphics.Point
 import android.support.annotation.LayoutRes
 import android.text.Html
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -74,4 +73,38 @@ fun Window.lowProfile() {
 
 fun Window.visible() {
     decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+}
+
+fun View.circularReveal(point: Point) {
+
+    if (VersionUtils.isAtLeastL()) {
+        val finalRadius = Math.max(width, height)
+        show()
+        val anim = ViewAnimationUtils.createCircularReveal(
+                this, point.x, point.y, 0f, finalRadius.toFloat())
+        anim.duration = 400
+        anim.start()
+
+    } else {
+        show()
+    }
+
+}
+
+fun View.circularConceal(point: Point) {
+    if (VersionUtils.isAtLeastL()) {
+        val initialRadius = width
+        val anim = ViewAnimationUtils.createCircularReveal(this, point.x, point.y, initialRadius.toFloat(), 0f)
+        anim.duration = 400
+        anim.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                super.onAnimationEnd(animation)
+                hide()
+            }
+        })
+        anim.start()
+
+    } else {
+        hide()
+    }
 }

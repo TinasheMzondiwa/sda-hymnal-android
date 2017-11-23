@@ -16,9 +16,9 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/drawer_header_height"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/colorPrimary">
 
     <ImageView
@@ -39,10 +39,12 @@
         android:padding="@dimen/spacing_medium">
 
         <ImageView
+            android:id="@+id/headerAccountImg"
             android:layout_width="54dp"
             android:layout_height="54dp"
-            app:srcCompat="@drawable/ic_account_circle"
-            android:contentDescription="@string/blank" />
+            android:contentDescription="@string/blank"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/ic_account_circle" />
 
         <TextView
             android:id="@+id/headerSabbathText"
@@ -51,9 +53,37 @@
             android:layout_weight="1"
             android:fontFamily="@font/advent_sans_logo"
             android:gravity="end"
-            tools:text="Friday, March 23\nSabbath starts at\n6:10pm"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/text_size_body" />
+            android:textSize="@dimen/text_size_body"
+            tools:text="Friday, March 23\nSabbath starts at\n6:10pm" />
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/revealLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/windowBackground"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:paddingBottom="@dimen/spacing_medium"
+        android:paddingTop="@dimen/spacing_medium">
+
+        <ImageButton
+            android:id="@+id/revealClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_large"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/ic_close" />
+
+        <com.google.android.gms.common.SignInButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginEnd="@dimen/spacing_large"
+            android:layout_marginStart="@dimen/spacing_large"
+            app:buttonSize="wide" />
+
+    </FrameLayout>
 
 </FrameLayout>

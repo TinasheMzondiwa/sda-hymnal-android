@@ -93,6 +93,8 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
 
     implementation "com.google.firebase:firebase-database:${versions.firebase}"
+    implementation "com.google.firebase:firebase-auth:${versions.firebase}"
+    implementation "com.google.android.gms:play-services-auth:${versions.firebase}"
     implementation "com.google.android.gms:play-services-location:${versions.firebase}"
 
     implementation "com.luckycatlabs:SunriseSunsetCalculator:${versions.sunrise_calc}"
