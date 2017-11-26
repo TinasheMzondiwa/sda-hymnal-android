@@ -19,6 +19,7 @@ package com.tinashe.sdah.prefs
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import com.tinashe.sdah.model.constants.Hymnal
 import com.tinashe.sdah.model.constants.UiPref
 
 /**
@@ -30,6 +31,7 @@ class HymnalPrefsImpl constructor(private val context: Context) : HymnalPrefs {
     companion object {
         const val KEY_UI_THEME = "pref_ui_theme"
         const val KEY_LAST_PAGE = "pref_last_opened_page"
+        const val KEY_HYMNAL_TYPE = "pref_hymnal_type"
     }
 
     @UiPref
@@ -43,6 +45,13 @@ class HymnalPrefsImpl constructor(private val context: Context) : HymnalPrefs {
 
     override fun setLastOpenedPage(page: Int) {
         getPrefs().edit { putInt(KEY_LAST_PAGE, page) }
+    }
+
+    @Hymnal
+    override fun getHymnal(): Int = getPrefs().getInt(KEY_HYMNAL_TYPE, Hymnal.ENGLISH)
+
+    override fun setHymnal(@Hymnal type: Int) {
+        getPrefs().edit { putInt(KEY_HYMNAL_TYPE, type) }
     }
 
     private fun getPrefs(): SharedPreferences =

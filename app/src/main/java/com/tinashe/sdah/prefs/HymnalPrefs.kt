@@ -16,6 +16,7 @@
 
 package com.tinashe.sdah.prefs
 
+import com.tinashe.sdah.model.constants.Hymnal
 import com.tinashe.sdah.model.constants.UiPref
 
 /**
@@ -31,4 +32,9 @@ interface HymnalPrefs {
     fun getLastOpenedPage(): Int
 
     fun setLastOpenedPage(page: Int)
+
+    @Hymnal
+    fun getHymnal(): Int
+
+    fun setHymnal(@Hymnal type: Int)
 }

@@ -24,14 +24,14 @@ import android.arch.persistence.room.OnConflictStrategy
 interface BaseDao<in T> {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(`object`: T)
+    fun insert(item: T)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(vararg objects: T)
+    fun insertAll(vararg items: T)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun update(`object`: T)
+    fun update(item: T)
 
     @Delete
-    fun delete(`object`: T)
+    fun delete(item: T)
 }

@@ -109,7 +109,7 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
                 .get(HomeViewModel::class.java)
 
         viewModel.urlData.observe(this, Observer { loadBackdrop(it.orEmpty()) })
-        viewModel.sabbathDate.observe(this, Observer { setSabbathTime(it) })
+        viewModel.sabbathDate.observe(this, Observer { it?.let { setSabbathTime(it) } })
         viewModel.navigation.observe(this, Observer { switchToFragment(it) })
 
         if (savedInstanceState == null) {
@@ -196,10 +196,7 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
         view?.loadFromUrl(url, res)
     }
 
-    private fun setSabbathTime(date: Calendar?) {
-        if (date == null) {
-            return
-        }
+    private fun setSabbathTime(date: Calendar) {
 
         headerAccountImg?.setOnClickListener { revealLayout?.circularReveal(it.getCenter()) }
         revealClose?.setOnClickListener { revealLayout?.circularConceal(headerAccountImg.getCenter()) }

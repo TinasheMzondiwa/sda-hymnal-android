@@ -33,7 +33,7 @@ class HymnsViewModel
                     private val schedulers: RxSchedulers,
                     private val hymnsDao: HymnsDao) : RxAwareViewModel() {
 
-    var hymnsList: MutableLiveData<List<Hymn>> = MutableLiveData()
+    val hymnsList: MutableLiveData<List<Hymn>> = MutableLiveData()
     val currentPage: MutableLiveData<Int> = MutableLiveData()
 
     init {
@@ -41,15 +41,12 @@ class HymnsViewModel
     }
 
     private fun fetchHymnList() {
-        val disposable = hymnsDao.listAllBooks()
+        val disposable = hymnsDao.findByType(prefs.getHymnal())
                 .subscribeOn(schedulers.database)
                 .observeOn(schedulers.main)
                 .subscribe({
                     it?.let {
-                        //TODO: Resolve which hymn to show
-                        if (it.isNotEmpty()) {
-                            hymnsList.value = it[0].hymns
-                        }
+                        hymnsList.value = it.hymns
 
                         currentPage.value = prefs.getLastOpenedPage()
                     }
