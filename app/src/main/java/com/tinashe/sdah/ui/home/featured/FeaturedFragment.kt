@@ -22,11 +22,14 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.tinashe.sdah.R
+import com.tinashe.sdah.model.FeaturedVideo
 import com.tinashe.sdah.ui.base.BaseDrawerFragment
+import com.tinashe.sdah.ui.custom.UniversalAdapter
 import com.tinashe.sdah.ui.custom.extensions.hide
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_featured.*
@@ -42,7 +45,7 @@ class FeaturedFragment : BaseDrawerFragment() {
 
     private lateinit var viewModel: FeaturedViewModel
 
-    private var adapter: FeaturedVideosListAdapter = FeaturedVideosListAdapter()
+    private lateinit var adapter: UniversalAdapter<FeaturedVideo, RecyclerView.ViewHolder>
 
     override fun titleRes(): Int = R.string.menu_featured
 
@@ -53,8 +56,7 @@ class FeaturedFragment : BaseDrawerFragment() {
         super.onViewCreated(view, savedInstanceState)
         AndroidSupportInjection.inject(this)
 
-        featuredList.layoutManager = LinearLayoutManager(activity)
-        featuredList.adapter = adapter
+        initList()
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(FeaturedViewModel::class.java)
@@ -63,8 +65,21 @@ class FeaturedFragment : BaseDrawerFragment() {
 
             progressBar.hide()
 
-            adapter.videosList = it!!
+            it?.let {
+                adapter.items = it.toMutableList()
+            }
         })
+    }
+
+    private fun initList() {
+        adapter = UniversalAdapter({ parent, _ ->
+            VideoHolder.inflate(parent)
+        }, { vh, _, item ->
+            (vh as VideoHolder).bindVideo(item)
+        })
+
+        featuredList.layoutManager = LinearLayoutManager(activity)
+        featuredList.adapter = adapter
     }
 
     override fun fabClicked(fab: FloatingActionButton) {

@@ -45,15 +45,9 @@ android {
         }
     }
 
-    dexOptions {
-        javaMaxHeapSize "2048M"
-    }
-    compileOptions.incremental = false
-
     androidExtensions {
         experimental = true
     }
-    sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
 }
 
 dependencies {

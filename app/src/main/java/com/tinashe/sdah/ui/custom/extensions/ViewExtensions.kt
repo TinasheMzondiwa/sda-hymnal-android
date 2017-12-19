@@ -60,10 +60,10 @@ fun View.getCenter(): Point {
 }
 
 fun TextView.renderHtml(string: String) {
-    if (VersionUtils.isAtLeastN()) {
-        text = Html.fromHtml(string, Html.FROM_HTML_MODE_COMPACT)
+    text = if (VersionUtils.isAtLeastN()) {
+        Html.fromHtml(string, Html.FROM_HTML_MODE_COMPACT)
     } else {
-        text = Html.fromHtml(string)
+        Html.fromHtml(string)
     }
 }
 
