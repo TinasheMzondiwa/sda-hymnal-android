@@ -14,7 +14,37 @@
   ~   limitations under the License.
   -->
 
-<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pager"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/searchResultsList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/windowBackground"
+        android:clipToPadding="false"
+        android:elevation="@dimen/spacing_micro"
+        android:paddingBottom="@dimen/spacing_medium"
+        android:paddingTop="@dimen/spacing_medium"
+        android:visibility="gone"
+        tools:listitem="@layout/search_result"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/searchPoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="@dimen/spacing_medium"
+        android:tint="#000"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_search" />
+</FrameLayout>

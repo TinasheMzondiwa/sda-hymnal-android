@@ -61,4 +61,11 @@ class HymnsViewModel
         prefs.setLastOpenedPage(page)
         currentPage.value = page
     }
+
+    fun searchHymns(query: String): MutableList<Hymn> {
+
+        val items = hymnsList.value?.filter { it.content?.contains(query, true) ?: false }
+
+        return items?.toMutableList() ?: mutableListOf()
+    }
 }

@@ -26,7 +26,8 @@
 
         <activity
             android:name=".ui.home.HomeActivity"
-            android:theme="@style/Hymnal.Theme.Main" />
+            android:theme="@style/Hymnal.Theme.Main"
+            android:windowSoftInputMode="adjustNothing" />
 
     </application>
 

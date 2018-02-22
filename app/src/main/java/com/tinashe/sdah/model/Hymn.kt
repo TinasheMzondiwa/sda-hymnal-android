@@ -33,4 +33,8 @@ class Hymn(
         val key: String? = null,
 
         val favorite: Boolean? = false
-) : Serializable
+) : Serializable {
+    override fun toString(): String {
+        return "Hymn(number=$number, title=$title)"
+    }
+}

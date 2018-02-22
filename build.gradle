@@ -6,14 +6,15 @@ buildscript {
             'support_library': '27.0.2',
             'const_layout'   : '1.0.2',
             'arch_comp'      : '1.0.0',
-            'dagger'         : '2.13',
-            'kotlin'         : '1.2.10',
+            'arch_lifecycle' : '1.1.0',
+            'dagger'         : '2.14.1',
+            'kotlin'         : '1.2.21',
             'rx_java'        : '2.1.5',
             'rx_android'     : '2.0.1',
             'retrofit'       : '2.3.0',
             'okhttp3'        : '3.8.1',
             'glide'          : '4.1.1',
-            'firebase'       : '11.6.2',
+            'firebase'       : '11.8.0',
             'sunrise_calc'   : '1.2'
     ]
 
@@ -26,7 +27,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:${versions.kotlin}"
-        classpath 'com.google.gms:google-services:3.1.0'
+        classpath 'com.google.gms:google-services:3.1.1'
         classpath 'io.fabric.tools:gradle:1.+'
     }
 }

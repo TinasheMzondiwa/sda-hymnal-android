@@ -60,8 +60,8 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:${versions.support_library}"
     implementation "com.android.support:design:${versions.support_library}"
 
-    implementation "android.arch.lifecycle:extensions:${versions.arch_comp}"
-    implementation "android.arch.lifecycle:reactivestreams:${versions.arch_comp}"
+    implementation "android.arch.lifecycle:extensions:${versions.arch_lifecycle}"
+    implementation "android.arch.lifecycle:reactivestreams:${versions.arch_lifecycle}"
     kapt "android.arch.lifecycle:compiler:${versions.arch_comp}"
 
     implementation "android.arch.persistence.room:rxjava2:${versions.arch_comp}"

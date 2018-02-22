@@ -37,10 +37,12 @@ import android.widget.TextView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.tinashe.sdah.R
-import com.tinashe.sdah.model.constants.DateType
+import com.tinashe.sdah.model.constants.DateType.DATE
+import com.tinashe.sdah.model.constants.DateType.TIME
 import com.tinashe.sdah.ui.base.BaseDrawerFragment
 import com.tinashe.sdah.ui.base.BaseThemedActivity
 import com.tinashe.sdah.ui.custom.extensions.*
+import com.tinashe.sdah.ui.home.Navigation.*
 import com.tinashe.sdah.ui.home.favorites.FavoritesFragment
 import com.tinashe.sdah.ui.home.featured.FeaturedFragment
 import com.tinashe.sdah.ui.home.hymns.HymnsFragment
@@ -121,10 +123,10 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
     private fun switchToFragment(navigation: Int?) {
 
         currentFragment = when (navigation) {
-            Navigation.HYMNS -> HymnsFragment()
-            Navigation.FAVORITES -> FavoritesFragment()
-            Navigation.INDEX -> IndexListFragment()
-            Navigation.FEATURED -> FeaturedFragment()
+            HYMNS -> HymnsFragment()
+            FAVORITES -> FavoritesFragment()
+            INDEX -> IndexListFragment()
+            FEATURED -> FeaturedFragment()
             else -> return
         }
 
@@ -159,10 +161,10 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
         }
 
         when (item.itemId) {
-            Navigation.HYMNS,
-            Navigation.FAVORITES,
-            Navigation.INDEX,
-            Navigation.FEATURED -> viewModel.navigationSelected(item.itemId)
+            HYMNS,
+            FAVORITES,
+            INDEX,
+            FEATURED -> viewModel.navigationSelected(item.itemId)
             R.id.nav_settings -> {
                 //TODO Implement
             }
@@ -213,8 +215,8 @@ class HomeActivity : BaseThemedActivity(), NavigationView.OnNavigationItemSelect
             return
         }
 
-        val day = DateUtils.getFormattedDate(date.time, DateType.DATE)
-        val time = DateUtils.getFormattedDate(date.time, DateType.TIME)
+        val day = DateUtils.getFormattedDate(date.time, DATE)
+        val time = DateUtils.getFormattedDate(date.time, TIME)
         view?.renderHtml(resources.getString(R.string.sabbath_date_time, day, time))
 
     }
