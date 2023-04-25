@@ -9,13 +9,20 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.sp
 import hymnal.ui.R
 
-private val Montserrat = FontFamily(
-    Font(R.font.montserrat_regular),
-    Font(R.font.montserrat_medium, FontWeight.W500)
+private val Poppins = FontFamily(
+    Font(R.font.poppins_regular),
+    Font(R.font.poppins_medium, FontWeight.W500),
+    Font(R.font.poppins_medium, FontWeight.Medium),
+    Font(R.font.poppins_black, FontWeight.Black),
+    Font(R.font.poppins_bold, FontWeight.Bold),
+    Font(R.font.poppins_extra_bold, FontWeight.ExtraBold),
+    Font(R.font.poppins_light, FontWeight.Light),
+    Font(R.font.poppins_semi_bold, FontWeight.SemiBold),
+    Font(R.font.poppins_thin, FontWeight.Thin),
 )
 
 private val defaultTextStyle = TextStyle(
-    //fontFamily = Montserrat,
+    fontFamily = Poppins,
     lineHeightStyle = LineHeightStyle(
         alignment = LineHeightStyle.Alignment.Center,
         trim = LineHeightStyle.Trim.None

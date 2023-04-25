@@ -42,8 +42,8 @@ slack {
 dependencies {
     ksp(libs.circuit.codegen)
 
-    implementation(projects.core.di)
-    implementation(projects.core.ui)
+    implementation(projects.libraries.di)
+    implementation(projects.libraries.coreUi)
     // implementation(projects.foundation.android)
     implementation(libs.bundles.circuit)
 
@@ -51,8 +51,6 @@ dependencies {
     kapt(libs.dagger.apt.compiler)
 
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.browser)
     implementation(libs.androidx.startup)
 
     implementation(libs.google.android.material)

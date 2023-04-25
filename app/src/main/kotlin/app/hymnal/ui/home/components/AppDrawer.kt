@@ -1,6 +1,7 @@
 package app.hymnal.ui.home.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,13 +14,16 @@ import androidx.compose.material.icons.rounded.Lyrics
 import androidx.compose.material.icons.rounded.SentimentVerySatisfied
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.ViewList
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -124,5 +128,43 @@ fun PreviewAppDrawer() {
                 )
             }
         )
+    }
+}
+
+@Composable
+private fun NavDrawerSecondaryItem(
+    title: String,
+    onClick: () -> Unit
+) {
+    TextButton(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
+        shape = MaterialTheme.shapes.large,
+        colors = ButtonDefaults.textButtonColors(
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            top = ButtonDefaults.ContentPadding.calculateTopPadding(),
+            end = 16.dp,
+            bottom = ButtonDefaults.ContentPadding.calculateBottomPadding()
+        )
+    ) {
+        Text(
+            text = title,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@DayNightPreviews
+@Composable
+private fun PreviewNavDrawerSecondaryItem() {
+    HymnalTheme {
+        Surface {
+            NavDrawerSecondaryItem("Settings") {}
+        }
     }
 }
