@@ -1,14 +1,10 @@
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    kotlin("android")
     alias(libs.plugins.sgp.base)
 }
 
-android {
-    namespace = "hymnal.ui"
-
-    buildFeatures { androidResources = true }
-}
+android { namespace = "hymnal.ui" }
 
 slack {
     features { compose() }

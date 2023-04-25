@@ -15,8 +15,8 @@ dependencyResolutionManagement {
 rootProject.name = "sda-hymnal-android"
 include(
     ":app",
-    ":core:di",
-    ":core:ui",
+    ":libraries:di",
+    ":libraries:core-ui",
   //  ":foundation:android",
 )
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
