@@ -33,6 +33,7 @@ joda-time = "2.12.5"
 jvmTarget = "11"
 kotlin = "1.8.21"
 kotlin-coroutines = "1.6.4"
+kotlinx-immutable = "0.3.5"
 ksp = "1.8.21-1.0.11"
 markwon = "4.6.2"
 material = "1.9.0-rc01"
@@ -111,6 +112,7 @@ kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", 
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlin-coroutines" }
 kotlin-coroutines-playservices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlin-coroutines" }
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlinx-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-immutable" }
 markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
 test-androidx-archcore = { module = "androidx.arch.core:core-testing", version.ref = "test-androidx-archcore" }
 test-androidx-benchmark = { module = "androidx.benchmark:benchmark-junit4", version.ref = "test-androidx-benchmark" }

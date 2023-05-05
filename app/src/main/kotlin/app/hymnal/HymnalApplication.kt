@@ -1,6 +1,8 @@
 package app.hymnal
 
 import android.app.Application
+import app.hymnal.di.ApplicationComponent
+import app.hymnal.di.DaggerApplicationComponent
 
 class HymnalApplication : Application() {
 

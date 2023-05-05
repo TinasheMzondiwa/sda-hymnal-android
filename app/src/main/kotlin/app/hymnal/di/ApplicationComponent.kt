@@ -1,7 +1,8 @@
-package app.hymnal
+package app.hymnal.di
 
 import android.app.Activity
 import android.app.Application
+import app.hymnal.HymnalApplication
 import com.squareup.anvil.annotations.MergeComponent
 import dagger.BindsInstance
 import dagger.Component

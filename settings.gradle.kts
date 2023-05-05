@@ -17,6 +17,8 @@ include(
     ":app",
     ":libraries:di",
     ":libraries:core-ui",
-  //  ":foundation:android",
+    ":services:hymnal-content",
+    ":services:hymnal-content:impl",
+    ":services:storage"
 )
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

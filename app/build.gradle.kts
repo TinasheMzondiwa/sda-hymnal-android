@@ -8,6 +8,14 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+slack {
+    features {
+        compose()
+        @Suppress("OPT_IN_USAGE")
+        dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
+    }
+}
+
 android {
     namespace = "app.hymnal"
 
@@ -32,19 +40,13 @@ android {
     }
 }
 
-slack {
-    features {
-        compose()
-        dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
-    }
-}
-
 dependencies {
     ksp(libs.circuit.codegen)
 
     implementation(projects.libraries.di)
     implementation(projects.libraries.coreUi)
-    // implementation(projects.foundation.android)
+    implementation(projects.services.storage)
+
     implementation(libs.bundles.circuit)
 
     implementation(libs.dagger.runtime)

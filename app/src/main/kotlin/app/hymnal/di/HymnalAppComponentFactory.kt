@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package app.hymnal
+package app.hymnal.di
 
 import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import androidx.annotation.Keep
 import androidx.core.app.AppComponentFactory
+import app.hymnal.HymnalApplication
 import javax.inject.Provider
 
 @Keep
