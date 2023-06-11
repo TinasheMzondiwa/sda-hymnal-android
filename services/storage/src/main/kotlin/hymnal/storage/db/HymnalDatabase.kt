@@ -14,7 +14,7 @@ import hymnal.storage.db.entity.SectionEntity
     version = 1,
     exportSchema = true,
 )
-abstract class HymnalDatabase : RoomDatabase() {
+internal abstract class HymnalDatabase : RoomDatabase() {
 
     abstract fun hymnsDao(): HymnsDao
 
