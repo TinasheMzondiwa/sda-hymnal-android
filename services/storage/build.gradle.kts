@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     kotlin("android")
+    kotlin("kapt")
     alias(libs.plugins.ksp)
     alias(libs.plugins.sgp.base)
 }
@@ -22,5 +23,5 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.dagger.runtime)
-    ksp(libs.dagger.apt.compiler)
+    kapt(libs.dagger.apt.compiler)
 }

@@ -8,9 +8,15 @@ import dagger.BindsInstance
 import dagger.Component
 import hymnal.di.AppScope
 import hymnal.di.SingleIn
+import hymnal.storage.di.StorageModule
 import javax.inject.Provider
 
-@MergeComponent(AppScope::class)
+@MergeComponent(
+    scope = AppScope::class,
+    modules = [
+        StorageModule::class,
+    ]
+)
 @SingleIn(AppScope::class)
 interface ApplicationComponent {
 

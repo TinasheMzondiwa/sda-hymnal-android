@@ -17,16 +17,14 @@ object StorageModule {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideDatabase(
+    fun provideHymnsDao(
         @ApplicationContext context: Context
-    ): HymnalDatabase = HymnalDatabase.getInstance(context)
+    ): HymnsDao = HymnalDatabase.getInstance(context).hymnsDao()
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideHymnsDao(database: HymnalDatabase): HymnsDao = database.hymnsDao()
-
-    @Provides
-    @SingleIn(AppScope::class)
-    fun provideSectionsDao(database: HymnalDatabase): SectionsDao = database.sectionsDao()
+    fun provideSectionsDao(
+        @ApplicationContext context: Context
+    ): SectionsDao = HymnalDatabase.getInstance(context).sectionsDao()
 
 }
