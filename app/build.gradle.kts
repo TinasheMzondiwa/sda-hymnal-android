@@ -43,6 +43,7 @@ android {
 dependencies {
     ksp(libs.circuit.codegen)
 
+    implementation(projects.features.search)
     implementation(projects.libraries.di)
     implementation(projects.libraries.coreUi)
     implementation(projects.services.storage)
