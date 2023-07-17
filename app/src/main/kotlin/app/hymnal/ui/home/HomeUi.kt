@@ -25,6 +25,7 @@ import app.hymnal.ui.home.components.AppDrawer
 import app.hymnal.ui.home.components.AppNavRail
 import com.slack.circuit.codegen.annotations.CircuitInject
 import hymnal.di.AppScope
+import hymnal.search.HymnalSearchBar
 import hymnal.ui.extensions.LocalWindowWidthSizeClass
 import kotlinx.coroutines.launch
 
@@ -67,14 +68,20 @@ fun HomeUi(state: State, modifier: Modifier = Modifier) {
             }
 
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                AnimatedContent(state) { targetState ->
+                AnimatedContent(state, Modifier.padding(16.dp)) { targetState ->
                     Text(text = "State is $targetState")
                 }
+
+                HymnalSearchBar(
+                    openDrawer = {
+                        if (!isExpandedScreen) {
+                            coroutineScope.launch { sizeAwareDrawerState.open() }
+                        }
+                    }
+                )
             }
         }
     }
