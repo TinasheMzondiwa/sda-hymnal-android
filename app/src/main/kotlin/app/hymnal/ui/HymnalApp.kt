@@ -2,14 +2,11 @@ package app.hymnal.ui
 
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import app.hymnal.ui.home.HomeScreen
 import com.slack.circuit.backstack.rememberSaveableBackStack
-import com.slack.circuit.foundation.CircuitCompositionLocals
-import com.slack.circuit.foundation.CircuitConfig
-import com.slack.circuit.foundation.LocalCircuitConfig
+import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.push
 import com.slack.circuit.foundation.rememberCircuitNavigator
@@ -19,22 +16,23 @@ import hymnal.ui.theme.HymnalTheme
 
 @Composable
 fun HymnalApp(
-    circuitConfig: CircuitConfig,
+    circuit: Circuit,
     windowWidthSizeClass: WindowWidthSizeClass
 ) {
     HymnalTheme {
-        CircuitCompositionLocals(circuitConfig) {
-            CompositionLocalProvider(
-                LocalWindowWidthSizeClass provides windowWidthSizeClass,
-                LocalCircuitConfig provides circuitConfig,
-            ) {
-                Surface {
-                    ContentWithOverlays {
-                        val backstack = rememberSaveableBackStack { push(HomeScreen) }
-                        val navigator = rememberCircuitNavigator(backstack)
+        CompositionLocalProvider(
+            LocalWindowWidthSizeClass provides windowWidthSizeClass,
+        ) {
+            Surface {
+                ContentWithOverlays {
+                    val backstack = rememberSaveableBackStack { push(HomeScreen) }
+                    val navigator = rememberCircuitNavigator(backstack)
 
-                        NavigableCircuitContent(navigator, backstack)
-                    }
+                    NavigableCircuitContent(
+                        navigator,
+                        backstack,
+                        circuit = circuit,
+                    )
                 }
             }
         }

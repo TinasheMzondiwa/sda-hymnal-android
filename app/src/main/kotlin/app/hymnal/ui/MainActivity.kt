@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.core.view.WindowCompat
-import com.slack.circuit.foundation.CircuitConfig
+import com.slack.circuit.foundation.Circuit
 import com.squareup.anvil.annotations.ContributesMultibinding
 import hymnal.di.ActivityKey
 import hymnal.di.AppScope
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @ContributesMultibinding(AppScope::class, boundType = Activity::class)
 class MainActivity
 @Inject constructor(
-    private val circuitConfig: CircuitConfig
+    private val circuit: Circuit
 ) : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -28,7 +28,7 @@ class MainActivity
 
         setContent {
             HymnalApp(
-                circuitConfig,
+                circuit,
                 calculateWindowSizeClass(this).widthSizeClass
             )
         }
