@@ -28,7 +28,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.isContainer
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -53,7 +53,7 @@ fun HymnalSearchBar(
     Box(Modifier.fillMaxSize()) {
         Box(
             Modifier
-                .semantics { isContainer = true }
+                .semantics { isTraversalGroup = true }
                 .zIndex(1f)
                 .fillMaxWidth()) {
             SearchBar(
