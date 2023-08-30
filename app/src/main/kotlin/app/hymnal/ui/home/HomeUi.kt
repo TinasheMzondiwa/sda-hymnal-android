@@ -1,7 +1,6 @@
 package app.hymnal.ui.home
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,12 +28,9 @@ import hymnal.search.HymnalSearchBar
 import hymnal.ui.extensions.LocalWindowWidthSizeClass
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 @CircuitInject(HomeScreen::class, AppScope::class)
 fun HomeUi(state: State, modifier: Modifier = Modifier) {
-    val sink = state.eventSink
-
     val coroutineScope = rememberCoroutineScope()
     val isExpandedScreen = LocalWindowWidthSizeClass.current == WindowWidthSizeClass.Expanded
     val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen)
@@ -43,9 +39,9 @@ fun HomeUi(state: State, modifier: Modifier = Modifier) {
         drawerContent = {
             AppDrawer(
                 currentRoute = state.currentRoute,
-                navigateToHome = { sink(Event.OnNav(AppRoute.Hymnal)) },
-                navigateToTopicalIndex = { sink(Event.OnNav(AppRoute.TopicalIndex)) },
-                navigateToCollections = { sink(Event.OnNav(AppRoute.Collections)) },
+                navigateToHome = { state.eventSink(Event.OnNav(AppRoute.Hymnal)) },
+                navigateToTopicalIndex = { state.eventSink(Event.OnNav(AppRoute.TopicalIndex)) },
+                navigateToCollections = { state.eventSink(Event.OnNav(AppRoute.Collections)) },
                 closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
                 drawerHeaderContent = {
                     Spacer(modifier = Modifier.height(54.dp))
@@ -61,9 +57,9 @@ fun HomeUi(state: State, modifier: Modifier = Modifier) {
             if (isExpandedScreen) {
                 AppNavRail(
                     currentRoute = state.currentRoute,
-                    navigateToHome = { sink(Event.OnNav(AppRoute.Hymnal)) },
-                    navigateToTopicalIndex = { sink(Event.OnNav(AppRoute.TopicalIndex)) },
-                    navigateToCollections = { sink(Event.OnNav(AppRoute.Collections)) },
+                    navigateToHome = { state.eventSink(Event.OnNav(AppRoute.Hymnal)) },
+                    navigateToTopicalIndex = { state.eventSink(Event.OnNav(AppRoute.TopicalIndex)) },
+                    navigateToCollections = { state.eventSink(Event.OnNav(AppRoute.Collections)) },
                 )
             }
 
@@ -71,7 +67,7 @@ fun HomeUi(state: State, modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                AnimatedContent(state, Modifier.padding(16.dp)) { targetState ->
+                AnimatedContent(state, Modifier.padding(16.dp), label = "") { targetState ->
                     Text(text = "State is $targetState")
                 }
 
