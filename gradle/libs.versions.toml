@@ -17,7 +17,7 @@ androidx-startup = "1.1.1"
 androidx-work = "2.8.1"
 anvil = "2.4.8-1-8"
 cash-app-turbine = "1.0.0"
-circuit = "0.12.1"
+circuit = "0.14.1"
 coil = "2.4.0"
 compose-compiler = "1.5.3"
 compose-compiler-kotlinVersion = "1.9.10"
@@ -95,6 +95,7 @@ circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.
 circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
 circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
 circuit-runtime-presenter = { module = "com.slack.circuit:circuit-runtime-presenter", version.ref = "circuit" }
+circuit-runtime-screen = { module = "com.slack.circuit:circuit-runtime-screen", version.ref = "circuit" }
 circuit-runtime-ui = { module = "com.slack.circuit:circuit-runtime-ui", version.ref = "circuit" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 coil-core = { module = "io.coil-kt:coil", version.ref = "coil" }
@@ -142,6 +143,7 @@ circuit = [
     "circuit-overlay",
     "circuit-runtime",
     "circuit-runtime-presenter",
+    "circuit-runtime-screen",
     "circuit-runtime-ui"
 ]
 compose = [

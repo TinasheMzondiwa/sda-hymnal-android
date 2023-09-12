@@ -3,7 +3,7 @@ package app.hymnal.ui.home
 import android.os.Parcelable
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.Screen
+import com.slack.circuit.runtime.screen.Screen
 import kotlinx.parcelize.Parcelize
 
 data class Hymn(val title: String)

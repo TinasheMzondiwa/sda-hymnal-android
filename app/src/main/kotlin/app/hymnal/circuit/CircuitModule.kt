@@ -25,7 +25,6 @@ interface CircuitModule {
       return Circuit.Builder()
         .addPresenterFactories(presenterFactories)
         .addUiFactories(uiFactories)
-        .setDefaultNavDecoration(DefaultCircuitNavDecoration)
         .build()
     }
   }
