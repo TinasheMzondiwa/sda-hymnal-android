@@ -101,7 +101,7 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 coil-core = { module = "io.coil-kt:coil", version.ref = "coil" }
 dagger-apt-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
-google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.0.3"
+google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.0.4"
 google-accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "google-accompanist" }
 google-accompanist-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "google-accompanist" }
 google-android-material = { module = "com.google.android.material:material", version.ref = "material" }
