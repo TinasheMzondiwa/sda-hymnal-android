@@ -22,22 +22,22 @@ coil = "2.5.0"
 compose-compiler = "1.5.3"
 compose-compiler-kotlinVersion = "1.9.10"
 dagger = "2.47"
+foundry = "0.27.6"
 google-accompanist = "0.34.0"
-gradle-android = "8.2.2"
+gradle-android = "8.11.1"
 gradle-cache-fix = "3.0.1"
 gradle-retry = "1.5.8"
 javax-annotation = "1.3.2"
-jdk = "19"
+jdk = "21"
 joda-android = "2.12.7"
 joda-time = "2.12.7"
-jvmTarget = "11"
-kotlin = "1.9.10"
-kotlin-coroutines = "1.7.3"
-kotlinx-immutable = "0.3.7"
-ksp = "1.9.22-1.0.16"
+jvmTarget = "17"
+kotlin = "2.1.21"
+kotlin-coroutines = "1.10.2"
+kotlinx-immutable = "0.4.0"
+ksp = "2.1.21-2.0.2"
 markwon = "4.6.2"
 material = "1.11.0"
-sgp = "0.10.11"
 sortDependencies = "0.6"
 spotless = "6.25.0"
 test-androidx = "1.5.0"
@@ -192,12 +192,15 @@ testing-common = [
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle-android" }
 android-library = { id = "com.android.library", version.ref = "gradle-android" }
+foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
+foundry-root = { id = "com.slack.foundry.root", version.ref = "foundry" }
 anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
 gradle-cache-fix = { id = "org.gradle.android.cache-fix", version.ref = "gradle-cache-fix" }
 gradle-retry = { id = "org.gradle.test-retry", version.ref = "gradle-retry" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
-sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
 sortDependencies = { id = "com.squareup.sort-dependencies", version.ref = "sortDependencies" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

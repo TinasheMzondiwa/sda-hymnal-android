@@ -3,7 +3,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     alias(libs.plugins.ksp)
-    alias(libs.plugins.sgp.base)
+    alias(libs.plugins.foundry.base)
 }
 
 android {
@@ -12,7 +12,7 @@ android {
 
 ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 
-slack {
+foundry {
     features { dagger() }
 }
 

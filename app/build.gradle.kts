@@ -3,12 +3,12 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     kotlin("plugin.parcelize")
-    alias(libs.plugins.sgp.base)
+    alias(libs.plugins.foundry.base)
     alias(libs.plugins.anvil)
     alias(libs.plugins.ksp)
 }
 
-slack {
+foundry {
     features {
         compose()
         @Suppress("OPT_IN_USAGE")

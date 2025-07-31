@@ -1,10 +1,10 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    alias(libs.plugins.sgp.base)
+    alias(libs.plugins.foundry.base)
 }
 
-slack {
+foundry {
     features {
         daggerRuntimeOnly()
     }

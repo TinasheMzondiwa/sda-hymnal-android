@@ -2,14 +2,14 @@ plugins {
     id("com.android.library")
     kotlin("android")
     kotlin("plugin.parcelize")
-    alias(libs.plugins.sgp.base)
+    alias(libs.plugins.foundry.base)
 }
 
 android {
     namespace = "hymnal.search"
 }
 
-slack {
+foundry {
     features {
         compose()
         dagger()
