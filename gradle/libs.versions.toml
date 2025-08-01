@@ -59,7 +59,7 @@ circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = 
 circuit-runtime-presenter = { module = "com.slack.circuit:circuit-runtime-presenter", version.ref = "circuit" }
 circuit-runtime-screen = { module = "com.slack.circuit:circuit-runtime-screen", version.ref = "circuit" }
 circuit-runtime-ui = { module = "com.slack.circuit:circuit-runtime-ui", version.ref = "circuit" }
-google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.0.4"
+google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.1.5"
 google-android-material = { module = "com.google.android.material:material", version.ref = "material" }
 gradle-android = { module = "com.android.tools.build:gradle", version.ref = "gradle-android" }
 
