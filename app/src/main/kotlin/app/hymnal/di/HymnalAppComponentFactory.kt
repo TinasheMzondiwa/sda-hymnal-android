@@ -22,19 +22,20 @@ import android.content.Intent
 import androidx.annotation.Keep
 import androidx.core.app.AppComponentFactory
 import app.hymnal.HymnalApplication
-import javax.inject.Provider
+import dev.zacsweers.metro.Provider
+import kotlin.reflect.KClass
 
 @Keep
 class HymnalAppComponentFactory : AppComponentFactory() {
 
-  private inline fun <reified T> getInstance(
+  private inline fun <reified T : Any> getInstance(
     cl: ClassLoader,
     className: String,
-    providers: Map<Class<out T>, @JvmSuppressWildcards Provider<T>>,
+    providers: Map<KClass<out T>, Provider<T>>,
   ): T? {
     val clazz = Class.forName(className, false, cl).asSubclass(T::class.java)
-    val modelProvider = providers[clazz] ?: return null
-    return modelProvider.get() as T
+    val modelProvider = providers[clazz.kotlin] ?: return null
+    return modelProvider()
   }
 
   override fun instantiateActivityCompat(
@@ -42,17 +43,18 @@ class HymnalAppComponentFactory : AppComponentFactory() {
     className: String,
     intent: Intent?,
   ): Activity {
-    return getInstance(cl, className, hymnalApp.appComponent.activityProviders)
+    return getInstance(cl, className, activityProviders)
       ?: super.instantiateActivityCompat(cl, className, intent)
   }
 
   override fun instantiateApplicationCompat(cl: ClassLoader, className: String): Application {
     val app = super.instantiateApplicationCompat(cl, className)
-    hymnalApp = (app as HymnalApplication)
+    activityProviders = (app as HymnalApplication).appGraph.activityProviders
     return app
   }
 
+  // AppComponentFactory can be created multiple times
   companion object {
-    private lateinit var hymnalApp: HymnalApplication
+    private lateinit var activityProviders: Map<KClass<out Activity>, Provider<Activity>>
   }
 }

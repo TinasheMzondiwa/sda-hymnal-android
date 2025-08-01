@@ -10,13 +10,13 @@ import app.hymnal.ui.home.HomeScreen.State
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import hymnal.di.AppScope
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.Inject
 
-class HomePresenter @AssistedInject
-constructor(
+@Inject
+class HomePresenter(
     @Assisted private val navigator: Navigator,
 ) : Presenter<State> {
 

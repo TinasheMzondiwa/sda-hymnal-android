@@ -1,17 +1,11 @@
 package app.hymnal
 
 import android.app.Application
-import app.hymnal.di.ApplicationComponent
-import app.hymnal.di.DaggerApplicationComponent
+import app.hymnal.di.AppGraph
+import dev.zacsweers.metro.createGraphFactory
 
 class HymnalApplication : Application() {
 
-    lateinit var appComponent: ApplicationComponent
-
-    override fun onCreate() {
-        super.onCreate()
-        appComponent = DaggerApplicationComponent.factory().create(this).apply {
-            inject(this@HymnalApplication)
-        }
-    }
+    /** Holder reference for the app graph for [MetroAppComponentFactory]. */
+    val appGraph by lazy { createGraphFactory<AppGraph.Factory>().create(this) }
 }

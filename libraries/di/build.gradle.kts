@@ -1,16 +1,8 @@
 plugins {
-    id("com.android.library")
-    kotlin("android")
+    alias(libs.plugins.android.library)
     alias(libs.plugins.foundry.base)
+    alias(libs.plugins.kotlin.android)
+    id("dev.zacsweers.metro")
 }
 
-foundry {
-    features {
-        daggerRuntimeOnly()
-    }
-}
-
-dependencies {
-    api(libs.dagger.runtime)
-    compileOnly(libs.anvil.annotations)
-}
+dependencies {}

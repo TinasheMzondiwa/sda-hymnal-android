@@ -24,7 +24,7 @@ fun HymnalApp(
         ) {
             Surface {
                 ContentWithOverlays {
-                    val backstack = rememberSaveableBackStack { push(HomeScreen) }
+                    val backstack = rememberSaveableBackStack(HomeScreen)
                     val navigator = rememberCircuitNavigator(backstack)
 
                     NavigableCircuitContent(

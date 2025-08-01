@@ -1,8 +1,8 @@
 plugins {
-    id("com.android.library")
-    kotlin("android")
-    kotlin("plugin.parcelize")
+    alias(libs.plugins.android.library)
     alias(libs.plugins.foundry.base)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -12,11 +12,9 @@ android {
 foundry {
     features {
         compose()
-        dagger()
     }
 }
 
 dependencies {
-    implementation(projects.libraries.di)
     implementation(projects.libraries.coreUi)
 }

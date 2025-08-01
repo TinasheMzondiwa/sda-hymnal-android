@@ -23,7 +23,7 @@ import app.hymnal.ui.home.HomeScreen.State
 import app.hymnal.ui.home.components.AppDrawer
 import app.hymnal.ui.home.components.AppNavRail
 import com.slack.circuit.codegen.annotations.CircuitInject
-import hymnal.di.AppScope
+import dev.zacsweers.metro.AppScope
 import hymnal.search.HymnalSearchBar
 import hymnal.ui.extensions.LocalWindowWidthSizeClass
 import kotlinx.coroutines.launch

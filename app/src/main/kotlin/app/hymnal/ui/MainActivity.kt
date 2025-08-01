@@ -8,15 +8,16 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.core.view.WindowCompat
 import com.slack.circuit.foundation.Circuit
-import com.squareup.anvil.annotations.ContributesMultibinding
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.binding
 import hymnal.di.ActivityKey
-import hymnal.di.AppScope
-import javax.inject.Inject
 
+@ContributesIntoMap(AppScope::class, binding<Activity>())
 @ActivityKey(MainActivity::class)
-@ContributesMultibinding(AppScope::class, boundType = Activity::class)
-class MainActivity
-@Inject constructor(
+@Inject
+class MainActivity(
     private val circuit: Circuit
 ) : ComponentActivity() {
 

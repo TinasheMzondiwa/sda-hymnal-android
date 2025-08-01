@@ -1,18 +1,15 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    kotlin("kapt")
-    kotlin("plugin.parcelize")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.foundry.base)
-    alias(libs.plugins.anvil)
     alias(libs.plugins.ksp)
+    id("dev.zacsweers.metro")
 }
 
 foundry {
     features {
         compose()
-        @Suppress("OPT_IN_USAGE")
-        dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
     }
 }
 
@@ -38,7 +35,15 @@ android {
             proguardFiles("proguard-rules.pro")
         }
     }
+
+    compileOptions {
+        val javaVersion = libs.versions.jvmTarget.get().let(JavaVersion::toVersion)
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
+    }
 }
+
+ksp { arg("circuit.codegen.mode", "metro") }
 
 dependencies {
     ksp(libs.circuit.codegen)
@@ -49,9 +54,6 @@ dependencies {
     implementation(projects.services.storage)
 
     implementation(libs.bundles.circuit)
-
-    implementation(libs.dagger.runtime)
-    kapt(libs.dagger.apt.compiler)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.startup)

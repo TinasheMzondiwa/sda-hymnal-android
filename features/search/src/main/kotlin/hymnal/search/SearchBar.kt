@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.Search
@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -57,33 +58,41 @@ fun HymnalSearchBar(
                 .zIndex(1f)
                 .fillMaxWidth()) {
             SearchBar(
-                modifier = Modifier.align(alignment),
-                query = text,
-                onQueryChange = { text = it },
-                onSearch = { active = false },
-                active = active,
-                onActiveChange = {
+                inputField = {
+                    SearchBarDefaults.InputField(
+                        query = text,
+                        onQueryChange = { text = it },
+                        onSearch = { active = false },
+                        expanded = active,
+                        onExpandedChange = {
+                            active = it
+                        },
+                        placeholder = { Text("Search hymnal") },
+                        leadingIcon = {
+                            IconButton(onClick = {
+                                if (active) {
+                                    active = false
+                                } else if (isExpandedScreen) {
+                                    active = true
+                                } else {
+                                    openDrawer()
+                                }
+                            }) {
+                                MenuToBackIcon(active, isExpandedScreen)
+                            }
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = { }) {
+                                Icon(Icons.Rounded.Mic, contentDescription = null)
+                            }
+                        },
+                    )
+                },
+                expanded = active,
+                onExpandedChange = {
                     active = it
                 },
-                placeholder = { Text("Search hymnal") },
-                leadingIcon = {
-                    IconButton(onClick = {
-                        if (active) {
-                            active = false
-                        } else if (isExpandedScreen) {
-                            active = true
-                        } else {
-                            openDrawer()
-                        }
-                    }) {
-                        MenuToBackIcon(active, isExpandedScreen)
-                    }
-                },
-                trailingIcon = {
-                    IconButton(onClick = { }) {
-                        Icon(Icons.Rounded.Mic, contentDescription = null)
-                    }
-                },
+                modifier = Modifier.align(alignment),
                 tonalElevation = 1.dp
             ) {
                 LazyColumn(
@@ -113,7 +122,7 @@ fun HymnalSearchBar(
 @Composable
 private fun MenuToBackIcon(showBack: Boolean, isExpandedScreen: Boolean) {
     val (icon, contentDescription) = if (showBack) {
-        Icons.Rounded.ArrowBack to "Back"
+        Icons.AutoMirrored.Rounded.ArrowBack to "Back"
     } else {
         if (isExpandedScreen) {
             Icons.Rounded.Search to "Search"

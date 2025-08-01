@@ -1,9 +1,9 @@
 plugins {
-    id("com.android.library")
-    kotlin("android")
-    kotlin("kapt")
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.foundry.base)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+    id("dev.zacsweers.metro")
 }
 
 android {
@@ -12,16 +12,8 @@ android {
 
 ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 
-foundry {
-    features { dagger() }
-}
-
 dependencies {
-    implementation(projects.libraries.di)
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
-
-    implementation(libs.dagger.runtime)
-    kapt(libs.dagger.apt.compiler)
 }

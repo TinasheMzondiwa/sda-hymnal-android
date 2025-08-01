@@ -8,14 +8,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Help
-import androidx.compose.material.icons.rounded.LibraryBooks
+import androidx.compose.material.icons.automirrored.rounded.Help
+import androidx.compose.material.icons.automirrored.rounded.LibraryBooks
+import androidx.compose.material.icons.automirrored.rounded.ViewList
 import androidx.compose.material.icons.rounded.Lyrics
 import androidx.compose.material.icons.rounded.SentimentVerySatisfied
 import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.icons.rounded.ViewList
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -55,20 +55,20 @@ fun AppDrawer(
         )
         NavigationDrawerItem(
             label = { Text(stringResource(id = R.string.topical_index)) },
-            icon = { Icon(Icons.Rounded.ViewList, null) },
+            icon = { Icon(Icons.AutoMirrored.Rounded.ViewList, null) },
             selected = currentRoute == AppRoute.TopicalIndex,
             onClick = { navigateToTopicalIndex(); closeDrawer() },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
         )
         NavigationDrawerItem(
             label = { Text(stringResource(id = R.string.collections)) },
-            icon = { Icon(Icons.Rounded.LibraryBooks, null) },
+            icon = { Icon(Icons.AutoMirrored.Rounded.LibraryBooks, null) },
             selected = currentRoute == AppRoute.Collections,
             onClick = { navigateToCollections(); closeDrawer() },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
         )
 
-        Divider(Modifier.padding(vertical = 12.dp))
+        HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
         NavigationDrawerItem(
             label = { Text(stringResource(id = R.string.settings)) },
@@ -80,7 +80,7 @@ fun AppDrawer(
 
         NavigationDrawerItem(
             label = { Text(stringResource(id = R.string.feedback)) },
-            icon = { Icon(Icons.Rounded.Help, null) },
+            icon = { Icon(Icons.AutoMirrored.Rounded.Help, null) },
             selected = false,
             onClick = { closeDrawer() },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)

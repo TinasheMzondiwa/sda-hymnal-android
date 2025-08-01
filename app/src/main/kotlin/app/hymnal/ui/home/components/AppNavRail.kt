@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.LibraryBooks
+import androidx.compose.material.icons.automirrored.rounded.LibraryBooks
+import androidx.compose.material.icons.automirrored.rounded.ViewList
 import androidx.compose.material.icons.rounded.Lyrics
-import androidx.compose.material.icons.rounded.ViewList
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
@@ -44,14 +44,14 @@ fun AppNavRail(
         )
         NavigationRailItem(
             label = { Text(stringResource(id = R.string.topical_index)) },
-            icon = { Icon(Icons.Rounded.ViewList, null) },
+            icon = { Icon(Icons.AutoMirrored.Rounded.ViewList, null) },
             selected = currentRoute == AppRoute.TopicalIndex,
             onClick = navigateToTopicalIndex,
             alwaysShowLabel = false
         )
         NavigationRailItem(
             label = { Text(stringResource(id = R.string.collections)) },
-            icon = { Icon(Icons.Rounded.LibraryBooks, null) },
+            icon = { Icon(Icons.AutoMirrored.Rounded.LibraryBooks, null) },
             selected = currentRoute == AppRoute.Collections,
             onClick = navigateToCollections,
             alwaysShowLabel = false

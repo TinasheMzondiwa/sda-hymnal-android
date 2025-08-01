@@ -33,7 +33,7 @@ internal abstract class HymnalDatabase : RoomDatabase() {
 
         private fun buildDatabase(context: Context): HymnalDatabase =
             Room.databaseBuilder(context, HymnalDatabase::class.java, DATABASE_NAME)
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(dropAllTables = true)
                 .build()
     }
 }

@@ -1,30 +1,29 @@
 package hymnal.storage.di
 
 import android.content.Context
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Module
-import dagger.Provides
-import hymnal.di.AppScope
-import hymnal.di.SingleIn
-import hymnal.di.qualifiers.ApplicationContext
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import hymnal.storage.db.HymnalDatabase
 import hymnal.storage.db.dao.HymnsDao
 import hymnal.storage.db.dao.SectionsDao
 
 @ContributesTo(AppScope::class)
-@Module
-object StorageModule {
+@BindingContainer
+object StorageBindings {
 
     @Provides
     @SingleIn(AppScope::class)
     fun provideHymnsDao(
-        @ApplicationContext context: Context
+        context: Context
     ): HymnsDao = HymnalDatabase.getInstance(context).hymnsDao()
 
     @Provides
     @SingleIn(AppScope::class)
     fun provideSectionsDao(
-        @ApplicationContext context: Context
+        context: Context
     ): SectionsDao = HymnalDatabase.getInstance(context).sectionsDao()
 
 }
