@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Platform.Theme.Hymnal" parent="Theme.Material3.DayNight">
-        <item name="android:statusBarColor">@color/black30</item>
-    </style>
+    <style name="Platform.Theme.Hymnal" parent="Theme.Material3.DayNight" />
 
     <style name="Theme.Hymnal" parent="Platform.Theme.Hymnal" />
 </resources>
