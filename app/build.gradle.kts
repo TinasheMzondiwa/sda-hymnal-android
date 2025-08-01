@@ -55,6 +55,5 @@ dependencies {
     implementation(libs.timber)
     implementation(projects.features.search)
     implementation(projects.libraries.coreUi)
-    implementation(projects.libraries.di)
     implementation(projects.services.storage)
 }
