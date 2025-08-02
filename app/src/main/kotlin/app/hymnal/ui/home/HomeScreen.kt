@@ -1,41 +1,23 @@
 package app.hymnal.ui.home
 
 import android.os.Parcelable
+import com.slack.circuit.foundation.NavEvent
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.parcelize.Parcelize
 
-data class Hymn(val title: String)
-data class Collection(val title: String)
-
 @Parcelize
-object HomeScreen : Screen, Parcelable {
-
-    sealed interface State : CircuitUiState {
-
-        val currentRoute: AppRoute
-        val eventSink: (Event) -> Unit
-
-        data class Hymns(
-            val hymns: List<Hymn>,
-            override val currentRoute: AppRoute = AppRoute.Hymnal,
-            override val eventSink: (Event) -> Unit
-        ) : State
-
-        data class Collections(
-            val collections: List<Collection>,
-            override val currentRoute: AppRoute = AppRoute.Collections,
-            override val eventSink: (Event) -> Unit
-        ) : State
-
-        data class TopicalIndex(
-            override val currentRoute: AppRoute = AppRoute.TopicalIndex,
-            override val eventSink: (Event) -> Unit
-        ): State
-    }
+data object HomeScreen: Screen, Parcelable {
+    data class State(
+        val currentRoute: HomeRoute,
+        val routes: ImmutableList<HomeRoute>,
+        val eventSink: (Event) -> Unit,
+    ) : CircuitUiState
 
     sealed interface Event : CircuitUiEvent {
-        data class OnNav(val destination: AppRoute) : Event
+        data class OnNav(val destination: HomeRoute) : Event
+        data class OnNavEvent(val navEvent: NavEvent) : Event
     }
 }

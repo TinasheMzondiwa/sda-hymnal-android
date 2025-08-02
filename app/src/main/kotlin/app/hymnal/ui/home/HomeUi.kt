@@ -1,103 +1,62 @@
 package app.hymnal.ui.home
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import app.hymnal.ui.home.HomeScreen.Event
 import app.hymnal.ui.home.HomeScreen.State
-import app.hymnal.ui.home.components.AppDrawer
-import app.hymnal.ui.home.components.AppNavRail
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.foundation.CircuitContent
 import dev.zacsweers.metro.AppScope
-import hymnal.search.HymnalSearchBar
-import hymnal.ui.extensions.LocalWindowWidthSizeClass
-import kotlinx.coroutines.launch
 
 @Composable
 @CircuitInject(HomeScreen::class, AppScope::class)
 fun HomeUi(state: State, modifier: Modifier = Modifier) {
-    val coroutineScope = rememberCoroutineScope()
-    val isExpandedScreen = LocalWindowWidthSizeClass.current == WindowWidthSizeClass.Expanded
-    val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen)
-
-    ModalNavigationDrawer(
-        drawerContent = {
-            AppDrawer(
-                currentRoute = state.currentRoute,
-                navigateToHome = { state.eventSink(Event.OnNav(AppRoute.Hymnal)) },
-                navigateToTopicalIndex = { state.eventSink(Event.OnNav(AppRoute.TopicalIndex)) },
-                navigateToCollections = { state.eventSink(Event.OnNav(AppRoute.Collections)) },
-                closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
-                drawerHeaderContent = {
-                    Spacer(modifier = Modifier.height(54.dp))
-                }
-            )
-        },
-        drawerState = sizeAwareDrawerState,
-        // Only enable opening the drawer via gestures if the screen is not expanded
-        gesturesEnabled = !isExpandedScreen,
-        modifier = modifier
-    ) {
-        Row {
-            if (isExpandedScreen) {
-                AppNavRail(
-                    currentRoute = state.currentRoute,
-                    navigateToHome = { state.eventSink(Event.OnNav(AppRoute.Hymnal)) },
-                    navigateToTopicalIndex = { state.eventSink(Event.OnNav(AppRoute.TopicalIndex)) },
-                    navigateToCollections = { state.eventSink(Event.OnNav(AppRoute.Collections)) },
-                )
-            }
-
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                AnimatedContent(state, Modifier.padding(16.dp), label = "") { targetState ->
-                    Text(text = "State is $targetState")
-                }
-
-                HymnalSearchBar(
-                    openDrawer = {
-                        if (!isExpandedScreen) {
-                            coroutineScope.launch { sizeAwareDrawerState.open() }
-                        }
+    NavigationSuiteScaffold(
+        navigationSuiteItems = {
+            state.routes.forEach { model ->
+                val selected = state.currentRoute == model
+                item(
+                    selected = selected,
+                    onClick = {
+                        state.eventSink(Event.OnNav(model))
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = model.icon,
+                            contentDescription = stringResource(model.title),
+                        )
+                    },
+                    label = {
+                        Text(stringResource(model.title))
                     }
                 )
             }
+        },
+        modifier = modifier,
+    ) {
+        AnimatedContent(
+            targetState = state.currentRoute.screen(),
+            transitionSpec = {
+                fadeIn(animationSpec = tween(300))
+                    .togetherWith(fadeOut(animationSpec = tween(300)))
+            },
+            label = "content",
+        ) { screen ->
+            CircuitContent(
+                screen = screen,
+                modifier = Modifier.fillMaxSize(),
+                onNavEvent = { state.eventSink(Event.OnNavEvent(it)) },
+            )
         }
-    }
-}
-
-/**
- * Determine the drawer state to pass to the modal drawer.
- */
-@Composable
-private fun rememberSizeAwareDrawerState(isExpandedScreen: Boolean): DrawerState {
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-
-    return if (!isExpandedScreen) {
-        // If we want to allow showing the drawer, we use a real, remembered drawer
-        // state defined above
-        drawerState
-    } else {
-        // If we don't want to allow the drawer to be shown, we provide a drawer state
-        // that is locked closed. This is intentionally not remembered, because we
-        // don't want to keep track of any changes and always keep it closed
-        DrawerState(DrawerValue.Closed)
     }
 }
