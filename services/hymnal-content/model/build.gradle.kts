@@ -4,6 +4,5 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
-android { namespace = "hymnal.content" }
-
-dependencies {}
+dependencies {
+}

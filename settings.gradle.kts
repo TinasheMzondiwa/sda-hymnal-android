@@ -18,8 +18,9 @@ include(
     ":features:search",
     ":libraries:core-ui",
     ":libraries:navigation:api",
-    ":services:hymnal-content",
+    ":services:hymnal-content:api",
     ":services:hymnal-content:impl",
+    ":services:hymnal-content:model",
     ":services:storage"
 )
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
