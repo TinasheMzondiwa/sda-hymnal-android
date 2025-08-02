@@ -25,7 +25,7 @@ metro = "0.5.3"
 sortDependencies = "0.14"
 spotless = "6.25.0"
 test-junit = "4.13.2"
-test-robolectric = "4.11.1"
+test-robolectric = "4.15.1"
 timber = "5.0.1"
 
 [libraries]
