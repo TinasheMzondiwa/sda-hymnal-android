@@ -12,6 +12,7 @@ import dev.zacsweers.metro.Multibinds
 import dev.zacsweers.metro.Provider
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
+import hymnal.services.content.HymnalContentSyncProvider
 import kotlin.reflect.KClass
 
 @DependencyGraph(AppScope::class)
@@ -38,6 +39,8 @@ interface AppGraph {
             .addUiFactories(uiFactories)
             .build()
     }
+
+    val contentSyncProvider: HymnalContentSyncProvider
 
     @DependencyGraph.Factory
     fun interface Factory {

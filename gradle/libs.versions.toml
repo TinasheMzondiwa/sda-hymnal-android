@@ -6,6 +6,7 @@ androidx-compose-material3 = "1.4.0-beta01"
 androidx-core = "1.16.0"
 androidx-lifecyle = "2.9.2"
 androidx-room = "2.7.2"
+androidx-startup = "1.2.0"
 cash-app-turbine = "1.2.1"
 circuit = "0.30.0"
 foundry = "0.28.1"
@@ -53,6 +54,7 @@ androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-ru
 androidx-room = { module = "androidx.room:room-ktx", version.ref = "androidx-room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
+androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "androidx-startup" }
 circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
 circuit-codegen-annotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
 circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }

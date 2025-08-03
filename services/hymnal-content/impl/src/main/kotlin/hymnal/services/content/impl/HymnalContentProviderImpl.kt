@@ -19,7 +19,6 @@ import timber.log.Timber
 @Inject
 class HymnalContentProviderImpl(
     private val hymnsDao: HymnsDao,
-    private val storage: Storage,
     private val dispatcherProvider: DispatcherProvider,
 ) : HymnalContentProvider {
 

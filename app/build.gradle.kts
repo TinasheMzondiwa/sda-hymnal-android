@@ -56,6 +56,7 @@ dependencies {
     implementation(projects.libraries.navigation.api)
     implementation(projects.services.hymnalContent.impl)
     implementation(projects.services.storage)
+    implementation(libs.androidx.startup.runtime)
 
     ksp(libs.circuit.codegen)
 }
