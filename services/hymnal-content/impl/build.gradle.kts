@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.foundry.base)
@@ -5,6 +7,25 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     id("dev.zacsweers.metro")
+}
+
+val propertiesFile = rootProject.file("release/api-keys.properties")
+val properties = Properties()
+if (propertiesFile.exists()) {
+    properties.load(propertiesFile.inputStream())
+} else {
+    println("Warning: release/api-keys.properties not found. BuildConfig fields will use defaults.")
+}
+
+android {
+    defaultConfig {
+        // Define supabase URL and key as build config fields
+        buildConfigField("String", "SUPABASE_URL", "\"${properties.getProperty("SUPABASE_URL", "YOUR_URL")}\"")
+        buildConfigField("String", "SUPABASE_KEY", "\"${properties.getProperty("SUPABASE_KEY", "YOUR_KEY")}\"")
+    }
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {

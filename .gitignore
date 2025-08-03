@@ -47,3 +47,6 @@ captures/
 
 # Kotlin 2.0
 .kotlin/
+
+# Release files
+release/

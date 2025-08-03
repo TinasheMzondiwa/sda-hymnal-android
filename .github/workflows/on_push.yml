@@ -13,6 +13,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Create API keys properties file
+        run: |
+          mkdir -p release
+          echo "${{ secrets.API_KEYS_PROPERTIES }}" > release/api-keys.properties
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
