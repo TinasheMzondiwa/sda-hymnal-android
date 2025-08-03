@@ -27,8 +27,5 @@ jobs:
       - name: Run spotless
         run: ./gradlew spotlessCheck
 
-      - name: Run Android lint
-        run: ./gradlew lintDebug
-
-      - name: Run unit tests
-        run: ./gradlew testDebugUnitTest
+      - name: Run Code Quality Checks
+        run: ./gradlew check
