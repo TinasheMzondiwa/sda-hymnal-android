@@ -5,11 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "hymns")
 data class HymnEntity(
-    @PrimaryKey val id: Int = 0,
+    @PrimaryKey val id: String,
     val title: String,
     val number: Int,
-    val content: String,
-    val book: String,
     val majorKey: String?,
-    val editedContent: String?
 )

@@ -46,14 +46,16 @@ android {
 ksp { arg("circuit.codegen.mode", "metro") }
 
 dependencies {
-    ksp(libs.circuit.codegen)
-
     implementation(libs.androidx.activity.compose)
     implementation(libs.google.android.material)
     implementation(libs.material3.adaptive.navigation.suite)
     implementation(libs.timber)
     implementation(projects.features.search)
     implementation(projects.libraries.coreUi)
+    implementation(projects.libraries.foundation.coroutines)
     implementation(projects.libraries.navigation.api)
+    implementation(projects.services.hymnalContent.impl)
     implementation(projects.services.storage)
+
+    ksp(libs.circuit.codegen)
 }

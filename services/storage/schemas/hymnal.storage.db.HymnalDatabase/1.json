@@ -2,16 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "48a4a67c9232efd54cdb20c95f7a531c",
+    "identityHash": "a95121b747415b59f3fd9b0775734982",
     "entities": [
       {
         "tableName": "hymns",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `number` INTEGER NOT NULL, `content` TEXT NOT NULL, `book` TEXT NOT NULL, `majorKey` TEXT, `editedContent` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `number` INTEGER NOT NULL, `majorKey` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -27,28 +27,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "content",
-            "columnName": "content",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "book",
-            "columnName": "book",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
             "fieldPath": "majorKey",
             "columnName": "majorKey",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "editedContent",
-            "columnName": "editedContent",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -56,9 +37,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "sections",
@@ -88,15 +67,78 @@
           "columnNames": [
             "title"
           ]
+        }
+      },
+      {
+        "tableName": "lyric_parts",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`partId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `hymnOwnerId` TEXT NOT NULL, `type` TEXT NOT NULL, `itemIndex` INTEGER NOT NULL, `lines` TEXT NOT NULL, FOREIGN KEY(`hymnOwnerId`) REFERENCES `hymns`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "partId",
+            "columnName": "partId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hymnOwnerId",
+            "columnName": "hymnOwnerId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "itemIndex",
+            "columnName": "itemIndex",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lines",
+            "columnName": "lines",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "partId"
+          ]
         },
-        "indices": [],
-        "foreignKeys": []
+        "indices": [
+          {
+            "name": "index_lyric_parts_hymnOwnerId",
+            "unique": false,
+            "columnNames": [
+              "hymnOwnerId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_lyric_parts_hymnOwnerId` ON `${TABLE_NAME}` (`hymnOwnerId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "hymns",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "hymnOwnerId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '48a4a67c9232efd54cdb20c95f7a531c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a95121b747415b59f3fd9b0775734982')"
     ]
   }
 }

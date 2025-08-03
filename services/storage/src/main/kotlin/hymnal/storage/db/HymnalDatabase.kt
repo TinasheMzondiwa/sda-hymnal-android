@@ -7,10 +7,11 @@ import androidx.room.RoomDatabase
 import hymnal.storage.db.dao.HymnsDao
 import hymnal.storage.db.dao.SectionsDao
 import hymnal.storage.db.entity.HymnEntity
+import hymnal.storage.db.entity.LyricPartEntity
 import hymnal.storage.db.entity.SectionEntity
 
 @Database(
-    entities = [HymnEntity::class, SectionEntity::class],
+    entities = [HymnEntity::class, SectionEntity::class, LyricPartEntity::class],
     version = 1,
     exportSchema = true,
 )

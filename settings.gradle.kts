@@ -17,6 +17,7 @@ include(
     ":app",
     ":features:search",
     ":libraries:core-ui",
+    ":libraries:foundation:coroutines",
     ":libraries:navigation:api",
     ":services:hymnal-content:api",
     ":services:hymnal-content:impl",

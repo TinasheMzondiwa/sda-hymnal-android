@@ -1,19 +1,29 @@
 package hymnal.storage.db.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import hymnal.storage.db.entity.HymnEntity
+import hymnal.storage.db.entity.HymnWithLyrics
+import hymnal.storage.db.entity.LyricPartEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HymnsDao : BaseDao<HymnEntity> {
 
-    @Query("SELECT * FROM hymns WHERE book = :code ORDER BY number")
-    fun listAll(code: String): Flow<List<HymnEntity>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertHymn(hymn: HymnEntity): Long
 
-    @Query("SELECT * FROM hymns WHERE title LIKE :query AND book = :code OR content LIKE :query AND book = :code")
-    suspend fun search(code: String, query: String): List<HymnEntity>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLyricParts(lyricParts: List<LyricPartEntity>)
 
-    @Query("SELECT * FROM hymns WHERE number = :number AND book = :code LIMIT 1")
-    suspend fun findByNumber(number: Int, code: String): HymnEntity?
+    @Transaction
+    @Query("SELECT * FROM hymns WHERE id = :hymnId")
+    suspend fun getHymnWithLyricsById(hymnId: String): HymnWithLyrics?
+
+    @Transaction
+    @Query("SELECT * FROM hymns")
+    fun getAllHymnsWithLyrics(): Flow<List<HymnWithLyrics>>
 }
