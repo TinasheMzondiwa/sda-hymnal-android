@@ -31,7 +31,7 @@ test-junit = "4.13.2"
 test-robolectric = "4.15.1"
 timber = "5.0.1"
 junit = "1.1.5"
-espressoCore = "3.5.1"
+espressoCore = "3.7.0"
 appcompat = "1.7.1"
 
 [libraries]
