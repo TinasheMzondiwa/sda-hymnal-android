@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a95121b747415b59f3fd9b0775734982",
+    "identityHash": "18ab5dfd6489d5ef709d07850119218f",
     "entities": [
       {
         "tableName": "hymns",
@@ -134,11 +134,45 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "hymns_fts",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`hymnId` TEXT NOT NULL, `lyricsContent` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "hymnId",
+            "columnName": "hymnId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lyricsContent",
+            "columnName": "lyricsContent",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": []
+        },
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": []
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a95121b747415b59f3fd9b0775734982')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '18ab5dfd6489d5ef709d07850119218f')"
     ]
   }
 }
