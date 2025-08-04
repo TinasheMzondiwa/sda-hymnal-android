@@ -13,22 +13,39 @@ import kotlinx.collections.immutable.toImmutableList
 @Stable
 interface HymnsStateProducer {
     @Composable
-    operator fun invoke(hymns: ImmutableList<Hymn>, category: HymnCategory?): ImmutableList<Hymn>
+    operator fun invoke(
+        hymns: ImmutableList<Hymn>,
+        category: HymnCategory?,
+        sortType: SortType,
+        ): ImmutableList<Hymn>
 }
 
 @ContributesBinding(AppScope::class)
 @Inject
 class HymnsStateProducerImpl : HymnsStateProducer {
     @Composable
-    override fun invoke(hymns: ImmutableList<Hymn>, category: HymnCategory?): ImmutableList<Hymn> {
-        return if (category == null) {
+    override fun invoke(
+        hymns: ImmutableList<Hymn>,
+        category: HymnCategory?,
+        sortType: SortType,
+    ): ImmutableList<Hymn> {
+        return (if (category == null) {
             hymns
         } else {
-            hymns.filter { it.isInCategory(category) }.toImmutableList()
-        }
+            hymns.filter { it.isInCategory(category) }
+        })
+            .sorted(sortType)
+            .toImmutableList()
     }
 
     private fun Hymn.isInCategory(category: HymnCategory): Boolean {
         return number in category.start..category.end
+    }
+
+    private fun List<Hymn>.sorted(sortType: SortType): List<Hymn> {
+        return when (sortType.next()) {
+            SortType.NUMBER -> sortedBy { it.number }
+            SortType.TITLE -> sortedBy { it.title }
+        }
     }
 }

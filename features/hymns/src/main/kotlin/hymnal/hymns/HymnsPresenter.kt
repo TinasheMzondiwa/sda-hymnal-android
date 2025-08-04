@@ -33,9 +33,15 @@ class HymnsPresenter (
         }
 
         var sortType by rememberRetained { mutableStateOf(SortType.TITLE) }
-        var selectedCategory by rememberRetained(categories) { mutableStateOf(categories.firstOrNull()) }
+        var selectedCategory by rememberRetained(categories) {
+            mutableStateOf(categories.firstOrNull())
+        }
 
-        val filteredHymns = hymnsStateProducer(hymns.toImmutableList(), selectedCategory)
+        val filteredHymns = hymnsStateProducer(
+            hymns = hymns.toImmutableList(),
+            category = selectedCategory,
+            sortType = sortType,
+        )
 
         return when {
             filteredHymns.isEmpty() -> State.Loading

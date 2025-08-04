@@ -81,7 +81,8 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                         }
                     }
                 },
-                navigationIcon = {
+                navigationIcon = {},
+                actions = {
                     when (state) {
                         is State.Hymns -> {
                             IconButton(onClick = { state.eventSink(Event.OnSortClicked) }) {
@@ -93,11 +94,6 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                         }
 
                         State.Loading -> Unit
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Rounded.Dialpad, contentDescription = null)
                     }
                 },
                 scrollBehavior = scrollBehavior
