@@ -14,6 +14,7 @@ ksp { arg("circuit.codegen.mode", "metro") }
 dependencies {
     implementation(libs.timber)
     implementation(projects.libraries.coreUi)
+    implementation(projects.libraries.l10n)
     implementation(projects.libraries.navigation.api)
     implementation(projects.services.hymnalContent.api)
 

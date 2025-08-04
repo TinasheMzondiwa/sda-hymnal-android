@@ -10,7 +10,7 @@ import com.slack.circuit.runtime.screen.Screen
 import hymnal.libraries.navigation.CollectionsScreen
 import hymnal.libraries.navigation.DonateScreen
 import hymnal.libraries.navigation.HymnsScreen
-import app.hymnal.R as L10nR
+import hymnal.libraries.l10n.R as L10nR
 
 enum class HomeRoute(
     val icon: ImageVector,

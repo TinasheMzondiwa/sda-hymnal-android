@@ -16,7 +16,6 @@ import dev.zacsweers.metro.Inject
 import hymnal.libraries.navigation.HymnsScreen
 import hymnal.services.content.HymnalContentProvider
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.collections.immutable.toImmutableSet
 
 @Inject
 class HymnsPresenter (
@@ -33,6 +32,7 @@ class HymnsPresenter (
             contentProvider.categories().collect { value = it }
         }
 
+        var sortType by rememberRetained { mutableStateOf(SortType.TITLE) }
         var selectedCategory by rememberRetained(categories) { mutableStateOf(categories.firstOrNull()) }
 
         val filteredHymns = hymnsStateProducer(hymns.toImmutableList(), selectedCategory)
@@ -40,14 +40,14 @@ class HymnsPresenter (
         return when {
             filteredHymns.isEmpty() -> State.Loading
             else -> State.Hymns(
+                sortType = sortType,
                 selectedCategory = selectedCategory,
                 categories = categories,
                 hymns = filteredHymns,
                 eventSink = { event ->
                     when (event) {
-                        is Event.OnCategorySelected -> {
-                            selectedCategory = event.category
-                        }
+                        Event.OnSortClicked -> sortType = sortType.next()
+                        is Event.OnCategorySelected -> selectedCategory = event.category
                     }
                 }
             )
