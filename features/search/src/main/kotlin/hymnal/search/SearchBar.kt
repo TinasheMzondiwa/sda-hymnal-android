@@ -31,10 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import hymnal.ui.extensions.LocalWindowWidthSizeClass
-import hymnal.ui.previews.DayNightPreviews
 import hymnal.ui.theme.HymnalTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -138,7 +138,7 @@ private fun MenuToBackIcon(showBack: Boolean, isExpandedScreen: Boolean) {
 
 
 @Composable
-@DayNightPreviews
+@PreviewLightDark
 private fun Preview() {
     HymnalTheme {
         Surface {
