@@ -1,41 +1,60 @@
 package app.hymnal.ui.home
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.LibraryBooks
-import androidx.compose.material.icons.rounded.Lyrics
-import androidx.compose.material.icons.rounded.SentimentVerySatisfied
-import androidx.compose.ui.graphics.vector.ImageVector
+import app.hymnal.R
 import com.slack.circuit.runtime.screen.Screen
 import hymnal.libraries.navigation.CollectionsScreen
-import hymnal.libraries.navigation.DonateScreen
 import hymnal.libraries.navigation.HymnsScreen
+import hymnal.libraries.navigation.SearchScreen
 import hymnal.libraries.l10n.R as L10nR
 
 enum class HomeRoute(
-    val icon: ImageVector,
+    val icon: RouteIcon,
     @param:StringRes val title: Int
 ) {
     Hymns(
-        Icons.Rounded.Lyrics,
+        RouteIcon.Hymns,
         L10nR.string.hymns,
     ),
 
-    Collections(
-        Icons.AutoMirrored.Rounded.LibraryBooks,
-        L10nR.string.collections,
+    Search(
+        RouteIcon.Search,
+        L10nR.string.search,
     ),
 
-    Donate(
-        Icons.Rounded.SentimentVerySatisfied,
-        L10nR.string.donate,
+    Collections(
+        RouteIcon.Collections,
+        L10nR.string.collections,
     ),
+}
+
+data class RouteIcon(
+    @param:DrawableRes val icon: Int,
+    @param:DrawableRes val filledIcon: Int,
+) {
+    companion object {
+        val Hymns = RouteIcon(
+            icon = R.drawable.ic_lyrics,
+            filledIcon = R.drawable.ic_lyrics_fill,
+        )
+
+        val Search = RouteIcon(
+            icon = R.drawable.ic_magnifying_glass,
+            filledIcon = R.drawable.ic_magnifying_glass_fill,
+        )
+
+        val Collections = RouteIcon(
+            icon = R.drawable.ic_list_heart,
+            filledIcon = R.drawable.ic_list_heart_fill,
+        )
+    }
 }
 
 fun HomeRoute.screen(): Screen {
     return when (this) {
         HomeRoute.Hymns -> HymnsScreen
         HomeRoute.Collections -> CollectionsScreen
-        HomeRoute.Donate -> DonateScreen
+        HomeRoute.Search -> SearchScreen
     }
 }

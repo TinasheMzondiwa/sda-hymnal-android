@@ -44,6 +44,7 @@ import hymnal.hymns.components.CategoryChip
 import hymnal.hymns.components.HymnCard
 import hymnal.libraries.navigation.HymnsScreen
 import hymnal.ui.theme.HymnalTheme
+import hymnal.ui.widget.AvatarNavigationIcon
 import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +79,11 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                         }
                     }
                 },
-                navigationIcon = {},
+                navigationIcon = {
+                    AvatarNavigationIcon(
+                        photoUrl = "https://images.unsplash.com/photo-1570158268183-d296b2892211?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    )
+                },
                 actions = {
                     when (state) {
                         is State.Hymns -> {

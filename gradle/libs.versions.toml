@@ -9,6 +9,7 @@ androidx-room = "2.7.2"
 androidx-startup = "1.2.0"
 cash-app-turbine = "1.2.1"
 circuit = "0.30.0"
+coil = "3.3.0"
 foundry = "0.28.1"
 gradle-android = "8.12.0"
 gradle-cache-fix = "3.0.1"
@@ -67,6 +68,8 @@ circuit-runtime-ui = { module = "com.slack.circuit:circuit-runtime-ui", version.
 circuitx-android = { module = "com.slack.circuit:circuitx-android", version.ref = "circuit" }
 circuitx-gesture-navigation = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
 circuitx-overlays = { module = "com.slack.circuit:circuitx-overlays", version.ref = "circuit" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.1.5"
 google-android-material = { module = "com.google.android.material:material", version.ref = "material" }
 gradle-android = { module = "com.android.tools.build:gradle", version.ref = "gradle-android" }
@@ -103,6 +106,10 @@ circuit = [
     "circuitx-android",
     "circuitx-gesture-navigation",
     "circuitx-overlays",
+]
+coil = [
+    "coil-compose",
+    "coil-okhttp",
 ]
 compose = [
     "androidx-compose-foundation",
