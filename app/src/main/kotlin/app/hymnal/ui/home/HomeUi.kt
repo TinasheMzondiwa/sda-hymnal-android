@@ -8,7 +8,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -18,11 +17,12 @@ import app.hymnal.ui.home.HomeScreen.State
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
 import dev.zacsweers.metro.AppScope
+import hymnal.ui.widget.scaffold.HazeNavigationSuiteScaffold
 
-@Composable
 @CircuitInject(HomeScreen::class, AppScope::class)
+@Composable
 fun HomeUi(state: State, modifier: Modifier = Modifier) {
-    NavigationSuiteScaffold(
+    HazeNavigationSuiteScaffold(
         navigationSuiteItems = {
             state.routes.forEach { model ->
                 val selected = state.currentRoute == model
@@ -41,7 +41,7 @@ fun HomeUi(state: State, modifier: Modifier = Modifier) {
                     },
                     label = {
                         Text(stringResource(model.title))
-                    }
+                    },
                 )
             }
         },

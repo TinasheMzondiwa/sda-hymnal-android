@@ -27,12 +27,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
@@ -45,6 +45,7 @@ import hymnal.hymns.components.HymnCard
 import hymnal.libraries.navigation.HymnsScreen
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.AvatarNavigationIcon
+import hymnal.ui.widget.scaffold.HazeScaffold
 import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +57,7 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
-    Scaffold(
+    HazeScaffold(
         modifier = modifier
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -98,15 +99,23 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                         State.Loading -> Unit
                     }
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent,
+                )
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {}, containerColor = MaterialTheme.colorScheme.primary) {
+            FloatingActionButton(
+                onClick = {},
+                containerColor = MaterialTheme.colorScheme.primary,
+            ) {
                 Icon(Icons.Rounded.Dialpad, contentDescription = null)
             }
         },
         contentWindowInsets = WindowInsets.safeDrawing,
+        blurTopBar = true,
     ) { innerPadding ->
         LazyColumn(
             state = listState,

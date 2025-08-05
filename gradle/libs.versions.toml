@@ -14,6 +14,7 @@ foundry = "0.28.1"
 gradle-android = "8.12.0"
 gradle-cache-fix = "3.0.1"
 gradle-retry = "1.6.2"
+haze = "1.6.9"
 jdk = "21"
 jvmTarget = "17"
 kotlin = "2.2.0"
@@ -73,6 +74,8 @@ coil-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "
 google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.1.5"
 google-android-material = { module = "com.google.android.material:material", version.ref = "material" }
 gradle-android = { module = "com.android.tools.build:gradle", version.ref = "gradle-android" }
+haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
+haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlin-coroutines" }
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -126,6 +129,10 @@ compose = [
 compose-tooling = [
     "androidx-compose-tooling",
     "androidx-compose-tooling-preview",
+]
+haze = [
+    "haze",
+    "haze-materials",
 ]
 
 [plugins]
