@@ -2,8 +2,8 @@ package hymnal.hymns
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.FormatListNumbered
 import androidx.compose.material.icons.rounded.SortByAlpha
-import androidx.compose.material.icons.rounded._123
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
@@ -28,7 +28,7 @@ sealed interface Event : CircuitUiEvent {
 }
 
 enum class SortType(@param:StringRes val title: Int, val icon: ImageVector) {
-    NUMBER(L10nR.string.sort_number, Icons.Rounded._123),
+    NUMBER(L10nR.string.sort_number, Icons.Rounded.FormatListNumbered),
     TITLE(L10nR.string.sort_title, Icons.Rounded.SortByAlpha),
 }
 

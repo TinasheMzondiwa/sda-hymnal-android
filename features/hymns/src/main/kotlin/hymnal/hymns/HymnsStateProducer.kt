@@ -17,7 +17,7 @@ interface HymnsStateProducer {
         hymns: ImmutableList<Hymn>,
         category: HymnCategory?,
         sortType: SortType,
-        ): ImmutableList<Hymn>
+    ): ImmutableList<Hymn>
 }
 
 @ContributesBinding(AppScope::class)
