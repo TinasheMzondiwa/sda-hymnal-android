@@ -62,7 +62,6 @@ fun HazeNavigationSuiteScaffold(
                         modifier = Modifier.hazeEffect(state = hazeState, style = hazeStyle)
                     ) {
                         NavigationSuite(
-                            modifier = Modifier,
                             layoutType = layoutType,
                             colors = navigationSuiteColors,
                             content = navigationSuiteItems,
