@@ -139,7 +139,7 @@ private fun NumberText(number: Int, modifier: Modifier = Modifier) {
     }
 }
 
-private val previewHymn = Hymn(
+internal val previewHymn = Hymn(
     index = "108",
     number = 108,
     title = "Amazing Grace",

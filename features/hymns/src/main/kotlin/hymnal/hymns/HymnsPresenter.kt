@@ -43,21 +43,18 @@ class HymnsPresenter (
             sortType = sortType,
         )
 
-        return when {
-            filteredHymns.isEmpty() -> State.Loading
-            else -> State.Hymns(
-                sortType = sortType,
-                selectedCategory = selectedCategory,
-                categories = categories,
-                hymns = filteredHymns,
-                eventSink = { event ->
-                    when (event) {
-                        Event.OnSortClicked -> sortType = sortType.next()
-                        is Event.OnCategorySelected -> selectedCategory = event.category
-                    }
+        return State(
+            sortType = sortType,
+            selectedCategory = selectedCategory,
+            categories = categories,
+            hymns = filteredHymns,
+            eventSink = { event ->
+                when (event) {
+                    Event.OnSortClicked -> sortType = sortType.next()
+                    is Event.OnCategorySelected -> selectedCategory = event.category
                 }
-            )
-        }
+            }
+        )
     }
 
     @CircuitInject(HymnsScreen::class, AppScope::class)

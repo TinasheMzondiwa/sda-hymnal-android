@@ -11,16 +11,13 @@ import hymnal.services.model.Hymn
 import hymnal.services.model.HymnCategory
 import hymnal.libraries.l10n.R as L10nR
 
-sealed interface State : CircuitUiState {
-    data object Loading : State
-    data class Hymns(
-        val sortType: SortType,
-        val selectedCategory: HymnCategory?,
-        val categories: List<HymnCategory>,
-        val hymns: List<Hymn>,
-        val eventSink: (Event) -> Unit
-    ) : State
-}
+data class State(
+    val sortType: SortType,
+    val selectedCategory: HymnCategory?,
+    val categories: List<HymnCategory>,
+    val hymns: List<Hymn>,
+    val eventSink: (Event) -> Unit
+) : CircuitUiState
 
 sealed interface Event : CircuitUiEvent {
     data object OnSortClicked : Event
