@@ -2,7 +2,6 @@ package hymnal.ui.widget
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -49,7 +48,6 @@ fun AvatarNavigationIcon(
             }
         ),
         modifier = modifier
-            .padding(horizontal = 16.dp)
             .size(AvatarSize)
             .clip(CircleShape)
             .clickable { onClick() }

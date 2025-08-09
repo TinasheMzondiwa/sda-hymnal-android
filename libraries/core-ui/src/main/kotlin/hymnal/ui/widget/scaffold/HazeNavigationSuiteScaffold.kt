@@ -1,6 +1,7 @@
 package hymnal.ui.widget.scaffold
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -10,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationRailDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuite
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
@@ -57,22 +59,37 @@ fun HazeNavigationSuiteScaffold(
     ) {
         NavigationSuiteScaffoldLayout(
             navigationSuite = {
-                if (layoutType == NavigationSuiteType.NavigationBar) {
-                    Box(
-                        modifier = Modifier.hazeEffect(state = hazeState, style = hazeStyle)
-                    ) {
+                when (layoutType) {
+                    NavigationSuiteType.NavigationBar -> {
+                        Box(
+                            modifier = Modifier.hazeEffect(state = hazeState, style = hazeStyle)
+                        ) {
+                            NavigationSuite(
+                                layoutType = layoutType,
+                                colors = navigationSuiteColors,
+                                content = navigationSuiteItems,
+                            )
+                        }
+                    }
+
+                    NavigationSuiteType.NavigationRail -> {
+                        Row {
+                            NavigationSuite(
+                                layoutType = layoutType,
+                                colors = navigationSuiteColors,
+                                content = navigationSuiteItems,
+                            )
+
+                            VerticalDivider()
+                        }
+                    }
+                    else -> {
                         NavigationSuite(
                             layoutType = layoutType,
                             colors = navigationSuiteColors,
                             content = navigationSuiteItems,
                         )
                     }
-                } else {
-                    NavigationSuite(
-                        layoutType = layoutType,
-                        colors = navigationSuiteColors,
-                        content = navigationSuiteItems,
-                    )
                 }
             },
             state = state,
