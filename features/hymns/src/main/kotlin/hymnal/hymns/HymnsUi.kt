@@ -28,6 +28,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -150,6 +151,11 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
 
             item { Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars)) }
         }
+    }
+
+    LaunchedEffect(state.sortType, state.selectedCategory) {
+        // Reset the list state when sort type or selected category changes
+        listState.animateScrollToItem(0)
     }
 }
 
