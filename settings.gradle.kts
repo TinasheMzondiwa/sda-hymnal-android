@@ -16,7 +16,6 @@ rootProject.name = "sda-hymnal-android"
 include(
     ":app",
     ":features:hymns",
-    ":features:search",
     ":libraries:core-ui",
     ":libraries:foundation:coroutines",
     ":libraries:l10n",
