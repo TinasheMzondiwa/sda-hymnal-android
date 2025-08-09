@@ -52,7 +52,6 @@ dependencies {
     implementation(libs.material3.adaptive.navigation.suite)
     implementation(libs.timber)
     implementation(projects.features.hymns)
-    implementation(projects.features.search)
     implementation(projects.libraries.coreUi)
     implementation(projects.libraries.foundation.coroutines)
     implementation(projects.libraries.l10n)
