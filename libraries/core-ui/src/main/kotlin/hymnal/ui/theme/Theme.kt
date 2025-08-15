@@ -1,8 +1,11 @@
 package hymnal.ui.theme
 
 import android.os.Build
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
@@ -13,8 +16,10 @@ import hymnal.ui.haptics.DefaultHapticFeedback
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.color.DarkColorScheme
 import hymnal.ui.theme.color.LightColorScheme
+import hymnal.ui.theme.shape.shapes
 import hymnal.ui.theme.type.HymnalTypography
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun HymnalTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -33,10 +38,12 @@ fun HymnalTheme(
     CompositionLocalProvider(
         LocalAppHapticFeedback provides DefaultHapticFeedback(LocalHapticFeedback.current),
     ) {
-        MaterialTheme(
+        MaterialExpressiveTheme(
             colorScheme = colorScheme,
             typography = HymnalTypography,
-            content = content
+            shapes = shapes,
+            motionScheme = MotionScheme.expressive(),
+            content = content,
         )
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.AppBarWithSearch
 import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -106,7 +107,7 @@ fun HymnsSearchBar(
             )
         }
 
-    TopSearchBar(
+    AppBarWithSearch(
         scrollBehavior = scrollBehavior,
         state = searchBarState,
         inputField = inputField,

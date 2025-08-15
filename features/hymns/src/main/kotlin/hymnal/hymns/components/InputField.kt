@@ -29,7 +29,6 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
@@ -240,15 +238,6 @@ private fun Modifier.textFieldBackground(color: ColorProducer, shape: Shape): Mo
     this.drawWithCache {
         val outline = shape.createOutline(size, layoutDirection, this)
         onDrawBehind { drawOutline(outline, color = color()) }
-    }
-
-@Stable
-private fun TextFieldColors.containerColor(enabled: Boolean, isError: Boolean, focused: Boolean): Color =
-    when {
-        !enabled -> disabledContainerColor
-        isError -> errorContainerColor
-        focused -> focusedContainerColor
-        else -> unfocusedContainerColor
     }
 
 private val SearchBarIconOffsetX: Dp = 4.dp
