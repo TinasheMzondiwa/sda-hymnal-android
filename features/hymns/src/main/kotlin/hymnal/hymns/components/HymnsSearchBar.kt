@@ -42,6 +42,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import hymnal.ui.extensions.LocalWindowWidthSizeClass
@@ -137,6 +138,7 @@ fun HymnsSearchBar(
         scrollBehavior = scrollBehavior,
         state = searchBarState,
         inputField = inputField,
+        colors = SearchBarDefaults.appBarWithSearchColors(appBarContainerColor = Color.Transparent),
     )
 
     if (LocalWindowWidthSizeClass.current == WindowWidthSizeClass.Compact) {

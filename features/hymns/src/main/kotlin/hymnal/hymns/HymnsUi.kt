@@ -37,13 +37,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.overlay.OverlayEffect
 import dev.zacsweers.metro.AppScope
 import hymnal.hymns.components.HymnCard
 import hymnal.hymns.components.HymnsSearchBar
+import hymnal.hymns.components.pad.NumberPadBottomSheet
 import hymnal.hymns.components.previewHymn
 import hymnal.libraries.navigation.HymnsScreen
 import hymnal.services.model.HymnCategory
 import hymnal.ui.extensions.copy
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.AvatarNavigationIcon
 import hymnal.ui.widget.scaffold.HazeScaffold
@@ -54,6 +57,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 fun HymnsUi(state: State, modifier: Modifier = Modifier) {
     val layoutDirection = LocalLayoutDirection.current
+    val hapticFeedback = LocalAppHapticFeedback.current
     val listState: LazyListState = rememberLazyListState()
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -126,7 +130,10 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = {
+                    state.eventSink(Event.OnNumberPadClicked)
+                    hapticFeedback.performScreenView()
+                },
                 containerColor = MaterialTheme.colorScheme.primary,
             ) {
                 Icon(Icons.Rounded.Dialpad, contentDescription = null)
@@ -164,9 +171,23 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
         }
     }
 
+    OverlayContent(state.overlayState)
+
     LaunchedEffect(state.sortType, state.selectedCategory) {
         // Reset the list state when sort type or selected category changes
         listState.animateScrollToItem(0)
+    }
+}
+
+@Composable
+private fun OverlayContent(state: OverlayState?) {
+    OverlayEffect(state) {
+        when (state) {
+            is OverlayState.NumberPadSheet -> state.onResult(
+                show(NumberPadBottomSheet())
+            )
+            null -> Unit
+        }
     }
 }
 
@@ -187,6 +208,7 @@ private fun Preview() {
                 categories = previewCategories,
                 hymns = persistentListOf(previewHymn, previewHymn.copy(index = "2")),
                 searchResults = persistentListOf(),
+                overlayState = null,
                 eventSink = {},
             )
         )

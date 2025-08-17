@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import hymnal.hymns.components.SearchResult
+import hymnal.hymns.components.pad.NumberPadBottomSheet
 import hymnal.services.model.Hymn
 import hymnal.services.model.HymnCategory
 import kotlinx.collections.immutable.ImmutableList
@@ -19,6 +20,7 @@ data class State(
     val categories: ImmutableList<HymnCategory>,
     val hymns: ImmutableList<Hymn>,
     val searchResults: ImmutableList<SearchResult>,
+    val overlayState: OverlayState?,
     val eventSink: (Event) -> Unit
 ) : CircuitUiState
 
@@ -26,6 +28,13 @@ sealed interface Event : CircuitUiEvent {
     data object OnSortClicked : Event
     data class OnCategorySelected(val category: HymnCategory) : Event
     data class OnQueryChanged(val query: String) : Event
+    data object OnNumberPadClicked : Event
+}
+
+sealed interface OverlayState : CircuitUiState {
+    data class NumberPadSheet(
+        val onResult: (NumberPadBottomSheet.Result) -> Unit,
+    ) : OverlayState
 }
 
 enum class SortType(@param:StringRes val title: Int, val icon: ImageVector) {
