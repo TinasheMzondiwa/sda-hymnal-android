@@ -55,4 +55,14 @@ class HymnalContentProviderImpl(
             emit(categories)
         }
     }
+
+    override fun search(query: String): Flow<List<Hymn>> {
+        return hymnsDao.searchLyrics(query)
+            .map { it.map(HymnWithLyrics::toDomainHymn) }
+            .flowOn(dispatcherProvider.io)
+            .catch {
+                Timber.e(it)
+                emit(emptyList())
+            }
+    }
 }

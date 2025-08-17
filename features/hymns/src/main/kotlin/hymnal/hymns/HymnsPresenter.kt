@@ -13,6 +13,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.Inject
+import hymnal.hymns.components.SearchResult
 import hymnal.libraries.navigation.HymnsScreen
 import hymnal.services.content.HymnalContentProvider
 import kotlinx.collections.immutable.toImmutableList
@@ -25,11 +26,16 @@ class HymnsPresenter (
 ) : Presenter<State> {
     @Composable
     override fun present(): State {
+        var searchQuery by rememberRetained { mutableStateOf("") }
         val hymns by produceRetainedState(emptyList()) {
             contentProvider.hymns().collect { value = it }
         }
         val categories by produceRetainedState(emptyList()) {
             contentProvider.categories().collect { value = it }
+        }
+        val searchResults by produceRetainedState(emptyList(), searchQuery) {
+            contentProvider.search(searchQuery)
+                .collect { hymn -> value = hymn.map { SearchResult(it) } }
         }
 
         var sortType by rememberRetained { mutableStateOf(SortType.TITLE) }
@@ -46,12 +52,16 @@ class HymnsPresenter (
         return State(
             sortType = sortType,
             selectedCategory = selectedCategory,
-            categories = categories,
+            categories = categories.toImmutableList(),
             hymns = filteredHymns,
+            searchResults = searchResults.toImmutableList(),
             eventSink = { event ->
                 when (event) {
                     Event.OnSortClicked -> sortType = sortType.next()
                     is Event.OnCategorySelected -> selectedCategory = event.category
+                    is Event.OnQueryChanged -> {
+                        searchQuery = event.query.trim()
+                    }
                 }
             }
         )

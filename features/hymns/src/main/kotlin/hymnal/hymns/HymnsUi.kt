@@ -47,6 +47,7 @@ import hymnal.ui.extensions.copy
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.AvatarNavigationIcon
 import hymnal.ui.widget.scaffold.HazeScaffold
+import kotlinx.collections.immutable.persistentListOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @CircuitInject(HymnsScreen::class, AppScope::class)
@@ -70,7 +71,10 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                 TopAppBar(
                     title = {
                         HymnsSearchBar(
-                            onSubmit = {},
+                            results = state.searchResults,
+                            onSearch = {
+                                state.eventSink(Event.OnQueryChanged(it.toString()))
+                            },
                             trailingIcon = {
                                 AvatarNavigationIcon(
                                     photoUrl = "https://images.unsplash.com/photo-1570158268183-d296b2892211?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -99,12 +103,19 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                         containerColor = Color.Transparent,
                         edgePadding = 16.dp,
                         tabs = {
-                            state.categories.forEach { category ->
+                            state.categories.forEachIndexed { index, category ->
                                 Tab(
                                     selected = category == state.selectedCategory,
                                     onClick = { state.eventSink(Event.OnCategorySelected(category)) },
-                                    text = { Text(category.name) },
-                                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    text = {
+                                        val title = if (index == 0) {
+                                            category.name
+                                        } else {
+                                            "${category.name} (${category.start}–${category.end})"
+                                        }
+                                        Text(title)
+                                    },
+                                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
                         }
@@ -159,7 +170,7 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
     }
 }
 
-private val previewCategories = listOf(
+private val previewCategories = persistentListOf(
     HymnCategory("1", "Category 1", 1, 2),
     HymnCategory("2", "Category 2", 2, 3),
     HymnCategory("2", "Category 3", 3, 4)
@@ -174,7 +185,8 @@ private fun Preview() {
                 sortType = SortType.NUMBER,
                 selectedCategory = previewCategories.first(),
                 categories = previewCategories,
-                hymns = listOf(previewHymn, previewHymn.copy(index = "2")),
+                hymns = persistentListOf(previewHymn, previewHymn.copy(index = "2")),
+                searchResults = persistentListOf(),
                 eventSink = {},
             )
         )

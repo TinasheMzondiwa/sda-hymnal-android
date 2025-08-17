@@ -64,6 +64,7 @@ internal fun InputField(
     searchBarState: SearchBarState,
     onSearch: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onValueChange: (CharSequence) -> Unit = {},
     enabled: Boolean = true,
     readOnly: Boolean = false,
     textStyle: TextStyle = LocalTextStyle.current,
@@ -206,7 +207,7 @@ internal fun InputField(
                     }
                     prevLength = currLength
                 }
-                .collect {}
+                .collect { onValueChange(it) }
         }
     }
 

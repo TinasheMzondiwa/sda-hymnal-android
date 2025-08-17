@@ -113,7 +113,7 @@ fun HymnCard(
 }
 
 @Composable
-private fun NumberText(number: Int, modifier: Modifier = Modifier) {
+internal fun NumberText(number: Int, modifier: Modifier = Modifier) {
     val verticalSpacing = if (number >= 100) 8.dp else 4.dp
 
     Box(
