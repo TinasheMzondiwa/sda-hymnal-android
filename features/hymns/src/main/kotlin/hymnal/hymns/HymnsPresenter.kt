@@ -16,9 +16,9 @@ import dev.zacsweers.metro.Inject
 import hymnal.hymns.components.SearchResult
 import hymnal.hymns.components.pad.NumberPadBottomSheet
 import hymnal.libraries.navigation.HymnsScreen
+import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.services.content.HymnalContentProvider
 import kotlinx.collections.immutable.toImmutableList
-import timber.log.Timber
 
 @Inject
 class HymnsPresenter (
@@ -66,6 +66,9 @@ class HymnsPresenter (
                     is Event.OnQueryChanged -> {
                         searchQuery = event.query.trim()
                     }
+                    is Event.OnHymnClicked -> {
+                        navigator.goTo(SingHymnScreen(event.index))
+                    }
                     Event.OnNumberPadClicked -> {
                         overlayState = OverlayState.NumberPadSheet(
                             onResult = { result ->
@@ -73,7 +76,10 @@ class HymnsPresenter (
                                 when (result) {
                                     is NumberPadBottomSheet.Result.Cancel -> Unit
                                     is NumberPadBottomSheet.Result.Confirm -> {
-                                        Timber.d("Number pad result: ${result.number}")
+                                        val hymn = hymns.firstOrNull { it.number == result.number }
+                                        if (hymn != null) {
+                                            navigator.goTo(SingHymnScreen(hymn.index))
+                                        }
                                     }
                                 }
                             }

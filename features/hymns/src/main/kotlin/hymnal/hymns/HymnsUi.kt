@@ -154,7 +154,7 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                     hymn = hymn,
                     sortType = state.sortType.next(),
                     modifier = Modifier.animateItem(),
-                    onClick = {}
+                    onClick = { state.eventSink(Event.OnHymnClicked(hymn.index)) },
                 )
             }
 

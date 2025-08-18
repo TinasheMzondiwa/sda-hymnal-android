@@ -55,7 +55,7 @@ interface HymnsDao : BaseDao<HymnEntity> {
 
     @Transaction
     @Query("SELECT * FROM hymns WHERE id = :hymnId")
-    suspend fun getHymnWithLyricsById(hymnId: String): HymnWithLyrics?
+    fun getHymnWithLyricsById(hymnId: String): Flow<HymnWithLyrics?>
 
     @Transaction
     @Query("SELECT * FROM hymns")

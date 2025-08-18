@@ -8,4 +8,5 @@ interface HymnalContentProvider {
     fun hymns(): Flow<List<Hymn>>
     fun categories(): Flow<List<HymnCategory>>
     fun search(query: String): Flow<List<Hymn>>
+    fun hymn(index: String): Flow<Hymn?>
 }

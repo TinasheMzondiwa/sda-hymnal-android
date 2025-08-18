@@ -28,6 +28,7 @@ sealed interface Event : CircuitUiEvent {
     data object OnSortClicked : Event
     data class OnCategorySelected(val category: HymnCategory) : Event
     data class OnQueryChanged(val query: String) : Event
+    data class OnHymnClicked(val index: String) : Event
     data object OnNumberPadClicked : Event
 }
 

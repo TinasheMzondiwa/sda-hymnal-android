@@ -65,4 +65,14 @@ class HymnalContentProviderImpl(
                 emit(emptyList())
             }
     }
+
+    override fun hymn(index: String): Flow<Hymn?> {
+        return hymnsDao.getHymnWithLyricsById(index)
+            .map { it?.toDomainHymn() }
+            .flowOn(dispatcherProvider.io)
+            .catch {
+                Timber.e(it)
+                emit(null)
+            }
+    }
 }
