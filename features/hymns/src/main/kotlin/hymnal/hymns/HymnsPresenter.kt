@@ -66,6 +66,9 @@ class HymnsPresenter (
                     is Event.OnQueryChanged -> {
                         searchQuery = event.query.trim()
                     }
+                    is Event.OnSearchResultClicked -> {
+                        navigator.goTo(SingHymnScreen(event.result.index))
+                    }
                     is Event.OnHymnClicked -> {
                         navigator.goTo(SingHymnScreen(event.index))
                     }

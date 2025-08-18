@@ -55,6 +55,7 @@ import kotlinx.coroutines.launch
 fun HymnsSearchBar(
     results: ImmutableList<SearchResult>,
     onSearch: (CharSequence) -> Unit,
+    onResultClick: (SearchResult) -> Unit = {},
     trailingIcon: @Composable () -> Unit = {}
 ) {
     val textFieldState = rememberTextFieldState()
@@ -145,16 +146,20 @@ fun HymnsSearchBar(
         ExpandedFullScreenSearchBar(
             state = searchBarState,
             inputField = inputField,
-        ) { SearchResults(results) }
+        ) { SearchResults(results, onResultClick) }
     } else {
         ExpandedDockedSearchBar(state = searchBarState, inputField = inputField) {
-            SearchResults(results)
+            SearchResults(results, onResultClick)
         }
     }
 }
 
 @Composable
-private fun SearchResults(results: ImmutableList<SearchResult>, modifier: Modifier = Modifier) {
+private fun SearchResults(
+    results: ImmutableList<SearchResult>,
+    onResultClick: (SearchResult) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val listState = rememberLazyListState()
 
     LazyColumn(
@@ -167,7 +172,7 @@ private fun SearchResults(results: ImmutableList<SearchResult>, modifier: Modifi
                 result = result,
                 modifier = Modifier
                     .animateItem()
-                    .clickable {}
+                    .clickable { onResultClick(result)}
             )
         }
 
