@@ -4,9 +4,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.BookmarkBorder
-import androidx.compose.material.icons.rounded.Fullscreen
-import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.PresentToAll
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.TextFormat
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -25,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.libraries.l10n.R as L10nR
 import hymnal.sing.R as SingR
@@ -36,11 +33,16 @@ fun SingTopAppBar(
     onNavBack: () -> Unit = { },
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
+    val hapticFeedback = LocalAppHapticFeedback.current
+
     TopAppBar(
-        title = { Text(text = "") },
+        title = { },
         modifier = modifier,
         navigationIcon = {
-            IconButton(onClick = onNavBack) {
+            IconButton(onClick = {
+                hapticFeedback.performClick()
+                onNavBack()
+            }) {
                 Icon(
                     Icons.AutoMirrored.Rounded.ArrowBack,
                     stringResource(L10nR.string.nav_back)
@@ -48,25 +50,33 @@ fun SingTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                hapticFeedback.performClick()
+            }) {
                 Icon(
                     Icons.Rounded.TextFormat,
-                    stringResource(L10nR.string.share)
+                    stringResource(L10nR.string.text_format)
                 )
             }
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                hapticFeedback.performClick()
+            }) {
                 Icon(
                     Icons.Rounded.BookmarkBorder,
-                    stringResource(L10nR.string.share)
+                    stringResource(L10nR.string.save_to_collection)
                 )
             }
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                hapticFeedback.performClick()
+            }) {
                 Icon(
                     painterResource(SingR.drawable.ic_mobile_landscape),
-                    stringResource(L10nR.string.share)
+                    stringResource(L10nR.string.fullscreen)
                 )
             }
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                hapticFeedback.performClick()
+            }) {
                 Icon(
                     Icons.Rounded.Share,
                     stringResource(L10nR.string.share)
@@ -75,7 +85,7 @@ fun SingTopAppBar(
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent,
-            scrolledContainerColor = Color.Transparent
+            scrolledContainerColor = Color.Transparent,
         ),
         scrollBehavior = scrollBehavior
     )
