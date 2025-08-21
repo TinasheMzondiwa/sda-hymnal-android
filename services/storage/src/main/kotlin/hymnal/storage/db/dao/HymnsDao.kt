@@ -58,6 +58,10 @@ interface HymnsDao : BaseDao<HymnEntity> {
     fun getHymnWithLyricsById(hymnId: String): Flow<HymnWithLyrics?>
 
     @Transaction
+    @Query("SELECT * FROM hymns WHERE number = :number")
+    suspend fun getHymnWithLyricsByNumber(number: Int): HymnWithLyrics?
+
+    @Transaction
     @Query("SELECT * FROM hymns")
     suspend fun getAllHymns(): List<HymnWithLyrics>
 

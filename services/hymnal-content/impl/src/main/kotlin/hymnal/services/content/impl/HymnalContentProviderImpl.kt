@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @ContributesBinding(AppScope::class)
@@ -74,5 +75,12 @@ class HymnalContentProviderImpl(
                 Timber.e(it)
                 emit(null)
             }
+    }
+
+    override suspend fun hymn(number: Int): Hymn? {
+        return withContext(dispatcherProvider.io) {
+            hymnsDao.getHymnWithLyricsByNumber(number)
+                ?.toDomainHymn()
+        }
     }
 }
