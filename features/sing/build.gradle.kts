@@ -7,6 +7,8 @@ plugins {
     id("dev.zacsweers.metro")
 }
 
+android { namespace = "hymnal.sing" }
+
 foundry { features { compose() } }
 
 ksp { arg("circuit.codegen.mode", "metro") }
