@@ -18,10 +18,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -63,18 +59,11 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
         bottomBar = {
             when (state) {
                 is State.Content -> {
-                    var isPlaying by remember { mutableStateOf(false) }
-
                     SingBottomAppBar(
-                        number = state.hymn.number,
-                        isPlaying = isPlaying,
+                        state = state.bottomBarState,
                         scrollBehavior = bottomAppBarScrollBehavior,
-                        onPlayPause = {
-                            isPlaying = !isPlaying
-                        }
                     )
                 }
-
                 State.Loading -> Unit
             }
         },
