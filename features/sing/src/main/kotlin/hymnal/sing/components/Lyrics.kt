@@ -44,13 +44,17 @@ internal fun LazyListScope.hymnLyrics(lyrics: ImmutableList<HymnLyrics>) {
         when (lyric) {
             is HymnLyrics.Chorus -> Chorus(
                 lines = lyric.lines.toImmutableList(),
-                Modifier.padding(bottom = 24.dp)
+                Modifier
+                    .animateItem()
+                    .padding(bottom = 24.dp)
             )
 
             is HymnLyrics.Verse -> Verse(
                 index = lyric.index,
                 lines = lyric.lines.toImmutableList(),
-                Modifier.padding(bottom = 24.dp)
+                Modifier
+                    .animateItem()
+                    .padding(bottom = 24.dp)
             )
         }
     }

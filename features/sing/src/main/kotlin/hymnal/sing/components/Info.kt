@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -24,8 +23,8 @@ internal fun LazyListScope.hymnInfo(
     majorKey: String?,
     author: String?,
 ) {
-    item {
-        HymnInfo(number, title, author, majorKey, Modifier)
+    item(key = number) {
+        HymnInfo(number, title, author, majorKey, Modifier.animateItem())
     }
 }
 
