@@ -1,6 +1,7 @@
 package hymnal.hymns.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -31,11 +32,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import hymnal.hymns.SortType
+import hymnal.libraries.navigation.key.HymnSharedTransitionKey
 import hymnal.services.model.Hymn
 import hymnal.services.model.HymnLyrics
 import hymnal.ui.theme.HymnalTheme
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HymnCard(
     hymn: Hymn,
@@ -43,71 +47,130 @@ fun HymnCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
-    OutlinedCard(
-        onClick = onClick,
-        modifier = modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-    ) {
-        AnimatedContent(targetState = sortType) { targetSortType ->
-            Row(
-                modifier = modifier
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-
-                if (targetSortType == SortType.NUMBER) {
-                    NumberText(
-                        number = hymn.number,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                }
-
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Text(
-                        text = hymn.title,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontSize = 18.sp
+    SharedElementTransitionScope {
+        OutlinedCard(
+            onClick = onClick,
+            modifier = modifier
+                .sharedElement(
+                    sharedContentState =
+                        rememberSharedContentState(
+                            HymnSharedTransitionKey(
+                                id = hymn.index,
+                                type = HymnSharedTransitionKey.ElementType.Card,
+                            )
                         ),
-                    )
+                    animatedVisibilityScope =
+                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                )
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        ) {
+            AnimatedContent(targetState = sortType) { targetSortType ->
+                Row(
+                    modifier = modifier
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
 
-                    hymn.lyrics.firstOrNull()?.let { verse ->
+                    if (targetSortType == SortType.NUMBER) {
+                        NumberText(
+                            number = hymn.number,
+                            modifier = Modifier
+                                .sharedBounds(
+                                    sharedContentState =
+                                        rememberSharedContentState(
+                                            HymnSharedTransitionKey(
+                                                id = hymn.index,
+                                                type = HymnSharedTransitionKey.ElementType.Number,
+                                            )
+                                        ),
+                                    animatedVisibilityScope =
+                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                                )
+                                .padding(end = 8.dp)
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
                         Text(
-                            text = verse.lines.take(3).joinToString(separator = "\n"),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            text = hymn.title,
+                            modifier = Modifier
+                                .sharedBounds(
+                                    sharedContentState =
+                                        rememberSharedContentState(
+                                            HymnSharedTransitionKey(
+                                                id = hymn.index,
+                                                type = HymnSharedTransitionKey.ElementType.Title,
+                                            )
+                                        ),
+                                    animatedVisibilityScope =
+                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                                ),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                fontSize = 14.sp
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontSize = 18.sp
+                            ),
+                        )
+
+                        hymn.lyrics.firstOrNull()?.let { verse ->
+                            Text(
+                                text = verse.lines.take(3).joinToString(separator = "\n"),
+                                modifier = Modifier.sharedBounds(
+                                    sharedContentState =
+                                        rememberSharedContentState(
+                                            HymnSharedTransitionKey(
+                                                id = hymn.index,
+                                                type = HymnSharedTransitionKey.ElementType.Lyrics,
+                                            )
+                                        ),
+                                    animatedVisibilityScope =
+                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                                ),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    fontSize = 14.sp
+                                )
+                            )
+                        }
+                    }
+
+                    if (targetSortType == SortType.TITLE) {
+                        NumberText(
+                            number = hymn.number,
+                            modifier = Modifier
+                                .sharedBounds(
+                                    sharedContentState =
+                                        rememberSharedContentState(
+                                            HymnSharedTransitionKey(
+                                                id = hymn.index,
+                                                type = HymnSharedTransitionKey.ElementType.Number,
+                                            )
+                                        ),
+                                    animatedVisibilityScope =
+                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                                )
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {},
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = Color.Black.copy(
+                                alpha = 0.04f
                             )
                         )
+                    ) {
+                        Icon(Icons.Rounded.MoreVert, contentDescription = null)
                     }
                 }
 
-                if (targetSortType == SortType.TITLE) {
-                    NumberText(
-                        number = hymn.number,
-                        modifier = Modifier
-                    )
-                }
-
-                IconButton(
-                    onClick = {},
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = Color.Black.copy(
-                            alpha = 0.04f
-                        )
-                    )
-                ) {
-                    Icon(Icons.Rounded.MoreVert, contentDescription = null)
-                }
             }
-
         }
     }
 }

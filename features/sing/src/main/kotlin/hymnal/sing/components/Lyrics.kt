@@ -1,5 +1,6 @@
 package hymnal.sing.components
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -34,28 +35,66 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.slack.circuit.sharedelements.SharedElementTransitionScope
+import hymnal.libraries.navigation.key.HymnSharedTransitionKey
 import hymnal.services.model.HymnLyrics
+import hymnal.ui.extensions.modifier.thenIf
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-internal fun LazyListScope.hymnLyrics(lyrics: ImmutableList<HymnLyrics>) {
-    items(lyrics) { lyric ->
+@OptIn(ExperimentalSharedTransitionApi::class)
+internal fun LazyListScope.hymnLyrics(hymnIndex: String, lyrics: ImmutableList<HymnLyrics>) {
+    itemsIndexed(lyrics) { index, lyric ->
         when (lyric) {
-            is HymnLyrics.Chorus -> Chorus(
-                lines = lyric.lines.toImmutableList(),
-                Modifier
-                    .animateItem()
-                    .padding(bottom = 24.dp)
-            )
+            is HymnLyrics.Chorus -> {
+                SharedElementTransitionScope {
+                    Chorus(
+                        lines = lyric.lines.toImmutableList(),
+                        Modifier
+                            .thenIf(index == 0) {
+                                sharedBounds(
+                                    sharedContentState =
+                                        rememberSharedContentState(
+                                            HymnSharedTransitionKey(
+                                                id = hymnIndex,
+                                                type = HymnSharedTransitionKey.ElementType.Lyrics,
+                                            )
+                                        ),
+                                    animatedVisibilityScope =
+                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                                )
+                            }
+                            .animateItem()
+                            .padding(bottom = 24.dp)
+                    )
+                }
+            }
 
-            is HymnLyrics.Verse -> Verse(
-                index = lyric.index,
-                lines = lyric.lines.toImmutableList(),
-                Modifier
-                    .animateItem()
-                    .padding(bottom = 24.dp)
-            )
+            is HymnLyrics.Verse -> {
+                SharedElementTransitionScope {
+                    Verse(
+                        index = lyric.index,
+                        lines = lyric.lines.toImmutableList(),
+                        Modifier
+                            .thenIf(index == 0) {
+                                sharedBounds(
+                                    sharedContentState =
+                                        rememberSharedContentState(
+                                            HymnSharedTransitionKey(
+                                                id = hymnIndex,
+                                                type = HymnSharedTransitionKey.ElementType.Lyrics,
+                                            )
+                                        ),
+                                    animatedVisibilityScope =
+                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                                )
+                            }
+                            .animateItem()
+                            .padding(bottom = 24.dp)
+                    )
+                }
+            }
         }
     }
 }

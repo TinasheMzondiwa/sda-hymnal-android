@@ -12,6 +12,7 @@ data class HymnContent(
     val number: Int,
     val title: String,
     val majorKey: String?,
+    val author: String? = null,
     val lyrics: ImmutableList<HymnLyrics>,
 ) {
     constructor(hymn: Hymn) : this(

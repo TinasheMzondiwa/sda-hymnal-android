@@ -178,7 +178,7 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
 
     LaunchedEffect(state.sortType, state.selectedCategory) {
         // Reset the list state when sort type or selected category changes
-        listState.animateScrollToItem(0)
+       // listState.animateScrollToItem(0)
     }
 }
 
