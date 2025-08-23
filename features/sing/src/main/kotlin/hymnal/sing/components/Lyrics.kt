@@ -91,7 +91,7 @@ internal fun LazyListScope.hymnLyrics(hymnIndex: String, lyrics: ImmutableList<H
                                 )
                             }
                             .animateItem()
-                            .padding(bottom = 24.dp)
+                            .padding(bottom = 24.dp),
                     )
                 }
             }
