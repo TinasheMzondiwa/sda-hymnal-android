@@ -1,17 +1,21 @@
 package hymnal.sing.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChevronLeft
@@ -21,6 +25,7 @@ import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FlexibleBottomAppBar
@@ -29,13 +34,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -47,6 +58,7 @@ import hymnal.ui.extensions.plus
 import hymnal.ui.haptics.AppHapticFeedback
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
+import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -96,6 +108,7 @@ fun SingBottomAppBar(
     OverlayContent(state.overlayState)
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PlaybackButton(
     state: BottomBarState,
@@ -103,26 +116,49 @@ private fun PlaybackButton(
     iconButtonColors: IconButtonColors,
     modifier: Modifier = Modifier
 ) {
-    IconButton(
-        onClick = {
-            hapticFeedback.performClick()
-            state.eventSink(BottomBarState.Event.OnPlayPause)
-        },
-        modifier = modifier,
-        enabled = state.isPlayEnabled,
-        colors = iconButtonColors,
-    ) {
-        AnimatedContent(
-            targetState = state.isPlaying,
-            transitionSpec = { fadeIn() togetherWith fadeOut() },
-            label = "playPauseIconAnimation"
-        ) { targetIsPlaying ->
-            Icon(
-                imageVector = if (targetIsPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                contentDescription = "Play/Pause Icon",
-                modifier = Modifier
-            )
+    val progress by remember(state.playbackProgress) {
+        mutableFloatStateOf(state.playbackProgress)
+    }
+    val animatedProgress by
+    animateFloatAsState(
+        targetValue = progress,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+    )
+    val trackColor by animateColorAsState(
+        targetValue = if (progress > 0f) {
+            ProgressIndicatorDefaults.circularDeterminateTrackColor
+        } else {
+            Color.Transparent
         }
+    )
+
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        IconButton(
+            onClick = {
+                hapticFeedback.performClick()
+                state.eventSink(BottomBarState.Event.OnPlayPause)
+            },
+            modifier = modifier,
+            enabled = state.isPlayEnabled,
+            colors = iconButtonColors,
+        ) {
+            AnimatedContent(
+                targetState = state.isPlaying,
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                label = "playPauseIconAnimation"
+            ) { targetIsPlaying ->
+                Icon(
+                    imageVector = if (targetIsPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                    contentDescription = "Play/Pause Icon",
+                    modifier = Modifier
+                )
+            }
+        }
+        CircularProgressIndicator(
+            progress = { animatedProgress },
+            modifier = Modifier.size(50.dp),
+            trackColor = trackColor,
+        )
     }
 }
 
@@ -162,7 +198,7 @@ private fun HymnNavigationButton(
             colors = textButtonColors,
         ) {
             Text(
-                "Hymn ${state.number}",
+                text = stringResource(L10nR.string.hymn_number, state.number),
                 style = MaterialTheme.typography.titleMediumEmphasized.copy(
                     fontWeight = FontWeight.Bold
                 )
@@ -205,6 +241,29 @@ private fun Preview() {
                 state = BottomBarState(
                     isPlaying = false,
                     isPlayEnabled = true,
+                    playbackProgress = 0.0f,
+                    number = 123,
+                    previousEnabled = true,
+                    nextEnabled = false,
+                    overlayState = null,
+                    eventSink = {}
+                )
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@PreviewLightDark
+@Composable
+private fun PreviewPlaying() {
+    HymnalTheme {
+        Surface {
+            SingBottomAppBar(
+                state = BottomBarState(
+                    isPlaying = true,
+                    isPlayEnabled = true,
+                    playbackProgress = 0.3f,
                     number = 123,
                     previousEnabled = true,
                     nextEnabled = false,

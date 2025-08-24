@@ -2,6 +2,7 @@
     <string name="app_name">SDA Hymnal</string>
     <string name="collections">Collections</string>
     <string name="fullscreen">Fullscreen</string>
+    <string name="hymn_number">Hymn %1d</string>
     <string name="hymns">Hymns</string>
     <string name="nav_back">Navigate back</string>
     <string name="save_to_collection">Save to collection</string>

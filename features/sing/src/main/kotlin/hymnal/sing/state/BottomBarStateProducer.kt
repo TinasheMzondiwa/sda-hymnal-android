@@ -3,6 +3,7 @@ package hymnal.sing.state
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.slack.circuit.retained.rememberRetained
@@ -31,12 +32,15 @@ class BottomBarStateProducerImpl(
     @Composable
     override fun invoke(hymn: HymnContent?, onIndex: (String) -> Unit): BottomBarState {
         val coroutineScope = rememberStableCoroutineScope()
+        var isPlaying by rememberRetained { mutableStateOf(false) }
+        var playbackProgress by rememberRetained { mutableFloatStateOf(0f) }
         var overlayState by rememberRetained { mutableStateOf<BottomBarOverlayState?>(null) }
 
         return BottomBarState(
             number = hymn?.number ?: 1,
-            isPlaying = false,
+            isPlaying = isPlaying,
             isPlayEnabled = hymn != null,
+            playbackProgress = playbackProgress,
             previousEnabled = hymn?.let { it.number > 1 } ?: false,
             nextEnabled = hymn?.let { it.number < 695 } ?: false,
             overlayState = overlayState,
