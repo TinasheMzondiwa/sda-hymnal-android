@@ -19,7 +19,7 @@ jobs:
           echo "${{ secrets.API_KEYS_PROPERTIES }}" > release/api-keys.properties
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '21'
