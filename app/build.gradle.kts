@@ -57,6 +57,7 @@ dependencies {
     implementation(projects.libraries.foundation.coroutines)
     implementation(projects.libraries.l10n)
     implementation(projects.libraries.navigation.api)
+    implementation(projects.libraries.navigation.number)
     implementation(projects.services.hymnalContent.impl)
     implementation(projects.services.storage)
 

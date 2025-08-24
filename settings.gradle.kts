@@ -21,6 +21,7 @@ include(
     ":libraries:foundation:coroutines",
     ":libraries:l10n",
     ":libraries:navigation:api",
+    ":libraries:navigation:number",
     ":services:hymnal-content:api",
     ":services:hymnal-content:impl",
     ":services:hymnal-content:model",

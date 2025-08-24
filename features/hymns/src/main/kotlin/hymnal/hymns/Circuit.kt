@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import hymnal.hymns.components.SearchResult
-import hymnal.hymns.components.pad.NumberPadBottomSheet
+import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.model.Hymn
 import hymnal.services.model.HymnCategory
 import kotlinx.collections.immutable.ImmutableList

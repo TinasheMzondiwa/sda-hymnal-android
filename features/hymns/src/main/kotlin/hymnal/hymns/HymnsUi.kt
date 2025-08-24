@@ -41,9 +41,9 @@ import com.slack.circuit.overlay.OverlayEffect
 import dev.zacsweers.metro.AppScope
 import hymnal.hymns.components.HymnCard
 import hymnal.hymns.components.HymnsSearchBar
-import hymnal.hymns.components.pad.NumberPadBottomSheet
 import hymnal.hymns.components.previewHymn
 import hymnal.libraries.navigation.HymnsScreen
+import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.model.HymnCategory
 import hymnal.ui.extensions.copy
 import hymnal.ui.haptics.LocalAppHapticFeedback

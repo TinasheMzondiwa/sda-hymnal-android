@@ -1,4 +1,4 @@
-package hymnal.hymns.components.pad
+package hymnal.libraries.navigation.number
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,13 +40,12 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.Inject
-import hymnal.libraries.l10n.R as L10nR
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.parcelize.Parcelize
-
-import hymnal.hymns.components.pad.PadContentScreen.Event as UiEvent
-import hymnal.hymns.components.pad.PadContentScreen.State as UiState
+import hymnal.libraries.l10n.R as L10nR
+import hymnal.libraries.navigation.number.PadContentScreen.Event as UiEvent
+import hymnal.libraries.navigation.number.PadContentScreen.State as UiState
 
 @Parcelize
 data object PadContentScreen : Screen {

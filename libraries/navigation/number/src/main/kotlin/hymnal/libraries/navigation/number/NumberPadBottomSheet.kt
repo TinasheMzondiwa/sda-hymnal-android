@@ -1,4 +1,4 @@
-package hymnal.hymns.components.pad
+package hymnal.libraries.navigation.number
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -41,7 +41,6 @@ class NumberPadBottomSheet : Overlay<NumberPadBottomSheet.Result> {
             content = {
                 CircuitContent(screen = PadContentScreen, onNavEvent = { navEvent ->
                     when (navEvent) {
-                        is NavEvent.GoTo -> Unit
                         is NavEvent.Pop -> {
                             val popResult = navEvent.result
                             val result = if (popResult is NumPadPopResult) {
@@ -54,7 +53,7 @@ class NumberPadBottomSheet : Overlay<NumberPadBottomSheet.Result> {
                                 navigator.finish(result)
                             }
                         }
-
+                        is NavEvent.GoTo,
                         is NavEvent.ResetRoot -> Unit
                     }
                 })
