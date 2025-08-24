@@ -175,7 +175,7 @@ private fun SearchResults(
                 result = result,
                 modifier = Modifier
                     .animateItem()
-                    .clickable { onResultClick(result)}
+                    .clickable { onResultClick(result) }
             )
         }
 
