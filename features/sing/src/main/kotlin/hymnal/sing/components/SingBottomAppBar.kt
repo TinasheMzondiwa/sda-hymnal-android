@@ -19,12 +19,14 @@ import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.BottomAppBarScrollBehavior
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FlexibleBottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -37,8 +39,12 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.slack.circuit.overlay.OverlayEffect
+import hymnal.libraries.navigation.number.NumberPadBottomSheet
+import hymnal.sing.BottomBarOverlayState
 import hymnal.sing.BottomBarState
 import hymnal.ui.extensions.plus
+import hymnal.ui.haptics.AppHapticFeedback
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 
@@ -70,72 +76,121 @@ fun SingBottomAppBar(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         scrollBehavior = scrollBehavior,
     ) {
+
+        PlaybackButton(
+            state = state,
+            hapticFeedback = hapticFeedback,
+            iconButtonColors = iconButtonColors,
+            modifier = Modifier
+        )
+
+        HymnNavigationButton(
+            state = state,
+            hapticFeedback = hapticFeedback,
+            iconButtonColors = iconButtonColors,
+            textButtonColors = textButtonColors,
+            modifier = Modifier.weight(1f)
+        )
+    }
+
+    OverlayContent(state.overlayState)
+}
+
+@Composable
+private fun PlaybackButton(
+    state: BottomBarState,
+    hapticFeedback: AppHapticFeedback,
+    iconButtonColors: IconButtonColors,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = {
+            hapticFeedback.performClick()
+            state.eventSink(BottomBarState.Event.OnPlayPause)
+        },
+        modifier = modifier,
+        enabled = state.isPlayEnabled,
+        colors = iconButtonColors,
+    ) {
+        AnimatedContent(
+            targetState = state.isPlaying,
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
+            label = "playPauseIconAnimation"
+        ) { targetIsPlaying ->
+            Icon(
+                imageVector = if (targetIsPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                contentDescription = "Play/Pause Icon",
+                modifier = Modifier
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun HymnNavigationButton(
+    state: BottomBarState,
+    hapticFeedback: AppHapticFeedback,
+    iconButtonColors: IconButtonColors,
+    textButtonColors: ButtonColors,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .background(
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(48.dp)
+            )
+    ) {
         IconButton(
             onClick = {
                 hapticFeedback.performClick()
-                state.eventSink(BottomBarState.Event.OnPlayPause)
+                state.eventSink(BottomBarState.Event.OnPreviousHymn)
             },
-            enabled = state.isPlayEnabled,
+            enabled = state.previousEnabled,
             colors = iconButtonColors,
         ) {
-            AnimatedContent(
-                targetState = state.isPlaying,
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
-                label = "playPauseIconAnimation"
-            ) { targetIsPlaying ->
-                Icon(
-                    imageVector = if (targetIsPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                    contentDescription = "Play/Pause Icon",
-                    modifier = Modifier
-                )
-            }
+            Icon(Icons.Rounded.ChevronLeft, null)
         }
 
-        Row(
-            modifier = Modifier
-                .weight(1f)
-                .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(48.dp)
-                )
+        TextButton(
+            onClick = {
+                hapticFeedback.performClick()
+                state.eventSink(BottomBarState.Event.OnGoToHymn)
+            },
+            modifier = Modifier.weight(1f),
+            colors = textButtonColors,
         ) {
-            IconButton(
-                onClick = {
-                    hapticFeedback.performClick()
-                    state.eventSink(BottomBarState.Event.OnPreviousHymn)
-                },
-                enabled = state.previousEnabled,
-                colors = iconButtonColors,
-            ) {
-                Icon(Icons.Rounded.ChevronLeft, null)
-            }
-
-            TextButton(
-                onClick = {
-                    hapticFeedback.performClick()
-                    state.eventSink(BottomBarState.Event.OnGoToHymn)
-                },
-                modifier = Modifier.weight(1f),
-                colors = textButtonColors,
-            ) {
-                Text(
-                    "Hymn ${state.number}",
-                    style = MaterialTheme.typography.titleMediumEmphasized.copy(
-                        fontWeight = FontWeight.Bold
-                    )
+            Text(
+                "Hymn ${state.number}",
+                style = MaterialTheme.typography.titleMediumEmphasized.copy(
+                    fontWeight = FontWeight.Bold
                 )
-            }
+            )
+        }
 
-            IconButton(
-                onClick = {
-                    hapticFeedback.performClick()
-                    state.eventSink(BottomBarState.Event.OnNextHymn)
-                },
-                enabled = state.nextEnabled,
-                colors = iconButtonColors,
-            ) {
-                Icon(Icons.Rounded.ChevronRight, null)
-            }
+        IconButton(
+            onClick = {
+                hapticFeedback.performClick()
+                state.eventSink(BottomBarState.Event.OnNextHymn)
+            },
+            enabled = state.nextEnabled,
+            colors = iconButtonColors,
+        ) {
+            Icon(Icons.Rounded.ChevronRight, null)
+        }
+    }
+}
+
+@Composable
+private fun OverlayContent(state: BottomBarOverlayState?) {
+    OverlayEffect(state) {
+        when (state) {
+            is BottomBarOverlayState.NumberPadSheet -> state.onResult(
+                show(NumberPadBottomSheet())
+            )
+
+            null -> Unit
         }
     }
 }
@@ -153,6 +208,7 @@ private fun Preview() {
                     number = 123,
                     previousEnabled = true,
                     nextEnabled = false,
+                    overlayState = null,
                     eventSink = {}
                 )
             )
