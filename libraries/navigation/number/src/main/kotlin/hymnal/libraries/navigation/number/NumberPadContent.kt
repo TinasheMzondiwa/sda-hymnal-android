@@ -1,11 +1,13 @@
 package hymnal.libraries.navigation.number
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Backspace
 import androidx.compose.material3.ButtonDefaults
@@ -127,12 +129,17 @@ fun PadContentUi(
     }
 
     Column(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        Row {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Spacer(Modifier.size(48.dp))
             Text(
                 text = state.input,
@@ -144,17 +151,22 @@ fun PadContentUi(
                 )
             )
 
-            IconButton(
-                onClick = {
-                    hapticFeedback.performError()
-                    state.eventSink(UiEvent.OnBackspaceClicked)
-                },
-                enabled = state.input.isNotEmpty(),
+            AnimatedVisibility(
+                visible = state.input.isNotEmpty(),
+                modifier = Modifier.sizeIn(48.dp, minHeight = 48.dp)
             ) {
-                Icon(
-                    Icons.AutoMirrored.Rounded.Backspace,
-                    contentDescription = null
-                )
+                IconButton(
+                    onClick = {
+                        hapticFeedback.performError()
+                        state.eventSink(UiEvent.OnBackspaceClicked)
+                    },
+                    enabled = state.input.isNotEmpty(),
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Rounded.Backspace,
+                        contentDescription = null
+                    )
+                }
             }
         }
 
@@ -174,7 +186,11 @@ fun PadContentUi(
             NumberButton(onClick = { onNumberClick(9) }, number = 9, Modifier.weight(1f))
         }
 
-        NumberButton(onClick = { onNumberClick(0) }, number = 0)
+        NumberButton(
+            onClick = { onNumberClick(0) },
+            number = 0,
+            enabled = state.input.isNotEmpty(),
+        )
 
         FilledTonalButton(onClick = {
             hapticFeedback.performSuccess()
@@ -182,19 +198,26 @@ fun PadContentUi(
         }, enabled = state.input.isNotEmpty()) {
             Text(
                 text = stringResource(L10nR.string.submit),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
             )
         }
     }
 }
 
 @Composable
-private fun NumberButton(onClick: () -> Unit, number: Int, modifier: Modifier = Modifier) {
+private fun NumberButton(
+    onClick: () -> Unit,
+    number: Int,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
     TextButton(
-        onClick = onClick, modifier = modifier,
+        onClick = onClick,
+        modifier = modifier,
+        enabled,
         colors = ButtonDefaults.textButtonColors(
             contentColor = MaterialTheme.colorScheme.onSurface
-        )
+        ),
     ) {
         Text(
             text = number.toString(),
