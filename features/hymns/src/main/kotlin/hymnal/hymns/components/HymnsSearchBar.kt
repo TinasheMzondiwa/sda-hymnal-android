@@ -70,6 +70,10 @@ fun HymnsSearchBar(
         }
     }
 
+    LaunchedEffect(textFieldState.text) {
+        onSearch(textFieldState.text)
+    }
+
     val inputField =
         @Composable {
             InputField(
@@ -77,7 +81,6 @@ fun HymnsSearchBar(
                 searchBarState = searchBarState,
                 textFieldState = textFieldState,
                 onSearch = { scope.launch { searchBarState.animateToCollapsed() } },
-                onValueChange = { onSearch(it) },
                 textStyle = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
