@@ -21,9 +21,12 @@ import hymnal.ui.theme.HymnalTheme
 @Composable
 fun HymnalApp(
     circuit: Circuit,
-    windowWidthSizeClass: WindowWidthSizeClass
+    windowWidthSizeClass: WindowWidthSizeClass,
+    isDarkTheme: Boolean,
 ) {
-    HymnalTheme {
+    // Fix status bar tint
+
+    HymnalTheme(darkTheme = isDarkTheme) {
         CompositionLocalProvider(
             LocalWindowWidthSizeClass provides windowWidthSizeClass,
         ) {
