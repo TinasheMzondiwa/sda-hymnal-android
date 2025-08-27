@@ -21,6 +21,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import hymnal.sing.TopBarState
+import hymnal.sing.TopBarState.Event as TopBarEvent
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.libraries.l10n.R as L10nR
@@ -29,8 +31,8 @@ import hymnal.sing.R as SingR
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SingTopAppBar(
+    state: TopBarState,
     modifier: Modifier = Modifier,
-    onNavBack: () -> Unit = { },
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     val hapticFeedback = LocalAppHapticFeedback.current
@@ -41,7 +43,7 @@ fun SingTopAppBar(
         navigationIcon = {
             IconButton(onClick = {
                 hapticFeedback.performClick()
-                onNavBack()
+                state.eventSink(TopBarEvent.OnNavBack)
             }) {
                 Icon(
                     Icons.AutoMirrored.Rounded.ArrowBack,
@@ -52,6 +54,7 @@ fun SingTopAppBar(
         actions = {
             IconButton(onClick = {
                 hapticFeedback.performClick()
+                state.eventSink(TopBarEvent.OnStyleClick)
             }) {
                 Icon(
                     Icons.Rounded.TextFormat,
@@ -60,6 +63,7 @@ fun SingTopAppBar(
             }
             IconButton(onClick = {
                 hapticFeedback.performClick()
+                state.eventSink(TopBarEvent.OnSaveClick)
             }) {
                 Icon(
                     Icons.Rounded.BookmarkBorder,
@@ -68,6 +72,7 @@ fun SingTopAppBar(
             }
             IconButton(onClick = {
                 hapticFeedback.performClick()
+                state.eventSink(TopBarEvent.OnFullscreenClick)
             }) {
                 Icon(
                     painterResource(SingR.drawable.ic_mobile_landscape),
@@ -76,6 +81,7 @@ fun SingTopAppBar(
             }
             IconButton(onClick = {
                 hapticFeedback.performClick()
+                state.eventSink(TopBarEvent.OnShareClick)
             }) {
                 Icon(
                     Icons.Rounded.Share,
@@ -96,6 +102,6 @@ fun SingTopAppBar(
 @Composable
 private fun Preview() {
     HymnalTheme {
-        Surface { SingTopAppBar(Modifier.padding(16.dp)) }
+        Surface { SingTopAppBar(state = TopBarState(overlayState = null) {}, Modifier.padding(16.dp)) }
     }
 }

@@ -31,10 +31,14 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.foundation.CircuitContent
+import com.slack.circuit.overlay.ContentWithOverlays
+import com.slack.circuit.overlay.OverlayEffect
 import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import dev.zacsweers.metro.AppScope
 import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.libraries.navigation.key.HymnSharedTransitionKey
+import hymnal.sing.components.BottomSheetOverlay
 import hymnal.sing.components.SingBottomAppBar
 import hymnal.sing.components.SingTopAppBar
 import hymnal.sing.components.hymnInfo
@@ -72,12 +76,13 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                SingTopAppBar(
-                    onNavBack = {
-                        (state as? State.Content)?.eventSink?.invoke(Event.OnNavBack)
-                    },
-                    scrollBehavior = scrollBehavior,
-                )
+                when (state) {
+                    is State.Content -> SingTopAppBar(
+                        state = state.topBarState,
+                        scrollBehavior = scrollBehavior,
+                    )
+                    State.Loading -> Unit
+                }
             },
             bottomBar = {
                 when (state) {
@@ -141,6 +146,28 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
 
                 item { Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars)) }
             }
+        }
+    }
+
+    Overlay((state as? State.Content)?.overlayState)
+}
+
+@Composable
+private fun Overlay(state: SingOverlayState?) {
+    OverlayEffect(state) {
+        when (val overlayState = state) {
+            is SingOverlayState.BottomSheet -> {
+                state.onResult(
+                    show(
+                        overlay = BottomSheetOverlay(skipPartiallyExpanded = overlayState.skipPartiallyExpanded) {
+                            ContentWithOverlays {
+                                CircuitContent(screen = overlayState.screen)
+                            }
+                        }
+                    )
+                )
+            }
+            null -> Unit
         }
     }
 }

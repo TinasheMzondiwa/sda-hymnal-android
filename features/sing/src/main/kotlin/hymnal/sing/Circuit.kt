@@ -2,7 +2,9 @@ package hymnal.sing
 
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.screen.Screen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
+import hymnal.sing.components.BottomSheetOverlay
 import hymnal.sing.components.HymnContent
 
 sealed interface State : CircuitUiState {
@@ -10,9 +12,33 @@ sealed interface State : CircuitUiState {
 
     data class Content(
         val hymn: HymnContent,
+        val topBarState: TopBarState,
         val bottomBarState: BottomBarState,
+        val overlayState: SingOverlayState?,
         val eventSink: (Event) -> Unit
     ) : State
+}
+
+sealed interface SingOverlayState : CircuitUiState {
+    data class BottomSheet(
+        val screen: Screen,
+        val skipPartiallyExpanded: Boolean = false,
+        val onResult: (BottomSheetOverlay.Result) -> Unit,
+    ) : SingOverlayState
+}
+
+data class TopBarState(
+    val overlayState: SingOverlayState?,
+    val eventSink: (Event) -> Unit
+) : CircuitUiState {
+    sealed interface Event : CircuitUiEvent {
+        /** Navigation icon is clicked. */
+        data object OnNavBack : Event
+        data object OnStyleClick : Event
+        data object OnSaveClick : Event
+        data object OnFullscreenClick : Event
+        data object OnShareClick : Event
+    }
 }
 
 data class BottomBarState(
@@ -34,8 +60,7 @@ data class BottomBarState(
 }
 
 sealed interface Event : CircuitUiEvent {
-    /** Navigation icon is clicked. */
-    data object OnNavBack : Event
+
 }
 
 sealed interface BottomBarOverlayState : CircuitUiState {
