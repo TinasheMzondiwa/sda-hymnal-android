@@ -4,6 +4,7 @@ androidx-annotations = "1.9.1"
 androidx-compose-bom = "2025.08.00"
 androidx-compose-material3 = "1.5.0-alpha02"
 androidx-core = "1.17.0"
+androidx-datastore-prefs = "1.1.7"
 androidx-lifecyle = "2.9.2"
 androidx-room = "2.7.2"
 androidx-startup = "1.2.0"
@@ -52,6 +53,7 @@ androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util" }
 androidx-compose-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "androidx-compose-material3" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-datastore-prefs = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore-prefs" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecyle" }
 androidx-room = { module = "androidx.room:room-ktx", version.ref = "androidx-room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
