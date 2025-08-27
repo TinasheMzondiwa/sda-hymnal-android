@@ -25,6 +25,9 @@ include(
     ":services:hymnal-content:api",
     ":services:hymnal-content:impl",
     ":services:hymnal-content:model",
+    ":services:prefs:api",
+    ":services:prefs:impl",
+    ":services:prefs:model",
     ":services:storage"
 )
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
