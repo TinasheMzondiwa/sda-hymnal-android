@@ -30,8 +30,8 @@ class HymnalPrefsImpl(
     private val dispatcherProvider: DispatcherProvider
 ) : HymnalPrefs {
 
-    override val themeStyle: Flow<ThemeStyle>
-        get() = combine(appTheme, textSize, typeface) { appTheme, textSize, typeface ->
+    override fun themeStyle(): Flow<ThemeStyle> =
+        combine(appTheme, textSize, typeface) { appTheme, textSize, typeface ->
             ThemeStyle(theme = appTheme, font = typeface, textSize = textSize)
         }.flowOn(dispatcherProvider.io)
 

@@ -4,33 +4,53 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
+import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.Inject
+import hymnal.services.prefs.HymnalPrefs
 import hymnal.services.prefs.model.ThemeStyle
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import hymnal.sing.components.text.TextStyleScreen.Event as UiEvent
 import hymnal.sing.components.text.TextStyleScreen.State as UiState
 
 @Inject
-class TextStylePresenter : Presenter<UiState> {
+class TextStylePresenter(
+    private val prefs: HymnalPrefs,
+) : Presenter<UiState> {
     @Composable
     override fun present(): UiState {
-        var style by rememberRetained { mutableStateOf(ThemeStyle()) }
+        val coroutineScope = rememberStableCoroutineScope()
 
-        return UiState(style) { event ->
-            style = when (event) {
+        val themeStyle by produceRetainedState(ThemeStyle()) {
+            prefs.themeStyle()
+                .catch { Timber.e(it) }
+                .collect { value = it }
+        }
+
+        return UiState(themeStyle) { event ->
+            when (event) {
                 is UiEvent.OnThemeChange -> {
-                    style.copy(theme = event.theme)
+                    coroutineScope.launch {
+                        prefs.updateThemeStyle(themeStyle.copy(theme = event.theme))
+                    }
                 }
 
                 is UiEvent.OnFontChange -> {
-                    style.copy(font = event.font)
+                    coroutineScope.launch {
+                        prefs.updateThemeStyle(themeStyle.copy(font = event.font))
+                    }
                 }
 
                 is UiEvent.OnTextSizeChange -> {
-                    style.copy(textSize = event.textSize)
+                    coroutineScope.launch {
+                        prefs.updateThemeStyle(themeStyle.copy(textSize = event.textSize))
+                    }
                 }
             }
 

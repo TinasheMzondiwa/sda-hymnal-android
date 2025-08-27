@@ -8,7 +8,7 @@ interface HymnalPrefs {
     /**
      * Emits the current theme style for the hymnal content.
      */
-    val themeStyle: Flow<ThemeStyle>
+    fun themeStyle(): Flow<ThemeStyle>
 
     /**
      * Updates the theme style preference.
