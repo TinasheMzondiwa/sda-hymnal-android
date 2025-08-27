@@ -20,6 +20,7 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.binding
 import hymnal.services.prefs.HymnalPrefs
 import hymnal.services.prefs.model.AppTheme
+import hymnal.services.prefs.model.ThemeStyle
 import kotlinx.coroutines.flow.map
 
 @ContributesIntoMap(AppScope::class, binding<Activity>())
@@ -36,8 +37,9 @@ class MainActivity(
         enableEdgeToEdge()
 
         setContent {
-            val appTheme by prefs.themeStyle().map { it.theme }
-                .collectAsStateWithLifecycle(AppTheme.FOLLOW_SYSTEM)
+            val themeStyle by prefs.themeStyle()
+                .collectAsStateWithLifecycle(ThemeStyle())
+            val appTheme = themeStyle.theme
 
             val isSystemInDarkTheme = isSystemInDarkTheme()
             val isDarkTheme by remember(appTheme) {
