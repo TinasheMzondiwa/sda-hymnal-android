@@ -1,10 +1,15 @@
 package app.hymnal.ui
 
+import android.app.Activity
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import app.hymnal.ui.home.HomeScreen
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
@@ -24,8 +29,6 @@ fun HymnalApp(
     windowWidthSizeClass: WindowWidthSizeClass,
     isDarkTheme: Boolean,
 ) {
-    // Fix status bar tint
-
     HymnalTheme(darkTheme = isDarkTheme) {
         CompositionLocalProvider(
             LocalWindowWidthSizeClass provides windowWidthSizeClass,
@@ -48,6 +51,23 @@ fun HymnalApp(
                     }
                 }
             }
+        }
+    }
+
+    SystemUiEffect(lightStatusBar = !isDarkTheme)
+}
+
+@Composable
+private fun SystemUiEffect(
+    lightStatusBar: Boolean,
+    isSystemInDarkTheme: Boolean = isSystemInDarkTheme()
+) {
+    val localView = LocalView.current
+    if (!localView.isInEditMode) {
+        DisposableEffect(lightStatusBar) {
+            val window = (localView.context as Activity).window
+            WindowCompat.getInsetsController(window, localView).isAppearanceLightStatusBars = lightStatusBar
+            onDispose { WindowCompat.getInsetsController(window, localView).isAppearanceLightStatusBars = !isSystemInDarkTheme }
         }
     }
 }
