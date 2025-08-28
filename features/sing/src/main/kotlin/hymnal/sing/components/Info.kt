@@ -18,14 +18,21 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import hymnal.libraries.navigation.key.HymnSharedTransitionKey
+import hymnal.sing.components.model.TextStyleSpec
+import hymnal.sing.components.text.toFamily
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.collections.immutable.persistentListOf
 
 internal fun LazyListScope.hymnInfo(
-    hymn: HymnContent
+    hymn: HymnContent,
+    textStyle: TextStyleSpec,
 ) {
     item(key = hymn.index) {
-        HymnInfo(hymn, Modifier.animateItem())
+        HymnInfo(
+            hymn = hymn,
+            textStyle = textStyle,
+            modifier = Modifier.animateItem(),
+        )
     }
 }
 
@@ -33,6 +40,7 @@ internal fun LazyListScope.hymnInfo(
 @Composable
 private fun HymnInfo(
     hymn: HymnContent,
+    textStyle: TextStyleSpec,
     modifier: Modifier = Modifier,
 ) {
     SharedElementTransitionScope {
@@ -57,7 +65,9 @@ private fun HymnInfo(
                     animatedVisibilityScope =
                         requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
                 ),
-                style = MaterialTheme.typography.headlineMediumEmphasized,
+                style = MaterialTheme.typography.headlineMediumEmphasized.copy(
+                    fontFamily = textStyle.font.toFamily()
+                ),
                 textAlign = TextAlign.Center
             )
             Text(
@@ -73,14 +83,18 @@ private fun HymnInfo(
                     animatedVisibilityScope =
                         requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
                 ),
-                style = MaterialTheme.typography.headlineMediumEmphasized,
+                style = MaterialTheme.typography.headlineMediumEmphasized.copy(
+                    fontFamily = textStyle.font.toFamily()
+                ),
                 textAlign = TextAlign.Center
             )
 
              hymn.author?.let {
                 Text(
                     text = "by $it",
-                    style = MaterialTheme.typography.bodySmallEmphasized,
+                    style = MaterialTheme.typography.bodySmallEmphasized.copy(
+                        fontFamily = textStyle.font.toFamily()
+                    ),
                     textAlign = TextAlign.Center
                 )
             }
@@ -88,7 +102,9 @@ private fun HymnInfo(
             hymn.majorKey?.let {
                 Text(
                     text = it,
-                    style = MaterialTheme.typography.bodyMediumEmphasized,
+                    style = MaterialTheme.typography.bodyMediumEmphasized.copy(
+                        fontFamily = textStyle.font.toFamily()
+                    ),
                     textAlign = TextAlign.Center
                 )
             }
@@ -109,6 +125,7 @@ private fun Preview() {
                 majorKey = "C Major",
                     lyrics = persistentListOf(),
                 ),
+                textStyle = TextStyleSpec(),
                 modifier = Modifier
                     .padding(16.dp)
             )

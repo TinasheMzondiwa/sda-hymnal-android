@@ -128,13 +128,16 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
             ) {
                 when (state) {
                     is State.Content -> {
-                        hymnInfo(state.hymn)
+                        hymnInfo(
+                            hymn = state.hymn,
+                            textStyle = state.textStyle,
+                        )
                         hymnLyrics(
                             hymnIndex = state.hymn.index,
                             lyrics = state.hymn.lyrics,
+                            textStyle = state.textStyle,
                         )
                     }
-
                     State.Loading -> Unit
                 }
 

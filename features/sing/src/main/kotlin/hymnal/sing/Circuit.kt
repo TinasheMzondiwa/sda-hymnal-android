@@ -6,6 +6,7 @@ import com.slack.circuit.runtime.screen.Screen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.sing.components.BottomSheetOverlay
 import hymnal.sing.components.HymnContent
+import hymnal.sing.components.model.TextStyleSpec
 
 sealed interface State : CircuitUiState {
     data object Loading: State
@@ -15,6 +16,7 @@ sealed interface State : CircuitUiState {
         val topBarState: TopBarState,
         val bottomBarState: BottomBarState,
         val overlayState: SingOverlayState?,
+        val textStyle: TextStyleSpec,
         val eventSink: (Event) -> Unit
     ) : State
 }

@@ -38,45 +38,26 @@ import androidx.compose.ui.unit.sp
 import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import hymnal.libraries.navigation.key.HymnSharedTransitionKey
 import hymnal.services.model.HymnLyrics
+import hymnal.sing.components.model.TextStyleSpec
+import hymnal.sing.components.text.toFamily
 import hymnal.ui.extensions.modifier.thenIf
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-internal fun LazyListScope.hymnLyrics(hymnIndex: String, lyrics: ImmutableList<HymnLyrics>) {
+internal fun LazyListScope.hymnLyrics(
+    hymnIndex: String,
+    lyrics: ImmutableList<HymnLyrics>,
+    textStyle: TextStyleSpec,
+) {
     itemsIndexed(lyrics) { index, lyric ->
         when (lyric) {
             is HymnLyrics.Chorus -> {
                 SharedElementTransitionScope {
                     Chorus(
                         lines = lyric.lines.toImmutableList(),
-                        Modifier
-                            .thenIf(index == 0) {
-                                sharedBounds(
-                                    sharedContentState =
-                                        rememberSharedContentState(
-                                            HymnSharedTransitionKey(
-                                                id = hymnIndex,
-                                                type = HymnSharedTransitionKey.ElementType.Lyrics,
-                                            )
-                                        ),
-                                    animatedVisibilityScope =
-                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                                )
-                            }
-                            .animateItem()
-                            .padding(bottom = 24.dp)
-                    )
-                }
-            }
-
-            is HymnLyrics.Verse -> {
-                SharedElementTransitionScope {
-                    Verse(
-                        index = lyric.index,
-                        lines = lyric.lines.toImmutableList(),
-                        Modifier
+                        modifier = Modifier
                             .thenIf(index == 0) {
                                 sharedBounds(
                                     sharedContentState =
@@ -92,6 +73,33 @@ internal fun LazyListScope.hymnLyrics(hymnIndex: String, lyrics: ImmutableList<H
                             }
                             .animateItem()
                             .padding(bottom = 24.dp),
+                        textStyle = textStyle,
+                    )
+                }
+            }
+
+            is HymnLyrics.Verse -> {
+                SharedElementTransitionScope {
+                    Verse(
+                        index = lyric.index,
+                        lines = lyric.lines.toImmutableList(),
+                        modifier = Modifier
+                            .thenIf(index == 0) {
+                                sharedBounds(
+                                    sharedContentState =
+                                        rememberSharedContentState(
+                                            HymnSharedTransitionKey(
+                                                id = hymnIndex,
+                                                type = HymnSharedTransitionKey.ElementType.Lyrics,
+                                            )
+                                        ),
+                                    animatedVisibilityScope =
+                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                                )
+                            }
+                            .animateItem()
+                            .padding(bottom = 24.dp),
+                        textStyle = textStyle,
                     )
                 }
             }
@@ -100,12 +108,17 @@ internal fun LazyListScope.hymnLyrics(hymnIndex: String, lyrics: ImmutableList<H
 }
 
 @Composable
-private fun Verse(index: Int, lines: ImmutableList<String>, modifier: Modifier = Modifier) {
+private fun Verse(
+    index: Int,
+    lines: ImmutableList<String>,
+    modifier: Modifier = Modifier,
+    textStyle: TextStyleSpec,
+) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        SectionText(section = "$index")
+        SectionText(section = "$index", textStyle = textStyle)
 
         Column(
             modifier = Modifier.weight(1f),
@@ -117,6 +130,7 @@ private fun Verse(index: Int, lines: ImmutableList<String>, modifier: Modifier =
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 18.sp,
                         lineHeight = 28.sp,
+                        fontFamily = textStyle.font.toFamily()
                     )
                 )
             }
@@ -125,7 +139,11 @@ private fun Verse(index: Int, lines: ImmutableList<String>, modifier: Modifier =
 }
 
 @Composable
-private fun Chorus(lines: ImmutableList<String>, modifier: Modifier = Modifier) {
+private fun Chorus(
+    lines: ImmutableList<String>,
+    modifier: Modifier = Modifier,
+    textStyle: TextStyleSpec,
+) {
     val density = LocalDensity.current
     val borderColor = MaterialTheme.colorScheme.onSecondaryContainer
     val borderSizeInPx: Float = with(density) { 16.dp.toPx() }
@@ -142,7 +160,7 @@ private fun Chorus(lines: ImmutableList<String>, modifier: Modifier = Modifier) 
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                Icons.Rounded.MusicNote,
+                imageVector = Icons.Rounded.MusicNote,
                 contentDescription = null,
                 modifier = Modifier
                     .size(32.dp)
@@ -155,6 +173,7 @@ private fun Chorus(lines: ImmutableList<String>, modifier: Modifier = Modifier) 
                 text = "Chorus",
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontFamily = textStyle.font.toFamily()
             )
         }
 
@@ -182,8 +201,8 @@ private fun Chorus(lines: ImmutableList<String>, modifier: Modifier = Modifier) 
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 18.sp,
                         lineHeight = 28.sp,
+                        fontFamily = textStyle.font.toFamily()
                     ),
-                    modifier = Modifier
                 )
             }
         }
@@ -193,6 +212,7 @@ private fun Chorus(lines: ImmutableList<String>, modifier: Modifier = Modifier) 
 @Composable
 internal fun SectionText(
     section: String,
+    textStyle: TextStyleSpec,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -212,7 +232,8 @@ internal fun SectionText(
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                fontFamily = textStyle.font.toFamily(),
             )
         )
     }
@@ -233,7 +254,8 @@ private fun PreviewVerse() {
                     "Where the dearest and best",
                     "For a world of lost sinners was slain",
                 ).toImmutableList(),
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
+                textStyle = TextStyleSpec(),
             )
         }
     }
@@ -251,7 +273,8 @@ private fun PreviewChorus() {
                     "I will cling to the old rugged cross",
                     "And exchange it someday for a crown",
                 ).toImmutableList(),
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
+                textStyle = TextStyleSpec(),
             )
         }
     }

@@ -15,15 +15,22 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.services.content.HymnalContentProvider
+import hymnal.services.prefs.HymnalPrefs
+import hymnal.services.prefs.model.ThemeStyle
 import hymnal.sing.components.HymnContent
+import hymnal.sing.components.model.TextStyleSpec
 import hymnal.sing.state.BottomBarStateProducer
 import hymnal.sing.state.TopBarStateProducer
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import timber.log.Timber
 
 @Inject
 class SingHymnPresenter(
     @Assisted private val navigator: Navigator,
     @Assisted private val screen: SingHymnScreen,
     private val contentProvider: HymnalContentProvider,
+    private val prefs: HymnalPrefs,
     private val topBarStateProducer: TopBarStateProducer,
     private val bottomBarStateProducer: BottomBarStateProducer,
 ) : Presenter<State> {
@@ -36,6 +43,12 @@ class SingHymnPresenter(
             contentProvider.hymn(hymnIndex)
                 .collect { value = it?.let { HymnContent(it) } }
         }
+        val textStyle by produceRetainedState(TextStyleSpec()) {
+            prefs.themeStyle()
+                .map { TextStyleSpec(font = it.font, textSize = it.textSize) }
+                .catch { Timber.e(it) }
+                .collect { value = it }
+        }
         val hymn = _hymn
 
         val topBarState = topBarStateProducer(navigator)
@@ -46,6 +59,7 @@ class SingHymnPresenter(
                 hymn = hymn,
                 topBarState = topBarState,
                 bottomBarState = bottomBarState,
+                textStyle = textStyle,
                 overlayState = overlayState ?: topBarState.overlayState,
                 eventSink = { event -> }
             )
