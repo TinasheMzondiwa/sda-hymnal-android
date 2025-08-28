@@ -4,12 +4,13 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.sp
 import hymnal.ui.R
 
-private val Poppins = FontFamily(
+val Poppins = FontFamily(
     Font(R.font.poppins_regular),
     Font(R.font.poppins_medium, FontWeight.W500),
     Font(R.font.poppins_medium, FontWeight.Medium),
@@ -19,6 +20,44 @@ private val Poppins = FontFamily(
     Font(R.font.poppins_light, FontWeight.Light),
     Font(R.font.poppins_semi_bold, FontWeight.SemiBold),
     Font(R.font.poppins_thin, FontWeight.Thin),
+)
+
+val LatoFontFamily = FontFamily(
+    Font(R.font.lato_regular, FontWeight.Normal),
+    Font(R.font.lato_medium, FontWeight.Medium),
+    Font(R.font.lato_bold, FontWeight.Bold),
+    Font(R.font.lato_bold_italic, FontWeight.Bold, FontStyle.Italic),
+    Font(R.font.lato_black, FontWeight.Black),
+    Font(R.font.lato_black_italic, FontWeight.Black, FontStyle.Italic),
+    Font(R.font.lato_light, FontWeight.Light),
+    Font(R.font.lato_light_italic, FontWeight.Light, FontStyle.Italic),
+    Font(R.font.lato_thin, FontWeight.Thin),
+    Font(R.font.lato_thin_italic, FontWeight.Thin, FontStyle.Italic),
+    Font(R.font.lato_italic, FontWeight.Normal, FontStyle.Italic),
+)
+
+val LoraFontFamily = FontFamily(
+    Font(R.font.lora_regular, FontWeight.Normal),
+    Font(R.font.lora_bold, FontWeight.Bold),
+    Font(R.font.lora_italic, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.lora_bold_italic, FontWeight.Bold, FontStyle.Italic),
+)
+
+val ProximaFontFamily = FontFamily(
+    Font(R.font.poppins_regular, FontWeight.Normal),
+    Font(R.font.proximanova_black, FontWeight.Bold),
+    Font(R.font.proximanova_black, FontWeight.Black),
+)
+
+val GentiumFontFamily = FontFamily(
+    Font(R.font.gentium_regular, FontWeight.Normal),
+    Font(R.font.gentium_bold, FontWeight.Bold),
+    Font(R.font.gentium_italic, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.gentium_bold_italic, FontWeight.Bold, FontStyle.Italic),
+)
+
+val AdventSansFontFamily = FontFamily(
+    Font(R.font.advent_sans, FontWeight.Normal),
 )
 
 private val defaultTextStyle = TextStyle(

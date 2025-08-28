@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,12 @@ import hymnal.services.prefs.model.AppTheme
 import hymnal.services.prefs.model.ThemeStyle
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
+import hymnal.ui.theme.type.AdventSansFontFamily
+import hymnal.ui.theme.type.GentiumFontFamily
+import hymnal.ui.theme.type.LatoFontFamily
+import hymnal.ui.theme.type.LoraFontFamily
+import hymnal.ui.theme.type.Poppins
+import hymnal.ui.theme.type.ProximaFontFamily
 import hymnal.libraries.l10n.R as L10nR
 import hymnal.sing.components.text.TextStyleScreen.Event as UiEvent
 import hymnal.sing.components.text.TextStyleScreen.State as UiState
@@ -175,7 +182,11 @@ private fun AppFontSelector(
                     },
                 modifier = Modifier.semantics { role = Role.RadioButton },
             ) {
-                Text(text = font.label)
+                Text(
+                    text = font.label,
+                    fontFamily = font.toFamily(),
+                    fontWeight = FontWeight.Medium,
+                )
             }
         }
     }
@@ -224,6 +235,15 @@ private fun TextSizeSelector(
             contentDescription = null,
         )
     }
+}
+
+internal fun AppFont.toFamily(): FontFamily = when (this) {
+    AppFont.POPPINS -> Poppins
+    AppFont.LATO -> LatoFontFamily
+    AppFont.PROXIMA_NOVA -> ProximaFontFamily
+    AppFont.ANDADA -> LoraFontFamily
+    AppFont.GENTIUM_BOOK -> GentiumFontFamily
+    AppFont.ADVENT_SANS -> AdventSansFontFamily
 }
 
 private const val MIN_FONT_SIZE = 12f

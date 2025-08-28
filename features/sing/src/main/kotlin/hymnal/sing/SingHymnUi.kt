@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.keepScreenOn
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -74,7 +75,8 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
                         requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
                 )
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .keepScreenOn(),
             topBar = {
                 when (state) {
                     is State.Content -> SingTopAppBar(
