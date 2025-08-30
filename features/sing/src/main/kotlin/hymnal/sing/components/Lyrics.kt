@@ -128,7 +128,7 @@ private fun Verse(
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = 18.sp,
+                        fontSize = textStyle.textSize.sp,
                         lineHeight = 28.sp,
                         fontFamily = textStyle.font.toFamily()
                     )
@@ -173,7 +173,8 @@ private fun Chorus(
                 text = "Chorus",
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontFamily = textStyle.font.toFamily()
+                fontFamily = textStyle.font.toFamily(),
+                fontSize = (textStyle.textSize - 4f).sp
             )
         }
 
@@ -199,7 +200,7 @@ private fun Chorus(
                     text = line,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = 18.sp,
+                        fontSize = textStyle.textSize.sp,
                         lineHeight = 28.sp,
                         fontFamily = textStyle.font.toFamily()
                     ),
@@ -232,7 +233,7 @@ internal fun SectionText(
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
+                fontSize = (textStyle.textSize - 4f).sp,
                 fontFamily = textStyle.font.toFamily(),
             )
         )

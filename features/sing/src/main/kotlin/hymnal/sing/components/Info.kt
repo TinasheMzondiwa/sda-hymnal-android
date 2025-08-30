@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import hymnal.libraries.navigation.key.HymnSharedTransitionKey
 import hymnal.sing.components.model.TextStyleSpec
@@ -66,7 +67,8 @@ private fun HymnInfo(
                         requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
                 ),
                 style = MaterialTheme.typography.headlineMediumEmphasized.copy(
-                    fontFamily = textStyle.font.toFamily()
+                    fontFamily = textStyle.font.toFamily(),
+                    fontSize = (textStyle.textSize + 8f).sp,
                 ),
                 textAlign = TextAlign.Center
             )
@@ -84,7 +86,8 @@ private fun HymnInfo(
                         requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
                 ),
                 style = MaterialTheme.typography.headlineMediumEmphasized.copy(
-                    fontFamily = textStyle.font.toFamily()
+                    fontFamily = textStyle.font.toFamily(),
+                    fontSize = (textStyle.textSize + 8f).sp,
                 ),
                 textAlign = TextAlign.Center
             )
@@ -93,7 +96,8 @@ private fun HymnInfo(
                 Text(
                     text = "by $it",
                     style = MaterialTheme.typography.bodySmallEmphasized.copy(
-                        fontFamily = textStyle.font.toFamily()
+                        fontFamily = textStyle.font.toFamily(),
+                        fontSize = textStyle.textSize.sp
                     ),
                     textAlign = TextAlign.Center
                 )
@@ -103,7 +107,8 @@ private fun HymnInfo(
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodyMediumEmphasized.copy(
-                        fontFamily = textStyle.font.toFamily()
+                        fontFamily = textStyle.font.toFamily(),
+                        fontSize = textStyle.textSize.sp
                     ),
                     textAlign = TextAlign.Center
                 )

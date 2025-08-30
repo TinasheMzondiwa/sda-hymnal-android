@@ -44,7 +44,7 @@ val LoraFontFamily = FontFamily(
 )
 
 val ProximaFontFamily = FontFamily(
-    Font(R.font.poppins_regular, FontWeight.Normal),
+    Font(R.font.proximanova_regular, FontWeight.Normal),
     Font(R.font.proximanova_black, FontWeight.Bold),
     Font(R.font.proximanova_black, FontWeight.Black),
 )
