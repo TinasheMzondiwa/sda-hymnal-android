@@ -7,6 +7,7 @@
     <string name="app_name">SDA Hymnal</string>
     <string name="collections">Collections</string>
     <string name="content_description_dial_pad">Enter Hymn number</string>
+    <string name="content_play_pause">Play/Pause</string>
     <string name="fullscreen">Fullscreen</string>
     <string name="hymn_number">Hymn %1d</string>
     <string name="hymns">Hymns</string>
@@ -23,5 +24,8 @@
     <string name="sort_number">Number</string>
     <string name="sort_title">Title</string>
     <string name="text_format">Text format</string>
+    <string name="tune_tooltip_action">Got it</string>
+    <string name="tune_tooltip_description">Tap to play or pause the tune. Long press to stop playback or restart from the beginning.</string>
+    <string name="tune_tooltip_title">Play or Pause tune</string>
     <string name="submit">Submit</string>
 </resources>

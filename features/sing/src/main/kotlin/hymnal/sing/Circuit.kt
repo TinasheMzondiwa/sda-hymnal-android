@@ -52,13 +52,13 @@ data class TopBarState(
 data class BottomBarState(
     val number: Int,
     val isPlayEnabled: Boolean,
+    val showTuneToolTip: Boolean,
     val previousEnabled: Boolean,
     val nextEnabled: Boolean,
     val overlayState: BottomBarOverlayState?,
     val eventSink: (Event) -> Unit,
 ) : CircuitUiState {
     sealed interface Event : CircuitUiEvent {
-        data object OnPlayPause : Event
         data object OnPreviousHymn : Event
         data object OnNextHymn : Event
         data object OnGoToHymn : Event

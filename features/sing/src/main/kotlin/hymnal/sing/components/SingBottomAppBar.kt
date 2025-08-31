@@ -153,8 +153,9 @@ private fun PlaybackButton(
                 hapticFeedback.performLongPress()
                 player?.stopMedia()
             },
-            modifier = modifier,
+            modifier = Modifier,
             enabled = state.isPlayEnabled,
+            showTooltip = state.showTuneToolTip,
             colors = iconButtonColors,
         ) {
             AnimatedContent(
@@ -164,7 +165,7 @@ private fun PlaybackButton(
             ) { targetIsPlaying ->
                 Icon(
                     imageVector = if (targetIsPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                    contentDescription = "Play/Pause",
+                    contentDescription = stringResource(L10nR.string.content_play_pause),
                     modifier = Modifier
                 )
             }
@@ -255,6 +256,7 @@ private fun Preview() {
             SingBottomAppBar(
                 state = BottomBarState(
                     isPlayEnabled = true,
+                    showTuneToolTip = false,
                     number = 123,
                     previousEnabled = true,
                     nextEnabled = false,
