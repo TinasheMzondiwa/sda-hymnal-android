@@ -42,7 +42,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,6 +58,7 @@ import com.slack.circuit.overlay.OverlayEffect
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.sing.BottomBarOverlayState
 import hymnal.sing.BottomBarState
+import hymnal.sing.components.tune.CombinedIconButton
 import hymnal.sing.components.tune.PlaybackState
 import hymnal.sing.components.tune.playbackStateOrIdle
 import hymnal.sing.components.tune.progressOrZero
@@ -125,6 +128,7 @@ private fun PlaybackButton(
     val player = rememberTunePlayer(state.number)
     val playbackState by player.playbackStateOrIdle.collectAsStateWithLifecycle()
     val playbackProgress by player.progressOrZero.collectAsStateWithLifecycle()
+    val isPlaying by remember { derivedStateOf { playbackState == PlaybackState.ON_PLAY } }
 
     val animatedProgress by
     animateFloatAsState(
@@ -140,23 +144,27 @@ private fun PlaybackButton(
     )
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        IconButton(
+        CombinedIconButton(
             onClick = {
                 hapticFeedback.performClick()
                 player?.playPause(state.number)
+            },
+            onLongClick = {
+                hapticFeedback.performLongPress()
+                player?.stopMedia()
             },
             modifier = modifier,
             enabled = state.isPlayEnabled,
             colors = iconButtonColors,
         ) {
             AnimatedContent(
-                targetState = playbackState == PlaybackState.ON_PLAY,
+                targetState = isPlaying,
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
                 label = "playPauseIconAnimation"
             ) { targetIsPlaying ->
                 Icon(
                     imageVector = if (targetIsPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                    contentDescription = "Play/Pause Icon",
+                    contentDescription = "Play/Pause",
                     modifier = Modifier
                 )
             }
