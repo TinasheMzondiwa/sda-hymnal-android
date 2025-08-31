@@ -18,6 +18,7 @@ import hymnal.libraries.coroutines.DispatcherProvider
 import hymnal.services.prefs.education.Education
 import hymnal.services.prefs.education.UserOrientation
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
@@ -58,7 +59,7 @@ class UserOrientationImpl(
             val underLimit = shownCount < education.timesToShow
 
             eligibleByTime && underLimit
-        }
+        }.flowOn(dispatcherProvider.io)
     }
 
     // ----- Helpers -----
