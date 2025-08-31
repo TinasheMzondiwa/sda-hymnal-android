@@ -65,8 +65,7 @@ class SingHymnPresenter(
                 overlayState = overlayState ?: topBarState.overlayState,
                 eventSink = { event -> }
             )
-
-            else -> State.Loading
+            else -> State.Loading(screen.index)
         }
     }
 

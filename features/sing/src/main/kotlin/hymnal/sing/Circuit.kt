@@ -12,9 +12,12 @@ import hymnal.sing.components.HymnContent
 import hymnal.sing.components.model.TextStyleSpec
 
 sealed interface State : CircuitUiState {
-    data object Loading: State
+    val index: String
+
+    data class Loading(override val index: String): State
 
     data class Content(
+        override val index: String = hymn.index,
         val hymn: HymnContent,
         val topBarState: TopBarState,
         val bottomBarState: BottomBarState,

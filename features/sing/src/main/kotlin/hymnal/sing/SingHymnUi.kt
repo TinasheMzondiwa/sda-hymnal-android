@@ -7,7 +7,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,12 +25,15 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.keepScreenOn
@@ -38,6 +44,7 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.overlay.OverlayEffect
+import com.slack.circuit.sharedelements.PreviewSharedElementTransitionLayout
 import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import dev.zacsweers.metro.AppScope
 import hymnal.libraries.navigation.SingHymnScreen
@@ -51,7 +58,10 @@ import hymnal.ui.extensions.copy
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.scaffold.HazeScaffold
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class
+)
 @CircuitInject(SingHymnScreen::class, AppScope::class)
 @Composable
 fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
@@ -70,7 +80,7 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
                     sharedContentState =
                         rememberSharedContentState(
                             HymnSharedTransitionKey(
-                                id = (state as? State.Content)?.hymn?.index ?: "card",
+                                id = state.index,
                                 type = HymnSharedTransitionKey.ElementType.Card,
                             )
                         ),
@@ -86,7 +96,7 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
                         state = state.topBarState,
                         scrollBehavior = scrollBehavior,
                     )
-                    State.Loading -> Unit
+                    is State.Loading -> Unit
                 }
             },
             bottomBar = {
@@ -100,7 +110,7 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
                                     durationMillis = 150,
                                     delayMillis = 50
                                 )
-                            ),
+                            ) + slideInVertically { it },
                         ) {
                             SingBottomAppBar(
                                 state = state.bottomBarState,
@@ -109,8 +119,7 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
                             )
                         }
                     }
-
-                    State.Loading -> Unit
+                    is State.Loading -> Unit
                 }
             },
             blurTopBar = true,
@@ -141,7 +150,16 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
                             textStyle = state.textStyle,
                         )
                     }
-                    State.Loading -> Unit
+                    is State.Loading -> item {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(48.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            LoadingIndicator()
+                        }
+                    }
                 }
 
                 item {
@@ -180,10 +198,13 @@ private fun Overlay(state: SingOverlayState?) {
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @PreviewLightDark
 @Composable
 private fun Preview() {
-    HymnalTheme {
-        SingHymnUi(state = State.Loading)
+    PreviewSharedElementTransitionLayout {
+        HymnalTheme {
+            SingHymnUi(state = State.Loading("001"))
+        }
     }
 }
