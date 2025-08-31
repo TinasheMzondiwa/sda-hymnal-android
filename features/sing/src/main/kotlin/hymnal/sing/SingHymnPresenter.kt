@@ -16,7 +16,6 @@ import dev.zacsweers.metro.Inject
 import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.services.content.HymnalContentProvider
 import hymnal.services.prefs.HymnalPrefs
-import hymnal.services.prefs.model.ThemeStyle
 import hymnal.sing.components.HymnContent
 import hymnal.sing.components.model.TextStyleSpec
 import hymnal.sing.state.BottomBarStateProducer

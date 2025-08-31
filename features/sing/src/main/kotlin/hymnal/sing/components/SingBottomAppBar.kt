@@ -40,8 +40,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,10 +48,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.overlay.OverlayEffect
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.sing.BottomBarOverlayState
 import hymnal.sing.BottomBarState
+import hymnal.sing.components.tune.PlaybackState
+import hymnal.sing.components.tune.playbackStateOrIdle
+import hymnal.sing.components.tune.progressOrZero
+import hymnal.sing.components.tune.rememberTunePlayer
 import hymnal.ui.extensions.plus
 import hymnal.ui.haptics.AppHapticFeedback
 import hymnal.ui.haptics.LocalAppHapticFeedback
@@ -116,16 +119,17 @@ private fun PlaybackButton(
     iconButtonColors: IconButtonColors,
     modifier: Modifier = Modifier
 ) {
-    val progress by remember(state.playbackProgress) {
-        mutableFloatStateOf(state.playbackProgress)
-    }
+    val player = rememberTunePlayer(state.number)
+    val playbackState by player.playbackStateOrIdle.collectAsStateWithLifecycle()
+    val playbackProgress by player.progressOrZero.collectAsStateWithLifecycle()
+
     val animatedProgress by
     animateFloatAsState(
-        targetValue = progress,
+        targetValue = playbackProgress.percent,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
     )
     val trackColor by animateColorAsState(
-        targetValue = if (progress > 0f) {
+        targetValue = if (playbackProgress.percent > 0f) {
             ProgressIndicatorDefaults.circularDeterminateTrackColor
         } else {
             Color.Transparent
@@ -136,14 +140,14 @@ private fun PlaybackButton(
         IconButton(
             onClick = {
                 hapticFeedback.performClick()
-                state.eventSink(BottomBarState.Event.OnPlayPause)
+                player?.playPause(state.number)
             },
             modifier = modifier,
             enabled = state.isPlayEnabled,
             colors = iconButtonColors,
         ) {
             AnimatedContent(
-                targetState = state.isPlaying,
+                targetState = playbackState == PlaybackState.ON_PLAY,
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
                 label = "playPauseIconAnimation"
             ) { targetIsPlaying ->
@@ -239,31 +243,7 @@ private fun Preview() {
         Surface {
             SingBottomAppBar(
                 state = BottomBarState(
-                    isPlaying = false,
                     isPlayEnabled = true,
-                    playbackProgress = 0.0f,
-                    number = 123,
-                    previousEnabled = true,
-                    nextEnabled = false,
-                    overlayState = null,
-                    eventSink = {}
-                )
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@PreviewLightDark
-@Composable
-private fun PreviewPlaying() {
-    HymnalTheme {
-        Surface {
-            SingBottomAppBar(
-                state = BottomBarState(
-                    isPlaying = true,
-                    isPlayEnabled = true,
-                    playbackProgress = 0.3f,
                     number = 123,
                     previousEnabled = true,
                     nextEnabled = false,

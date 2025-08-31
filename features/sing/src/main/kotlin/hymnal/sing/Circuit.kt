@@ -45,9 +45,7 @@ data class TopBarState(
 
 data class BottomBarState(
     val number: Int,
-    val isPlaying: Boolean,
     val isPlayEnabled: Boolean,
-    val playbackProgress: Float,
     val previousEnabled: Boolean,
     val nextEnabled: Boolean,
     val overlayState: BottomBarOverlayState?,
