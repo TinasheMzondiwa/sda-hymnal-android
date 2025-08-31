@@ -3,13 +3,18 @@
 
 package hymnal.hymns
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
@@ -20,20 +25,19 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Dialpad
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryScrollableTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
@@ -43,7 +47,7 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.OverlayEffect
 import dev.zacsweers.metro.AppScope
 import hymnal.hymns.components.HymnCard
-import hymnal.hymns.components.HymnsSearchBar
+import hymnal.hymns.components.HymnsTopAppBar
 import hymnal.hymns.components.previewHymn
 import hymnal.libraries.navigation.HymnsScreen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
@@ -51,11 +55,11 @@ import hymnal.services.model.HymnCategory
 import hymnal.ui.extensions.copy
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
-import hymnal.ui.widget.AvatarNavigationIcon
 import hymnal.ui.widget.scaffold.HazeScaffold
 import kotlinx.collections.immutable.persistentListOf
+import hymnal.libraries.l10n.R as L10nR
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @CircuitInject(HymnsScreen::class, AppScope::class)
 @Composable
 fun HymnsUi(state: State, modifier: Modifier = Modifier) {
@@ -64,85 +68,31 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
     val listState: LazyListState = rememberLazyListState()
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val fabVisible by remember { derivedStateOf { !listState.isScrollInProgress } }
 
     HazeScaffold(
         modifier = modifier
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .imePadding()
+        topBar = { HymnsTopAppBar(state, Modifier, scrollBehavior) },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = fabVisible,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut()
             ) {
-                TopAppBar(
-                    title = {
-                        HymnsSearchBar(
-                            results = state.searchResults,
-                            onSearch = {
-                                state.eventSink(Event.OnQueryChanged(it.toString()))
-                            },
-                            onResultClick = {
-                                state.eventSink(Event.OnSearchResultClicked(it))
-                            },
-                            trailingIcon = {
-                                AvatarNavigationIcon(
-                                    photoUrl = "https://images.unsplash.com/photo-1570158268183-d296b2892211?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                )
-                            }
-                        )
+                FloatingActionButton(
+                    onClick = {
+                        state.eventSink(Event.OnNumberPadClicked)
+                        hapticFeedback.performScreenView()
                     },
-                    actions = {
-                        IconButton(onClick = { state.eventSink(Event.OnSortClicked) }) {
-                            Icon(
-                                state.sortType.icon,
-                                contentDescription = stringResource(state.sortType.title),
-                            )
-                        }
-                    },
-                    scrollBehavior = scrollBehavior,
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent,
-                        scrolledContainerColor = Color.Transparent,
-                    )
-                )
-
-                if (state.categories.isNotEmpty()) {
-                    PrimaryScrollableTabRow(
-                        selectedTabIndex = state.categories.indexOf(state.selectedCategory),
-                        containerColor = Color.Transparent,
-                        edgePadding = 16.dp,
-                        tabs = {
-                            state.categories.forEachIndexed { index, category ->
-                                Tab(
-                                    selected = category == state.selectedCategory,
-                                    onClick = { state.eventSink(Event.OnCategorySelected(category)) },
-                                    text = {
-                                        val title = if (index == 0) {
-                                            category.name
-                                        } else {
-                                            "${category.name} (${category.start}–${category.end})"
-                                        }
-                                        Text(title)
-                                    },
-                                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                        }
+                    containerColor = MaterialTheme.colorScheme.primary,
+                ) {
+                    Icon(
+                        Icons.Rounded.Dialpad,
+                        contentDescription = stringResource(L10nR.string.content_description_dial_pad)
                     )
                 }
-
-            }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    state.eventSink(Event.OnNumberPadClicked)
-                    hapticFeedback.performScreenView()
-                },
-                containerColor = MaterialTheme.colorScheme.primary,
-            ) {
-                Icon(Icons.Rounded.Dialpad, contentDescription = null)
             }
         },
         contentWindowInsets = WindowInsets.safeDrawing,
@@ -164,6 +114,19 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                 )
             }
 
+            if (state.hymns.isEmpty()) {
+                item {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(48.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LoadingIndicator()
+                    }
+                }
+            }
+
             // Fab clearance space
             item {
                 Spacer(
@@ -178,11 +141,6 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
     }
 
     OverlayContent(state.overlayState)
-
-    LaunchedEffect(state.sortType, state.selectedCategory) {
-        // Reset the list state when sort type or selected category changes
-       // listState.animateScrollToItem(0)
-    }
 }
 
 @Composable

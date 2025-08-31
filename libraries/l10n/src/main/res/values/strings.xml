@@ -6,6 +6,7 @@
 <resources>
     <string name="app_name">SDA Hymnal</string>
     <string name="collections">Collections</string>
+    <string name="content_description_dial_pad">Enter Hymn number</string>
     <string name="fullscreen">Fullscreen</string>
     <string name="hymn_number">Hymn %1d</string>
     <string name="hymns">Hymns</string>
