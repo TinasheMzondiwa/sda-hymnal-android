@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2025 Tinashe Mzondiwa
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+
 <resources>
 
     <style name="Platform.Theme.Hymnal" parent="Theme.Material3.DayNight" />

@@ -1,9 +1,13 @@
+/*
+ * Copyright (C) 2025 Tinashe Mzondiwa
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package app.hymnal
 
 import android.app.Application
 import app.hymnal.di.AppGraph
 import dev.zacsweers.metro.createGraphFactory
-import timber.log.Timber
 
 class HymnalApplication : Application() {
 

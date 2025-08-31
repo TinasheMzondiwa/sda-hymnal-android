@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2025 Tinashe Mzondiwa
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package hymnal.ui.theme.color
 
 import androidx.compose.material3.darkColorScheme

@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2025 Tinashe Mzondiwa
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package hymnal.sing.components.text
 
 import androidx.compose.foundation.layout.Arrangement
