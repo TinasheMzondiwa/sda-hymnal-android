@@ -12,4 +12,5 @@ data class HymnsCollection(
     val description: String?,
     val hymns: List<Hymn>,
     val created: Long,
+    val color: String,
 )
