@@ -48,7 +48,7 @@ class HymnalContentSyncProviderImpl(
     private suspend fun saveHymnsToDatabase(hymns: List<Hymn>) {
         hymns.forEach { hymn ->
             val entity = HymnEntity(
-                id = hymn.index,
+                hymnId = hymn.index,
                 number = hymn.number,
                 title = hymn.title,
                 majorKey = null // majorKey is not provided in the Hymn model yet
@@ -61,7 +61,7 @@ class HymnalContentSyncProviderImpl(
                 }
 
                 LyricPartEntity(
-                    hymnOwnerId = entity.id,
+                    hymnOwnerId = entity.hymnId,
                     type = type,
                     itemIndex = lyrics.index,
                     lines = lyrics.lines,

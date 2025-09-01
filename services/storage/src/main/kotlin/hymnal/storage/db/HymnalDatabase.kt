@@ -1,18 +1,28 @@
+// Copyright (C) 2025 Tinashe Mzondiwa
+// SPDX-License-Identifier: Apache-2.0
+
 package hymnal.storage.db
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import hymnal.storage.db.dao.CollectionDao
 import hymnal.storage.db.dao.HymnsDao
-import hymnal.storage.db.dao.SectionsDao
+import hymnal.storage.db.entity.CollectionEntity
+import hymnal.storage.db.entity.CollectionHymnCrossRef
 import hymnal.storage.db.entity.HymnEntity
 import hymnal.storage.db.entity.HymnFtsEntity
 import hymnal.storage.db.entity.LyricPartEntity
-import hymnal.storage.db.entity.SectionEntity
 
 @Database(
-    entities = [HymnEntity::class, SectionEntity::class, LyricPartEntity::class,  HymnFtsEntity::class],
+    entities = [
+        HymnEntity::class,
+        LyricPartEntity::class,
+        HymnFtsEntity::class,
+        CollectionEntity::class,
+        CollectionHymnCrossRef::class,
+    ],
     version = 1,
     exportSchema = true,
 )
@@ -20,7 +30,7 @@ internal abstract class HymnalDatabase : RoomDatabase() {
 
     abstract fun hymnsDao(): HymnsDao
 
-    abstract fun sectionsDao(): SectionsDao
+    abstract fun collectionsDao(): CollectionDao
 
     companion object {
         private const val DATABASE_NAME = "hymnal.db"

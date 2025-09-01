@@ -1,3 +1,6 @@
+// Copyright (C) 2025 Tinashe Mzondiwa
+// SPDX-License-Identifier: Apache-2.0
+
 package hymnal.storage.di
 
 import android.content.Context
@@ -7,8 +10,8 @@ import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
 import hymnal.storage.db.HymnalDatabase
+import hymnal.storage.db.dao.CollectionDao
 import hymnal.storage.db.dao.HymnsDao
-import hymnal.storage.db.dao.SectionsDao
 
 @ContributesTo(AppScope::class)
 @BindingContainer
@@ -22,8 +25,8 @@ object StorageBindings {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideSectionsDao(
+    fun provideCollectionDao(
         context: Context
-    ): SectionsDao = HymnalDatabase.getInstance(context).sectionsDao()
+    ): CollectionDao = HymnalDatabase.getInstance(context).collectionsDao()
 
 }

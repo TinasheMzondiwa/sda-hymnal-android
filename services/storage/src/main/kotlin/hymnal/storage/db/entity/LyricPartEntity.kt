@@ -1,3 +1,6 @@
+// Copyright (C) 2025 Tinashe Mzondiwa
+// SPDX-License-Identifier: Apache-2.0
+
 package hymnal.storage.db.entity
 
 import androidx.room.Entity
@@ -12,7 +15,7 @@ import hymnal.storage.db.converter.StringListConverter
     foreignKeys = [
         ForeignKey(
             entity = HymnEntity::class,
-            parentColumns = ["id"], // Primary key in HymnEntity is 'id: String'
+            parentColumns = ["hymnId"], // Primary key in HymnEntity is 'id: String'
             childColumns = ["hymnOwnerId"], // Foreign key in LyricPartEntity
             onDelete = ForeignKey.CASCADE
         )

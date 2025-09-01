@@ -1,3 +1,6 @@
+// Copyright (C) 2025 Tinashe Mzondiwa
+// SPDX-License-Identifier: Apache-2.0
+
 package hymnal.storage.db.entity
 
 import androidx.room.Embedded
@@ -8,7 +11,7 @@ import hymnal.services.model.HymnLyrics
 data class HymnWithLyrics(
     @Embedded val hymn: HymnEntity,
     @Relation(
-        parentColumn = "id",      // Primary key in HymnEntity (HymnEntity.id)
+        parentColumn = "hymnId",      // Primary key in HymnEntity (HymnEntity.hymnId)
         entityColumn = "hymnOwnerId", // Foreign key in LyricPartEntity
         entity = LyricPartEntity::class
     )
@@ -16,10 +19,10 @@ data class HymnWithLyrics(
 ) {
     fun toDomainHymn(): Hymn {
         return Hymn(
-            index = hymn.id,
+            index = hymn.hymnId,
             title = hymn.title,
             number = hymn.number,
-             majorKey = hymn.majorKey,
+            majorKey = hymn.majorKey,
             lyrics = lyricParts.map { part ->
                 when (part.type) {
                     DbLyricType.VERSE -> HymnLyrics.Verse(

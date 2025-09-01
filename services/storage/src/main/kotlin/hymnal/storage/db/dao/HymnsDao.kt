@@ -1,3 +1,6 @@
+// Copyright (C) 2025 Tinashe Mzondiwa
+// SPDX-License-Identifier: Apache-2.0
+
 package hymnal.storage.db.dao
 
 import androidx.room.Dao
@@ -34,11 +37,11 @@ interface HymnsDao : BaseDao<HymnEntity> {
         internalInsertHymn(hymn)
 
         // Clear existing lyric parts and FTS entry for this hymn
-        deleteLyricPartsByHymnId(hymn.id)
-        deleteHymnFtsByHymnId(hymn.id)
+        deleteLyricPartsByHymnId(hymn.hymnId)
+        deleteHymnFtsByHymnId(hymn.hymnId)
 
         // Insert new lyric parts
-        val lyricsWithOwnerId = lyricParts.map { it.copy(hymnOwnerId = hymn.id) }
+        val lyricsWithOwnerId = lyricParts.map { it.copy(hymnOwnerId = hymn.hymnId) }
         internalInsertLyricParts(lyricsWithOwnerId)
 
         // Prepare FTS data including title, number, and lyrics
@@ -49,12 +52,12 @@ interface HymnsDao : BaseDao<HymnEntity> {
         val searchableContent = "${hymn.title}\n${hymn.number}\n$lyricsText"
 
         if (searchableContent.isNotBlank()) {
-            insertHymnFts(HymnFtsEntity(hymnId = hymn.id, lyricsContent = searchableContent))
+            insertHymnFts(HymnFtsEntity(hymnId = hymn.hymnId, lyricsContent = searchableContent))
         }
     }
 
     @Transaction
-    @Query("SELECT * FROM hymns WHERE id = :hymnId")
+    @Query("SELECT * FROM hymns WHERE hymnId = :hymnId")
     fun getHymnWithLyricsById(hymnId: String): Flow<HymnWithLyrics?>
 
     @Transaction
@@ -76,7 +79,7 @@ interface HymnsDao : BaseDao<HymnEntity> {
     @Transaction
     @Query("""
         SELECT h.* FROM hymns h
-        JOIN hymns_fts fts ON h.id = fts.hymnId
+        JOIN hymns_fts fts ON h.hymnId = fts.hymnId
         WHERE fts.lyricsContent MATCH :query
     """)
     fun searchLyrics(query: String): Flow<List<HymnWithLyrics>>

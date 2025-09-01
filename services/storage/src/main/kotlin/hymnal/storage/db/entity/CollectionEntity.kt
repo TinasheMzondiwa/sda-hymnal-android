@@ -6,10 +6,9 @@ package hymnal.storage.db.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "hymns")
-data class HymnEntity(
-    @PrimaryKey val hymnId: String,
+@Entity(tableName = "collections")
+data class CollectionEntity(
+    @PrimaryKey val collectionId: String,
     val title: String,
-    val number: Int,
-    val majorKey: String?,
+    val description: String?,
 )
