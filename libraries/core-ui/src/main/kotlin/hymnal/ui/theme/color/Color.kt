@@ -137,3 +137,15 @@ internal val DarkColorScheme = darkColorScheme(
     outlineVariant = md_theme_dark_outlineVariant,
     scrim = md_theme_dark_scrim,
 )
+
+
+fun String.toColor(): Color {
+    val cleanHex = replace("#", "")
+    val colorLong = cleanHex.toLong(16)
+
+    return when (cleanHex.length) {
+        6 -> Color((0xFF000000 or colorLong).toInt()) // Add alpha
+        8 -> Color(colorLong.toInt())
+        else -> throw IllegalArgumentException("Invalid hex color: $this")
+    }
+}
