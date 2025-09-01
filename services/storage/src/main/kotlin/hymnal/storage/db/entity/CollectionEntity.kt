@@ -11,4 +11,5 @@ data class CollectionEntity(
     @PrimaryKey val collectionId: String,
     val title: String,
     val description: String?,
+    val created: Long,
 )

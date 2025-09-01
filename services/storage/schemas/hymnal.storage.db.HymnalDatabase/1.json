@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "dd86cc9accf94f1f884ab811cf77d571",
+    "identityHash": "d0cfaf430ba9fb6e439281a60fe0510f",
     "entities": [
       {
         "tableName": "hymns",
@@ -141,7 +141,7 @@
       },
       {
         "tableName": "collections",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`collectionId` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT, PRIMARY KEY(`collectionId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`collectionId` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `created` INTEGER NOT NULL, PRIMARY KEY(`collectionId`))",
         "fields": [
           {
             "fieldPath": "collectionId",
@@ -159,6 +159,12 @@
             "fieldPath": "description",
             "columnName": "description",
             "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -240,7 +246,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dd86cc9accf94f1f884ab811cf77d571')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd0cfaf430ba9fb6e439281a60fe0510f')"
     ]
   }
 }

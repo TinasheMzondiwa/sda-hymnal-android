@@ -1,5 +1,8 @@
 package hymnal.services.model
 
+import androidx.compose.runtime.Stable
+
+@Stable
 sealed interface HymnLyrics {
     val index: Int
     val lines: List<String>
