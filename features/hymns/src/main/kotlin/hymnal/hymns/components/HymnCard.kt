@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.slack.circuit.sharedelements.PreviewSharedElementTransitionLayout
 import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import hymnal.hymns.SortType
 import hymnal.libraries.navigation.key.HymnSharedTransitionKey
@@ -223,42 +224,45 @@ internal val previewHymn = Hymn(
     ),
 )
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @PreviewLightDark
 @Composable
 private fun Preview() {
-    HymnalTheme {
-        Surface {
-            LazyColumn(modifier = Modifier.padding(16.dp)) {
-                item {
-                    HymnCard(
-                        hymn = previewHymn,
-                        sortType = SortType.NUMBER,
-                        modifier = Modifier
-                    )
-                }
+    PreviewSharedElementTransitionLayout {
+        HymnalTheme {
+            Surface {
+                LazyColumn(modifier = Modifier.padding(16.dp)) {
+                    item {
+                        HymnCard(
+                            hymn = previewHymn,
+                            sortType = SortType.NUMBER,
+                            modifier = Modifier
+                        )
+                    }
 
-                item {
-                    HymnCard(
-                        hymn = previewHymn.copy(number = 8),
-                        sortType = SortType.NUMBER,
-                        modifier = Modifier
-                    )
-                }
+                    item {
+                        HymnCard(
+                            hymn = previewHymn.copy(number = 8),
+                            sortType = SortType.NUMBER,
+                            modifier = Modifier
+                        )
+                    }
 
-                item {
-                    HymnCard(
-                        hymn = previewHymn.copy(number = 99),
-                        sortType = SortType.NUMBER,
-                        modifier = Modifier
-                    )
-                }
+                    item {
+                        HymnCard(
+                            hymn = previewHymn.copy(number = 99),
+                            sortType = SortType.NUMBER,
+                            modifier = Modifier
+                        )
+                    }
 
-                item {
-                    HymnCard(
-                        hymn = previewHymn,
-                        sortType = SortType.TITLE,
-                        modifier = Modifier
-                    )
+                    item {
+                        HymnCard(
+                            hymn = previewHymn,
+                            sortType = SortType.TITLE,
+                            modifier = Modifier
+                        )
+                    }
                 }
             }
         }

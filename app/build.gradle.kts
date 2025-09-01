@@ -1,3 +1,6 @@
+// Copyright (C) 2025 Tinashe Mzondiwa
+// SPDX-License-Identifier: Apache-2.0
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,11 +10,7 @@ plugins {
     id("dev.zacsweers.metro")
 }
 
-foundry {
-    features {
-        compose()
-    }
-}
+foundry { features { compose() } }
 
 android {
     namespace = "app.hymnal"
@@ -51,6 +50,7 @@ dependencies {
     implementation(libs.google.android.material)
     implementation(libs.material3.adaptive.navigation.suite)
     implementation(libs.timber)
+    implementation(projects.features.collections)
     implementation(projects.features.hymns)
     implementation(projects.features.sing)
     implementation(projects.libraries.coreUi)
