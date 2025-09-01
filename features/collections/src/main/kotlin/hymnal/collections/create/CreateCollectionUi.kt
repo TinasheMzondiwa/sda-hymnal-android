@@ -1,7 +1,7 @@
 // Copyright (C) 2025 Tinashe Mzondiwa
 // SPDX-License-Identifier: Apache-2.0
 
-package hymnal.collections.add
+package hymnal.collections.create
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,8 +54,8 @@ import hymnal.ui.extensions.modifier.thenIf
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.theme.color.toColor
-import hymnal.collections.add.CreateCollectionScreen.Event as UiEvent
-import hymnal.collections.add.CreateCollectionScreen.State as UiState
+import hymnal.collections.create.CreateCollectionScreen.Event as UiEvent
+import hymnal.collections.create.CreateCollectionScreen.State as UiState
 import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalMaterial3Api::class)

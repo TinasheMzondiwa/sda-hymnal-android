@@ -1,7 +1,7 @@
 // Copyright (C) 2025 Tinashe Mzondiwa
 // SPDX-License-Identifier: Apache-2.0
 
-package hymnal.collections.add
+package hymnal.collections.create
 
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState

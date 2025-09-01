@@ -1,7 +1,7 @@
 // Copyright (C) 2025 Tinashe Mzondiwa
 // SPDX-License-Identifier: Apache-2.0
 
-package hymnal.collections.add
+package hymnal.collections.create
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,8 +20,8 @@ import hymnal.collections.components.CollectionColor
 import hymnal.services.content.repository.CollectionsRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import hymnal.collections.add.CreateCollectionScreen.Event as UiEvent
-import hymnal.collections.add.CreateCollectionScreen.State as UiState
+import hymnal.collections.create.CreateCollectionScreen.Event as UiEvent
+import hymnal.collections.create.CreateCollectionScreen.State as UiState
 
 @Inject
 class CreateCollectionPresenter(
