@@ -56,6 +56,6 @@ interface CollectionDao : BaseDao<CollectionEntity> {
      * Gets all collections with their hymns.
      */
     @Transaction
-    @Query("SELECT * FROM collections")
+    @Query("SELECT * FROM collections ORDER BY created DESC")
     fun getAllCollectionsWithHymns(): Flow<List<CollectionWithHymns>>
 }

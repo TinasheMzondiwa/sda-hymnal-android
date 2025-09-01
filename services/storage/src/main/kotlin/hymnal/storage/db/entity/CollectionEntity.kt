@@ -12,4 +12,5 @@ data class CollectionEntity(
     val title: String,
     val description: String?,
     val created: Long,
+    val color: String,
 )
