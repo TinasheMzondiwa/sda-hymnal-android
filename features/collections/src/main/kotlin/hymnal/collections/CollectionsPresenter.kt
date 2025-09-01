@@ -16,7 +16,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.Inject
-import hymnal.collections.add.CreateCollectionScreen
+import hymnal.collections.create.CreateCollectionScreen
 import hymnal.libraries.navigation.CollectionsScreen
 import hymnal.services.content.repository.CollectionsRepository
 import hymnal.services.model.HymnsCollection
