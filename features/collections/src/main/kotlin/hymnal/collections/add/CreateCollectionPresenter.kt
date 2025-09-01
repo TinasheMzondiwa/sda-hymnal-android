@@ -20,8 +20,8 @@ import hymnal.collections.components.CollectionColor
 import hymnal.services.content.repository.CollectionsRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import hymnal.collections.add.CreateCollectionScreen.State as UiState
 import hymnal.collections.add.CreateCollectionScreen.Event as UiEvent
+import hymnal.collections.add.CreateCollectionScreen.State as UiState
 
 @Inject
 class CreateCollectionPresenter(

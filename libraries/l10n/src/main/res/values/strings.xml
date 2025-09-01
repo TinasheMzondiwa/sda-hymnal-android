@@ -9,6 +9,8 @@
     <string name="content_description_add_collection">Add collection</string>
     <string name="content_description_dial_pad">Enter Hymn number</string>
     <string name="content_play_pause">Play/Pause</string>
+    <string name="empty_collections_title">No Collections yet</string>
+    <string name="empty_collections_message">Create your first collection to organize your favorite hymns</string>
     <string name="fullscreen">Fullscreen</string>
     <string name="hymn_count_one">One Hymn</string>
     <string name="hymn_count_other">%1$d Hymns</string>

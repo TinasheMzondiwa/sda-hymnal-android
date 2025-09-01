@@ -18,10 +18,8 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.Inject
 import hymnal.collections.add.CreateCollectionScreen
 import hymnal.libraries.navigation.CollectionsScreen
-import hymnal.services.content.HymnalContentProvider
 import hymnal.services.content.repository.CollectionsRepository
 import hymnal.services.model.HymnsCollection
-import hymnal.ui.circuit.BottomSheetOverlay
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.catch
 import timber.log.Timber

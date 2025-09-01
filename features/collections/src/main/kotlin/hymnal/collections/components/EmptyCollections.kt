@@ -20,10 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import hymnal.ui.theme.HymnalTheme
+import hymnal.libraries.l10n.R as L10nR
 import hymnal.ui.R as UiR
 
 internal fun LazyListScope.emptyCollections() {
@@ -63,12 +65,12 @@ private fun EmptyCollections(modifier: Modifier = Modifier) {
         }
 
         Text(
-            text = "No Collections yet",
+            text = stringResource(L10nR.string.empty_collections_title),
             style = MaterialTheme.typography.titleLarge
         )
 
         Text(
-            text = "Create your first collection to organize your favorite hymns",
+            text = stringResource(L10nR.string.empty_collections_message),
             style = MaterialTheme.typography.bodyMediumEmphasized,
             textAlign = TextAlign.Center,
         )

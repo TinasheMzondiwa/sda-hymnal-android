@@ -47,7 +47,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
-import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.overlay.OverlayEffect
 import com.slack.circuit.sharedelements.PreviewSharedElementTransitionLayout
 import dev.zacsweers.metro.AppScope
