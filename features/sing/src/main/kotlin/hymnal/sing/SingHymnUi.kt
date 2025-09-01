@@ -49,11 +49,11 @@ import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import dev.zacsweers.metro.AppScope
 import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.libraries.navigation.key.HymnSharedTransitionKey
-import hymnal.sing.components.BottomSheetOverlay
 import hymnal.sing.components.SingBottomAppBar
 import hymnal.sing.components.SingTopAppBar
 import hymnal.sing.components.hymnInfo
 import hymnal.sing.components.hymnLyrics
+import hymnal.ui.circuit.BottomSheetOverlay
 import hymnal.ui.extensions.copy
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.scaffold.HazeScaffold

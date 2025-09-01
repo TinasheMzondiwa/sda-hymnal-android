@@ -7,9 +7,9 @@ import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
-import hymnal.sing.components.BottomSheetOverlay
 import hymnal.sing.components.HymnContent
 import hymnal.sing.components.model.TextStyleSpec
+import hymnal.ui.circuit.BottomSheetOverlay
 
 sealed interface State : CircuitUiState {
     val index: String
