@@ -30,16 +30,15 @@ import hymnal.ui.R as UiR
 
 internal fun LazyListScope.emptyCollections() {
     item("empty-collections") {
-        EmptyCollections(Modifier.animateItem())
+        EmptyCollections(Modifier.animateItem().padding(top = 64.dp))
     }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun EmptyCollections(modifier: Modifier = Modifier) {
+internal fun EmptyCollections(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
-            .padding(top = 64.dp)
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -47,7 +46,7 @@ private fun EmptyCollections(modifier: Modifier = Modifier) {
 
         Box(
             modifier = Modifier
-                .size(120.dp)
+                .size(80.dp)
                 .background(
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
                         alpha = 0.12f

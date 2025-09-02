@@ -4,11 +4,14 @@
   -->
 
 <resources>
+    <string name="add_to_collection">Add to collection</string>
     <string name="app_name">SDA Hymnal</string>
     <string name="collections">Collections</string>
     <string name="content_description_add_collection">Add collection</string>
     <string name="content_description_dial_pad">Enter Hymn number</string>
     <string name="content_play_pause">Play/Pause</string>
+    <string name="create">Create</string>
+    <string name="create_collection">Create Collection</string>
     <string name="empty_collections_title">No Collections yet</string>
     <string name="empty_collections_message">Create your first collection to organize your favorite hymns</string>
     <string name="fullscreen">Fullscreen</string>

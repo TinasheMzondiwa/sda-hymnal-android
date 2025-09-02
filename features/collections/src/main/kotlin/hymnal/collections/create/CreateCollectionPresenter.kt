@@ -26,6 +26,7 @@ import hymnal.collections.create.CreateCollectionScreen.State as UiState
 @Inject
 class CreateCollectionPresenter(
     @Assisted private val navigator: Navigator,
+    @Assisted private val screen: CreateCollectionScreen,
     private val repository: CollectionsRepository
 ) : Presenter<UiState> {
 
@@ -35,8 +36,13 @@ class CreateCollectionPresenter(
         var selectedColor by rememberRetained { mutableStateOf(CollectionColor.skyBlue) }
         var saveEnabled by rememberRetained { mutableStateOf(false) }
 
-        return UiState(selectedColor, saveEnabled) { event ->
+        return UiState(
+            showUpNavigation = screen.showUpNavigation,
+            selectedColor = selectedColor,
+            saveEnabled = saveEnabled,
+        ) { event ->
             when (event) {
+                is UiEvent.OnNavigateUp -> navigator.pop()
                 is UiEvent.OnTitleChanged -> {
                     saveEnabled = event.title.isNotBlank()
                 }
@@ -68,6 +74,6 @@ class CreateCollectionPresenter(
     @CircuitInject(CreateCollectionScreen::class, AppScope::class)
     @AssistedFactory
     interface Factory {
-        fun create(navigator: Navigator): CreateCollectionPresenter
+        fun create(navigator: Navigator, screen: CreateCollectionScreen): CreateCollectionPresenter
     }
 }

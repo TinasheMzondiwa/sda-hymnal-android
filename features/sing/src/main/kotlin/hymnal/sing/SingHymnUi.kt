@@ -40,11 +40,13 @@ import androidx.compose.ui.keepScreenOn
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.slack.circuit.foundation.CircuitContent
-import com.slack.circuit.overlay.ContentWithOverlays
+import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.OverlayEffect
 import com.slack.circuit.sharedelements.PreviewSharedElementTransitionLayout
+import com.slack.circuit.sharedelements.SharedElementTransitionLayout
 import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import dev.zacsweers.metro.AppScope
 import hymnal.libraries.navigation.SingHymnScreen
@@ -178,6 +180,7 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
     Overlay((state as? State.Content)?.overlayState)
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun Overlay(state: SingOverlayState?) {
     OverlayEffect(state) {
@@ -186,8 +189,14 @@ private fun Overlay(state: SingOverlayState?) {
                 state.onResult(
                     show(
                         overlay = BottomSheetOverlay(skipPartiallyExpanded = overlayState.skipPartiallyExpanded) {
-                            ContentWithOverlays {
-                                CircuitContent(screen = overlayState.screen)
+                            val backstack = rememberSaveableBackStack(overlayState.screen)
+                            val navigator = rememberCircuitNavigator(backstack)
+
+                            SharedElementTransitionLayout {
+                                NavigableCircuitContent(
+                                    navigator = navigator,
+                                    backStack = backstack,
+                                )
                             }
                         }
                     )

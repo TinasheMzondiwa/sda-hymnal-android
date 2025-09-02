@@ -22,11 +22,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -74,6 +76,16 @@ fun CreateCollectionUi(state: UiState, modifier: Modifier = Modifier) {
     ) {
         TopAppBar(
             title = { Text(stringResource(L10nR.string.new_collection)) },
+            navigationIcon = {
+                if (state.showUpNavigation) {
+                    IconButton(onClick = { state.eventSink(UiEvent.OnNavigateUp) }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = stringResource(L10nR.string.nav_back)
+                        )
+                    }
+                }
+            },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = BottomSheetDefaults.ContainerColor,
                 scrolledContainerColor = BottomSheetDefaults.ContainerColor
@@ -206,6 +218,7 @@ private fun Preview() {
         Surface {
             CreateCollectionUi(
                 UiState(
+                    showUpNavigation = true,
                     selectedColor = CollectionColor.coralOrange,
                     saveEnabled = true,
                     eventSink = {},

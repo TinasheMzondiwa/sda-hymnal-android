@@ -45,7 +45,7 @@ class CollectionsPresenter(
                 Event.OnAddCollectionClicked -> {
                     overlayState =
                         CollectionOverlayState.BottomSheet(
-                            screen = CreateCollectionScreen,
+                            screen = CreateCollectionScreen(),
                             skipPartiallyExpanded = true,
                             onResult = { result ->
                                 overlayState = null

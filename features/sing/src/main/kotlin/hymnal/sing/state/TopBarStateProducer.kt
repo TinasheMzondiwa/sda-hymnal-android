@@ -13,6 +13,7 @@ import com.slack.circuit.runtime.Navigator
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
+import hymnal.libraries.navigation.AddToCollectionScreen
 import hymnal.sing.SingOverlayState
 import hymnal.sing.TopBarState
 import hymnal.sing.components.text.TextStyleScreen
@@ -20,14 +21,14 @@ import hymnal.sing.components.text.TextStyleScreen
 @Stable
 interface TopBarStateProducer {
     @Composable
-    operator fun invoke(navigator: Navigator): TopBarState
+    operator fun invoke(navigator: Navigator, hymnId: String?): TopBarState
 }
 
 @Inject
 @ContributesBinding(scope = AppScope::class)
 class TopBarStateProducerImpl : TopBarStateProducer {
     @Composable
-    override fun invoke(navigator: Navigator): TopBarState {
+    override fun invoke(navigator: Navigator, hymnId: String?): TopBarState {
         var overlayState by rememberRetained { mutableStateOf<SingOverlayState?>(null) }
 
         return TopBarState(
@@ -36,7 +37,15 @@ class TopBarStateProducerImpl : TopBarStateProducer {
                 when (event) {
                     is TopBarState.Event.OnNavBack -> navigator.pop()
                     TopBarState.Event.OnFullscreenClick -> Unit
-                    TopBarState.Event.OnSaveClick -> Unit
+                    TopBarState.Event.OnSaveClick -> {
+                        hymnId?.let {
+                            overlayState =
+                                SingOverlayState.BottomSheet(
+                                    screen = AddToCollectionScreen(it),
+                                    skipPartiallyExpanded = true,
+                                ) { overlayState = null }
+                        }
+                    }
                     TopBarState.Event.OnShareClick -> Unit
                     TopBarState.Event.OnStyleClick -> {
                         overlayState =
