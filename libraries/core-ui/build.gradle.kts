@@ -17,8 +17,8 @@ dependencies {
     api(libs.bundles.compose.tooling)
     api(libs.bundles.haze)
 
-    implementation(libs.bundles.circuit)
     implementation(libs.androidx.core)
+    implementation(libs.bundles.circuit)
     implementation(libs.material3.adaptive.navigation.suite)
     implementation(libs.timber)
 }
