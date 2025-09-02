@@ -48,6 +48,7 @@ import com.slack.circuit.overlay.OverlayEffect
 import com.slack.circuit.sharedelements.PreviewSharedElementTransitionLayout
 import com.slack.circuit.sharedelements.SharedElementTransitionLayout
 import com.slack.circuit.sharedelements.SharedElementTransitionScope
+import com.slack.circuitx.gesturenavigation.GestureNavigationDecorationFactory
 import dev.zacsweers.metro.AppScope
 import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.libraries.navigation.key.HymnSharedTransitionKey
@@ -196,6 +197,10 @@ private fun Overlay(state: SingOverlayState?) {
                                 NavigableCircuitContent(
                                     navigator = navigator,
                                     backStack = backstack,
+                                    decoratorFactory =
+                                        remember(navigator) {
+                                            GestureNavigationDecorationFactory(onBackInvoked = navigator::pop)
+                                        },
                                 )
                             }
                         }

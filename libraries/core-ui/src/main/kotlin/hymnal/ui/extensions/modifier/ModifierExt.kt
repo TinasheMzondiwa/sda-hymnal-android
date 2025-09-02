@@ -15,4 +15,7 @@ inline fun Modifier.thenIf(
     builder: Modifier.() -> Modifier
 ) = if (condition) builder() else this
 
+inline fun Modifier.thenIfNotNull(condition: Any?, builder: Modifier.() -> Modifier) =
+    if (condition != null) builder() else this
+
 

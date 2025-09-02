@@ -3,6 +3,7 @@
 
 package hymnal.collections.create
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -50,9 +52,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.sharedelements.PreviewSharedElementTransitionLayout
+import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import dev.zacsweers.metro.AppScope
 import hymnal.collections.components.CollectionColor
+import hymnal.libraries.navigation.key.AddToCollectionSharedTransitionKey
 import hymnal.ui.extensions.modifier.thenIf
+import hymnal.ui.extensions.modifier.thenIfNotNull
+import hymnal.ui.haptics.AppHapticFeedback
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.theme.color.toColor
@@ -60,7 +67,7 @@ import hymnal.collections.create.CreateCollectionScreen.Event as UiEvent
 import hymnal.collections.create.CreateCollectionScreen.State as UiState
 import hymnal.libraries.l10n.R as L10nR
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @CircuitInject(CreateCollectionScreen::class, AppScope::class)
 @Composable
 fun CreateCollectionUi(state: UiState, modifier: Modifier = Modifier) {
@@ -68,30 +75,99 @@ fun CreateCollectionUi(state: UiState, modifier: Modifier = Modifier) {
     val descriptionState = rememberTextFieldState()
     val hapticFeedback = LocalAppHapticFeedback.current
 
+    SharedElementTransitionScope {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .background(BottomSheetDefaults.ContainerColor)
+                .imePadding(),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            CreateCollectionTopAppBar(state, hapticFeedback)
+
+            CreateCollectionContent(state, titleState, descriptionState, hapticFeedback, Modifier)
+
+            SaveButton(state, titleState, descriptionState, hapticFeedback)
+
+            Spacer(Modifier.height(16.dp))
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { titleState.text }.collect {
+            state.eventSink(UiEvent.OnTitleChanged(it))
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedElementTransitionScope.CreateCollectionTopAppBar(
+    state: UiState,
+    hapticFeedback: AppHapticFeedback,
+    modifier: Modifier = Modifier,
+) {
+    TopAppBar(
+        title = { Text(stringResource(L10nR.string.new_collection)) },
+        modifier = modifier
+            .thenIfNotNull(findAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation)) {
+                sharedElement(
+                    sharedContentState =
+                        rememberSharedContentState(
+                            AddToCollectionSharedTransitionKey(
+                                type = AddToCollectionSharedTransitionKey.ElementType.TopAppBar,
+                            )
+                        ),
+                    animatedVisibilityScope =
+                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                )
+            },
+        navigationIcon = {
+            if (state.showUpNavigation) {
+                IconButton(onClick = {
+                    hapticFeedback.performClick()
+                    state.eventSink(UiEvent.OnNavigateUp)
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = stringResource(L10nR.string.nav_back)
+                    )
+                }
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = BottomSheetDefaults.ContainerColor,
+            scrolledContainerColor = BottomSheetDefaults.ContainerColor
+        )
+    )
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedElementTransitionScope.CreateCollectionContent(
+    state: UiState,
+    titleState: TextFieldState,
+    descriptionState: TextFieldState,
+    hapticFeedback: AppHapticFeedback,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .imePadding(),
+            .thenIfNotNull(findAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation)) {
+                sharedElement(
+                    sharedContentState =
+                        rememberSharedContentState(
+                            AddToCollectionSharedTransitionKey(
+                                type = AddToCollectionSharedTransitionKey.ElementType.Content,
+                            )
+                        ),
+                    animatedVisibilityScope =
+                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                )
+            }
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        TopAppBar(
-            title = { Text(stringResource(L10nR.string.new_collection)) },
-            navigationIcon = {
-                if (state.showUpNavigation) {
-                    IconButton(onClick = { state.eventSink(UiEvent.OnNavigateUp) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = stringResource(L10nR.string.nav_back)
-                        )
-                    }
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = BottomSheetDefaults.ContainerColor,
-                scrolledContainerColor = BottomSheetDefaults.ContainerColor
-            )
-        )
-
         OutlinedTextField(
             state = titleState,
             modifier = Modifier
@@ -124,31 +200,6 @@ fun CreateCollectionUi(state: UiState, modifier: Modifier = Modifier) {
                 state.eventSink(UiEvent.OnColorSelected(it))
             }
         )
-
-        Button(
-            onClick = {
-                state.eventSink(
-                    UiEvent.SaveClicked(
-                        title = titleState.text,
-                        description = descriptionState.text,
-                    )
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            enabled = state.saveEnabled
-        ) {
-            Text(stringResource(L10nR.string.save))
-        }
-
-        Spacer(Modifier.height(16.dp))
-    }
-
-    LaunchedEffect(Unit) {
-        snapshotFlow { titleState.text }.collect {
-            state.eventSink(UiEvent.OnTitleChanged(it))
-        }
     }
 }
 
@@ -210,20 +261,62 @@ private fun ColorPicker(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedElementTransitionScope.SaveButton(
+    state: UiState,
+    titleState: TextFieldState,
+    descriptionState: TextFieldState,
+    hapticFeedback: AppHapticFeedback,
+) {
+    Button(
+        onClick = {
+            hapticFeedback.performSuccess()
+            state.eventSink(
+                UiEvent.SaveClicked(
+                    title = titleState.text,
+                    description = descriptionState.text,
+                )
+            )
+        },
+        modifier = Modifier
+            .thenIfNotNull(findAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation)) {
+                sharedElement(
+                    sharedContentState =
+                        rememberSharedContentState(
+                            AddToCollectionSharedTransitionKey(
+                                type = AddToCollectionSharedTransitionKey.ElementType.CreateButton,
+                            )
+                        ),
+                    animatedVisibilityScope =
+                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                )
+            }
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        enabled = state.saveEnabled
+    ) {
+        Text(stringResource(L10nR.string.save))
+    }
+}
 
+
+@OptIn(ExperimentalSharedTransitionApi::class)
 @PreviewLightDark
 @Composable
 private fun Preview() {
-    HymnalTheme {
-        Surface {
-            CreateCollectionUi(
-                UiState(
-                    showUpNavigation = true,
-                    selectedColor = CollectionColor.coralOrange,
-                    saveEnabled = true,
-                    eventSink = {},
+    PreviewSharedElementTransitionLayout {
+        HymnalTheme {
+            Surface {
+                CreateCollectionUi(
+                    UiState(
+                        showUpNavigation = true,
+                        selectedColor = CollectionColor.coralOrange,
+                        saveEnabled = true,
+                        eventSink = {},
+                    )
                 )
-            )
+            }
         }
     }
 }

@@ -3,13 +3,13 @@
 
 package hymnal.collections.add
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,30 +33,73 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.sharedelements.PreviewSharedElementTransitionLayout
+import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import dev.zacsweers.metro.AppScope
 import hymnal.collections.components.CollectionColor
 import hymnal.collections.components.EmptyCollections
 import hymnal.libraries.navigation.AddToCollectionScreen
+import hymnal.libraries.navigation.key.AddToCollectionSharedTransitionKey
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.collections.immutable.persistentListOf
 import hymnal.libraries.l10n.R as L10nR
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class)
 @CircuitInject(AddToCollectionScreen::class, AppScope::class)
 @Composable
 fun AddToCollectionUi(state: State, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .imePadding(),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        TopAppBar(
-            title = { Text(stringResource(L10nR.string.add_to_collection)) },
-            actions = {
+    SharedElementTransitionScope {
+        Column(
+            modifier = modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AddToCollectionTopBar(state)
+
+            when (state) {
+                is State.Loading -> LoadingContent()
+                is State.Empty -> EmptyContent(state)
+                is State.Choose -> ChooseContent(state, Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedElementTransitionScope.AddToCollectionTopBar(state: State) {
+    val hapticFeedback = LocalAppHapticFeedback.current
+    TopAppBar(
+        title = { Text(stringResource(L10nR.string.add_to_collection)) },
+        modifier = Modifier
+            .sharedElement(
+                sharedContentState =
+                    rememberSharedContentState(
+                        AddToCollectionSharedTransitionKey(
+                            type = AddToCollectionSharedTransitionKey.ElementType.TopAppBar,
+                        )
+                    ),
+                animatedVisibilityScope =
+                    requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+            ),
+        actions = {
+            if (state is State.Choose) {
                 Button(
-                    onClick = { state.eventSink(Event.CreateNewCollection) },
+                    onClick = {
+                        hapticFeedback.performClick()
+                        state.eventSink(Event.CreateNewCollection)
+                    },
+                    modifier = Modifier.sharedElement(
+                        sharedContentState =
+                            rememberSharedContentState(
+                                AddToCollectionSharedTransitionKey(
+                                    type = AddToCollectionSharedTransitionKey.ElementType.CreateButton,
+                                )
+                            ),
+                        animatedVisibilityScope =
+                            requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                    )
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Add,
@@ -65,59 +108,108 @@ fun AddToCollectionUi(state: State, modifier: Modifier = Modifier) {
 
                     Text(text = stringResource(L10nR.string.create))
                 }
+            }
 
-                Spacer(Modifier.size(8.dp))
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = BottomSheetDefaults.ContainerColor,
-                scrolledContainerColor = BottomSheetDefaults.ContainerColor
-            )
+            Spacer(Modifier.size(8.dp))
+        }, colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = BottomSheetDefaults.ContainerColor,
+            scrolledContainerColor = BottomSheetDefaults.ContainerColor
+        )
+    )
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun LoadingContent(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(48.dp), contentAlignment = Alignment.Center
+    ) {
+        LoadingIndicator()
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedElementTransitionScope.EmptyContent(
+    state: State.Empty,
+) {
+    val hapticFeedback = LocalAppHapticFeedback.current
+    EmptyCollections(
+        Modifier.sharedElement(
+            sharedContentState =
+                rememberSharedContentState(
+                    AddToCollectionSharedTransitionKey(
+                        type = AddToCollectionSharedTransitionKey.ElementType.Content,
+                    )
+                ),
+            animatedVisibilityScope =
+                requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+        )
+    )
+
+    Button(
+        onClick = {
+            hapticFeedback.performClick()
+            state.eventSink(Event.CreateNewCollection)
+        },
+        modifier = Modifier.sharedElement(
+            sharedContentState =
+                rememberSharedContentState(
+                    AddToCollectionSharedTransitionKey(
+                        type = AddToCollectionSharedTransitionKey.ElementType.CreateButton,
+                    )
+                ),
+            animatedVisibilityScope =
+                requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+        )
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Add,
+            contentDescription = null,
+            modifier = Modifier.padding(end = 8.dp)
         )
 
-        when (state) {
-            is State.Loading -> {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(48.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    LoadingIndicator()
-                }
-            }
+        Text(stringResource(L10nR.string.create_collection))
+    }
+}
 
-            is State.Empty -> {
-                EmptyCollections()
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedElementTransitionScope.ChooseContent(
+    state: State.Choose,
+    modifier: Modifier = Modifier,
+) {
+    val hapticFeedback = LocalAppHapticFeedback.current
 
-                Button(onClick = { state.eventSink(Event.CreateNewCollection) }) {
-                    Icon(
-                        imageVector = Icons.Rounded.Add,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-
-                    Text(stringResource(L10nR.string.create_collection))
-                }
-            }
-
-            is State.Choose -> {
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(state.collections, key = { it.id }) { spec ->
-                        CollectionRow(
-                            spec = spec,
-                            modifier = Modifier
-                                .animateItem()
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            onClick = { state.eventSink(Event.CollectionSelected(spec)) }
+    LazyColumn(
+        modifier = modifier
+            .sharedElement(
+                sharedContentState =
+                    rememberSharedContentState(
+                        AddToCollectionSharedTransitionKey(
+                            type = AddToCollectionSharedTransitionKey.ElementType.Content,
                         )
-                    }
+                    ),
+                animatedVisibilityScope =
+                    requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+            ),
+        contentPadding = PaddingValues(bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(state.collections, key = { it.id }) { spec ->
+            CollectionRow(
+                spec = spec,
+                modifier = Modifier
+                    .animateItem()
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                onClick = {
+                    hapticFeedback.performClick()
+                    state.eventSink(Event.CollectionSelected(spec))
                 }
-            }
+            )
         }
     }
 }
@@ -126,10 +218,8 @@ fun AddToCollectionUi(state: State, modifier: Modifier = Modifier) {
 @PreviewLightDark
 @Composable
 private fun PreviewLoading() {
-    HymnalTheme {
-        Surface(contentColor = BottomSheetDefaults.ContainerColor) {
-            AddToCollectionUi(State.Loading {})
-        }
+    Preview {
+        AddToCollectionUi(State.Loading {})
     }
 }
 
@@ -137,10 +227,8 @@ private fun PreviewLoading() {
 @PreviewLightDark
 @Composable
 private fun PreviewEmpty() {
-    HymnalTheme {
-        Surface(contentColor = BottomSheetDefaults.ContainerColor) {
-            AddToCollectionUi(State.Empty {})
-        }
+    Preview {
+        AddToCollectionUi(State.Empty {})
     }
 }
 
@@ -148,28 +236,35 @@ private fun PreviewEmpty() {
 @PreviewLightDark
 @Composable
 private fun PreviewChoose() {
-    HymnalTheme {
-        Surface(contentColor = BottomSheetDefaults.ContainerColor) {
-            AddToCollectionUi(
-                State.Choose(
-                    collections = persistentListOf(
-                        ChooseCollectionSpec(
-                            collection = sampleCollection,
-                            isSelected = false,
+    Preview {
+        AddToCollectionUi(
+            State.Choose(
+                collections = persistentListOf(
+                    ChooseCollectionSpec(
+                        collection = sampleCollection,
+                        isSelected = false,
+                    ), ChooseCollectionSpec(
+                        collection = sampleCollection.copy(
+                            collectionId = "2",
+                            title = "A very long collection title that should be truncated",
+                            description = "A very long collection description that should be truncated",
+                            color = CollectionColor.lavender.hex
                         ),
-                        ChooseCollectionSpec(
-                            collection = sampleCollection.copy(
-                                collectionId = "2",
-                                title = "A very long collection title that should be truncated",
-                                description = "A very long collection description that should be truncated",
-                                color = CollectionColor.lavender.hex
-                            ),
-                            isSelected = true,
-                        )
-                    ),
-                    eventSink = {}
-                )
-            )
+                        isSelected = true,
+                    )
+                ), eventSink = {})
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@Composable
+private fun Preview(content: @Composable () -> Unit) {
+    PreviewSharedElementTransitionLayout {
+        HymnalTheme {
+            Surface(contentColor = BottomSheetDefaults.ContainerColor) {
+                content()
+            }
         }
     }
 }
