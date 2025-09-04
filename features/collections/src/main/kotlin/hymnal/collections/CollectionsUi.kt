@@ -49,6 +49,7 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.overlay.OverlayEffect
 import com.slack.circuit.sharedelements.PreviewSharedElementTransitionLayout
+import com.slack.circuit.sharedelements.SharedElementTransitionLayout
 import dev.zacsweers.metro.AppScope
 import hymnal.collections.components.CollectionCard
 import hymnal.collections.components.CollectionsTopBar
@@ -160,6 +161,7 @@ private fun LazyListScope.collectionsContent(state: State) {
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun Overlay(state: CollectionOverlayState?) {
     OverlayEffect(state) {
@@ -168,12 +170,14 @@ private fun Overlay(state: CollectionOverlayState?) {
                 state.onResult(
                     show(
                         overlay = BottomSheetOverlay(skipPartiallyExpanded = overlayState.skipPartiallyExpanded) {
-                            CircuitContent(
-                                screen = overlayState.screen,
-                                onNavEvent = {
-                                    state.onResult(BottomSheetOverlay.Result.Dismissed)
-                                }
-                            )
+                            SharedElementTransitionLayout {
+                                CircuitContent(
+                                    screen = overlayState.screen,
+                                    onNavEvent = {
+                                        state.onResult(BottomSheetOverlay.Result.Dismissed)
+                                    }
+                                )
+                            }
                         }
                     )
                 )
