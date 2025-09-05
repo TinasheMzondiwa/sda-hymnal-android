@@ -7,4 +7,4 @@ import com.slack.circuit.runtime.screen.Screen
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data object SearchScreen : Screen
+data object SabbathScreen : Screen

@@ -28,6 +28,7 @@
     <string name="pref_theme_dark">Dark</string>
     <string name="pref_theme_follow_system">Follow system</string>
     <string name="pref_theme_light">Light</string>
+    <string name="sabbath">Sabbath</string>
     <string name="save">Save</string>
     <string name="save_to_collection">Save to collection</string>
     <string name="search">Search</string>
