@@ -136,4 +136,30 @@ class CollectionsRepositoryImpl(
                 emit(emptyList())
             }
     }
+
+    override fun getCollectionById(collectionId: String): Flow<HymnsCollection?> {
+        return collectionsDao.getHymnsForCollection(collectionId)
+            .map { collection ->
+                collection?.let {
+                    HymnsCollection(
+                        collectionId = it.collection.collectionId,
+                        title = it.collection.title,
+                        description = it.collection.description,
+                        hymns = it.hymns.map { hymn ->
+                            Hymn(
+                                index = hymn.hymnId,
+                                title = hymn.title,
+                                number = hymn.number,
+                                majorKey = hymn.majorKey,
+                                lyrics = emptyList(), // Purposely avoid loading lyrics in collections
+                            )
+                        },
+                        created = it.collection.created,
+                        color = it.collection.color,
+                    )
+                }
+            }
+            .flowOn(dispatcherProvider.io)
+            .catch { Timber.e(it) }
+    }
 }

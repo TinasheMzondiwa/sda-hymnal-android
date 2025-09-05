@@ -8,3 +8,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data object CollectionsScreen : Screen
+
+@Parcelize
+data class CollectionHymnsScreen(val collectionId: String): Screen

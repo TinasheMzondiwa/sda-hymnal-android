@@ -57,4 +57,12 @@ interface CollectionsRepository {
      * @return A [Flow] emitting a list of [HymnsCollection] objects.
      */
     fun getHymnCollections(hymnId: String): Flow<List<HymnsCollection>>
+
+    /**
+     * Retrieves a specific collection by its ID.
+     *
+     * @param collectionId The ID of the collection.
+     * @return A [Flow] emitting the [HymnsCollection] object or null if not found.
+     */
+    fun getCollectionById(collectionId: String): Flow<HymnsCollection?>
 }

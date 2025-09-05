@@ -17,6 +17,7 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.Inject
 import hymnal.collections.create.CreateCollectionScreen
+import hymnal.libraries.navigation.CollectionHymnsScreen
 import hymnal.libraries.navigation.CollectionsScreen
 import hymnal.services.content.repository.CollectionsRepository
 import hymnal.services.model.HymnsCollection
@@ -40,7 +41,7 @@ class CollectionsPresenter(
 
         val collections = collectionsState
 
-        val eventSink = { event: Event ->
+        val eventSink: (Event) -> Unit = { event: Event ->
             when (event) {
                 Event.OnAddCollectionClicked -> {
                     overlayState =
@@ -53,7 +54,7 @@ class CollectionsPresenter(
                         )
                 }
                 is Event.OnCollectionClicked -> {
-                    // Handle collection click if needed
+                    navigator.goTo(CollectionHymnsScreen(event.collection.collectionId))
                 }
             }
         }
