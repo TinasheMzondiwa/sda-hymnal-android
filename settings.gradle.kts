@@ -32,3 +32,4 @@ include(
     ":services:storage"
 )
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+include(":features:sabbath")

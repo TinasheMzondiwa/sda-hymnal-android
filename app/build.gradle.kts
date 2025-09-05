@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.timber)
     implementation(projects.features.collections)
     implementation(projects.features.hymns)
+    implementation(projects.features.sabbath)
     implementation(projects.features.sing)
     implementation(projects.libraries.coreUi)
     implementation(projects.libraries.foundation.coroutines)
