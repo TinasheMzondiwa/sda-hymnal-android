@@ -49,4 +49,12 @@ interface CollectionsRepository {
      * @return A [Result] indicating success or failure.
      */
     suspend fun removeHymnFromCollection(collectionId: String, hymnId: String): Result<Unit>
+
+    /**
+     * Retrieves all collections that a specific hymn belongs to.
+     *
+     * @param hymnId The ID of the hymn.
+     * @return A [Flow] emitting a list of [HymnsCollection] objects.
+     */
+    fun getHymnCollections(hymnId: String): Flow<List<HymnsCollection>>
 }

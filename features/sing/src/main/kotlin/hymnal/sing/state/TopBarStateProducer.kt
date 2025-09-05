@@ -8,12 +8,14 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.navigation.AddToCollectionScreen
+import hymnal.services.content.repository.CollectionsRepository
 import hymnal.sing.SingOverlayState
 import hymnal.sing.TopBarState
 import hymnal.sing.components.text.TextStyleScreen
@@ -26,12 +28,21 @@ interface TopBarStateProducer {
 
 @Inject
 @ContributesBinding(scope = AppScope::class)
-class TopBarStateProducerImpl : TopBarStateProducer {
+class TopBarStateProducerImpl(
+    private val collectionsRepository: CollectionsRepository
+) : TopBarStateProducer {
     @Composable
     override fun invoke(navigator: Navigator, hymnId: String?): TopBarState {
+        val collections by produceRetainedState(emptyList(), hymnId) {
+            hymnId?.let { id ->
+                collectionsRepository.getHymnCollections(id)
+                    .collect { value = it }
+            }
+        }
         var overlayState by rememberRetained { mutableStateOf<SingOverlayState?>(null) }
 
         return TopBarState(
+            isSavedToCollection = collections.isNotEmpty(),
             overlayState = overlayState,
             eventSink = { event ->
                 when (event) {

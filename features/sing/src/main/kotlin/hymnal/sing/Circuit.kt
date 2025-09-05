@@ -36,6 +36,7 @@ sealed interface SingOverlayState : CircuitUiState {
 }
 
 data class TopBarState(
+    val isSavedToCollection: Boolean,
     val overlayState: SingOverlayState?,
     val eventSink: (Event) -> Unit
 ) : CircuitUiState {

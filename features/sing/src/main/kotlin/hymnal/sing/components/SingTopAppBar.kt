@@ -3,9 +3,11 @@
 
 package hymnal.sing.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.BookmarkAdded
 import androidx.compose.material.icons.rounded.BookmarkBorder
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.TextFormat
@@ -25,11 +27,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import hymnal.sing.TopBarState
-import hymnal.sing.TopBarState.Event as TopBarEvent
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.libraries.l10n.R as L10nR
 import hymnal.sing.R as SingR
+import hymnal.sing.TopBarState.Event as TopBarEvent
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -68,10 +70,13 @@ fun SingTopAppBar(
                 hapticFeedback.performClick()
                 state.eventSink(TopBarEvent.OnSaveClick)
             }) {
-                Icon(
-                    Icons.Rounded.BookmarkBorder,
-                    stringResource(L10nR.string.save_to_collection)
-                )
+                AnimatedContent(state.isSavedToCollection) { isSaved ->
+                    Icon(
+                        imageVector = if (isSaved) Icons.Rounded.BookmarkAdded else Icons.Rounded.BookmarkBorder,
+                        contentDescription = stringResource(L10nR.string.save_to_collection)
+                    )
+                }
+
             }
             IconButton(onClick = {
                 hapticFeedback.performClick()
@@ -105,6 +110,15 @@ fun SingTopAppBar(
 @Composable
 private fun Preview() {
     HymnalTheme {
-        Surface { SingTopAppBar(state = TopBarState(overlayState = null) {}, Modifier.padding(16.dp)) }
+        Surface {
+            SingTopAppBar(
+                state = TopBarState(
+                    isSavedToCollection = true,
+                    overlayState = null,
+                    eventSink = {},
+                ),
+                modifier = Modifier.padding(16.dp),
+            )
+        }
     }
 }
