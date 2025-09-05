@@ -5,7 +5,6 @@ package hymnal.hymns.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,8 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import hymnal.hymns.Event
 import hymnal.hymns.State
-import hymnal.ui.widget.AvatarNavigationIcon
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,11 +30,7 @@ fun HymnsTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .imePadding()
-    ) {
+    Column(modifier = modifier.fillMaxWidth()) {
         TopAppBar(
             title = {
                 HymnsSearchBar(
@@ -48,11 +41,6 @@ fun HymnsTopAppBar(
                     onResultClick = {
                         state.eventSink(Event.OnSearchResultClicked(it))
                     },
-                    trailingIcon = {
-                        AvatarNavigationIcon(
-                            photoUrl = "https://images.unsplash.com/photo-1570158268183-d296b2892211?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                        )
-                    }
                 )
             },
             actions = {
