@@ -17,6 +17,7 @@ include(
     ":app",
     ":features:collections",
     ":features:hymns",
+    ":features:sabbath",
     ":features:sing",
     ":libraries:core-ui",
     ":libraries:foundation:coroutines",
@@ -32,4 +33,3 @@ include(
     ":services:storage"
 )
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-include(":features:sabbath")

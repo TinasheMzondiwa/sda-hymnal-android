@@ -33,8 +33,9 @@ class CollectionHymnsPresenter(
                 .collect { value = it }
         }
         return State(
+            id = screen.collectionId,
             title = collection?.title ?: "",
-            description = collection?.description,
+            description = collection?.description?.takeUnless { it.isEmpty() },
             color = collection?.color,
             eventSink = { event ->
                 when (event) {

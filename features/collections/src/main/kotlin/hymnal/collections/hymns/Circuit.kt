@@ -7,6 +7,7 @@ import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 
 data class State(
+    val id: String,
     val title: String,
     val description: String?,
     val color: String?,

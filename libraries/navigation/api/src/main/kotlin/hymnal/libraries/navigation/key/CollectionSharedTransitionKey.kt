@@ -11,5 +11,6 @@ data class CollectionSharedTransitionKey(val id: String, val type: ElementType) 
         Card,
         Title,
         Description,
+        MoreButton,
     }
 }

@@ -115,6 +115,18 @@ internal fun CollectionCard(
                 trailingContent = {
                     IconButton(
                         onClick = {},
+                        modifier = Modifier
+                            .sharedBounds(
+                                sharedContentState =
+                                    rememberSharedContentState(
+                                        CollectionSharedTransitionKey(
+                                            id = collection.collectionId,
+                                            type = CollectionSharedTransitionKey.ElementType.MoreButton,
+                                        )
+                                    ),
+                                animatedVisibilityScope =
+                                    requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                            ),
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = Color.Black.copy(alpha = 0.04f)
                         )
