@@ -61,6 +61,7 @@ dependencies {
     implementation(projects.libraries.navigation.number)
     implementation(projects.services.hymnalContent.impl)
     implementation(projects.services.prefs.impl)
+    implementation(projects.services.sabbath.impl)
     implementation(projects.services.storage)
 
     ksp(libs.circuit.codegen)
