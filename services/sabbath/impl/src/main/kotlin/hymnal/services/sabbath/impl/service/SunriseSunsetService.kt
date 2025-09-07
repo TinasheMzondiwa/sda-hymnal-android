@@ -16,9 +16,10 @@ import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAdjusters
 
 interface SunriseSunsetService {
-    suspend fun getSunriseSunset(
+    suspend fun getSabbathTimes(
         latitude: Double,
         longitude: Double,
     ): Result<SabbathTimes>
@@ -33,9 +34,7 @@ data class SabbathTimes(
 @Inject
 class SunriseSunsetServiceImpl(val client: HttpClient) : SunriseSunsetService {
 
-    // https://api.sunrise-sunset.org/json?lat=36.7201600&lng=-4.4203400&date=2025-09-07
-
-    override suspend fun getSunriseSunset(
+    override suspend fun getSabbathTimes(
         latitude: Double,
         longitude: Double,
     ): Result<SabbathTimes> {
@@ -71,7 +70,7 @@ class SunriseSunsetServiceImpl(val client: HttpClient) : SunriseSunsetService {
         date: String,
     ): Result<String> {
         val response: HttpResponse = client.get {
-            url("${BASE_URL}json")
+            url(SUNRISE_SUNSET_API_URL)
             parameter("lat", latitude)
             parameter("lng", longitude)
             parameter("date", date)
@@ -87,16 +86,16 @@ class SunriseSunsetServiceImpl(val client: HttpClient) : SunriseSunsetService {
 
     private fun fridayDate(): String =
         LocalDate.now()
-            .with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.FRIDAY))
+            .with(TemporalAdjusters.previousOrSame(DayOfWeek.FRIDAY))
             .format(DateTimeFormatter.ISO_LOCAL_DATE)
 
     private fun saturdayDate(): String =
         LocalDate.now()
-            .with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY))
+            .with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY))
             .format(DateTimeFormatter.ISO_LOCAL_DATE)
 
     companion object {
-        private const val BASE_URL = "https://api.sunrise-sunset.org/"
+        private const val SUNRISE_SUNSET_API_URL = "https://api.sunrise-sunset.org/json"
     }
 }
 

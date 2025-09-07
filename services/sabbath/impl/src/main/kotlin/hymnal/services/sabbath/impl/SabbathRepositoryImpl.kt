@@ -49,7 +49,7 @@ class SabbathRepositoryImpl(
     }
 
     /**
-     * Check if today is Sabbath.
+     * Check if today is the Sabbath.
      *
      * @param start The start time of Sabbath in the format (2025-09-07T23:44:58+00:00).
      * @param end The end time of Sabbath in the format (2025-09-07T10:45:34+00:00).
@@ -71,10 +71,7 @@ class SabbathRepositoryImpl(
         return if (!addresses.isNullOrEmpty()) {
             val city = addresses[0].locality      // e.g., "Toronto"
             val state = addresses[0].adminArea    // e.g., "Ontario"
-            val stateCode = addresses[0].subAdminArea // sometimes better for abbreviations
-            val countryCode = addresses[0].countryCode // e.g., "CA", "US", "ZA"
 
-            // You’ll likely want an abbreviation map (e.g. ON for Ontario, NY for New York)
             if (city != null && state != null) {
                 "$city $state"
             } else {
