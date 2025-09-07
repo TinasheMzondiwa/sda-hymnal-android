@@ -14,8 +14,10 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.navigation.CollectionHymnsScreen
+import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.services.content.repository.CollectionsRepository
 import hymnal.services.model.HymnsCollection
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.catch
 import timber.log.Timber
 
@@ -27,22 +29,33 @@ class CollectionHymnsPresenter(
 ) : Presenter<State> {
     @Composable
     override fun present(): State {
-        val collection by produceRetainedState<HymnsCollection?>(null) {
+        val collectionState by produceRetainedState<HymnsCollection?>(null) {
             repository.getCollectionById(screen.collectionId)
                 .catch { Timber.e(it) }
                 .collect { value = it }
         }
-        return State(
-            id = screen.collectionId,
-            title = collection?.title ?: "",
-            description = collection?.description?.takeUnless { it.isEmpty() },
-            color = collection?.color,
-            eventSink = { event ->
-                when (event) {
-                    Event.OnNavBack -> navigator.pop()
-                }
-            }
-        )
+        val collection = collectionState
+
+        return when {
+            collection == null -> State.Loading(id = screen.collectionId)
+            else ->
+                State.Content(
+                    id = collection.collectionId,
+                    title = collection.title,
+                    description = collection.description?.takeUnless { it.isEmpty() },
+                    color = collection.color,
+                    hymns = collection.hymns.toImmutableList(),
+                    eventSink = { event ->
+                        when (event) {
+                            is Event.OnNavBack -> navigator.pop()
+                            is Event.OnHymnClicked -> navigator.goTo(SingHymnScreen(event.index))
+                            Event.OnDeleteCollectionClicked -> {
+
+                            }
+                        }
+                    },
+                )
+        }
     }
 
     @AssistedFactory

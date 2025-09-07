@@ -58,6 +58,7 @@ import hymnal.libraries.navigation.CollectionsScreen
 import hymnal.services.model.HymnsCollection
 import hymnal.ui.circuit.BottomSheetOverlay
 import hymnal.ui.extensions.copy
+import hymnal.ui.haptics.AppHapticFeedback
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.scaffold.HazeScaffold
@@ -114,7 +115,7 @@ fun CollectionsUi(state: State, modifier: Modifier = Modifier) {
             ),
         ) {
 
-            collectionsContent(state)
+            collectionsContent(state, hapticFeedback)
 
             // Fab clearance space
             item {
@@ -133,7 +134,7 @@ fun CollectionsUi(state: State, modifier: Modifier = Modifier) {
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun LazyListScope.collectionsContent(state: State) {
+private fun LazyListScope.collectionsContent(state: State, hapticFeedback: AppHapticFeedback) {
     when (state) {
         is State.Loading ->
             item(key = "loading") {
@@ -154,6 +155,7 @@ private fun LazyListScope.collectionsContent(state: State) {
                     collection = collection,
                     modifier = Modifier.animateItem()
                 ) {
+                    hapticFeedback.performClick()
                     state.eventSink(Event.OnCollectionClicked(collection))
                 }
             }

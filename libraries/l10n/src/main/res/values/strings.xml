@@ -12,6 +12,7 @@
     <string name="content_play_pause">Play/Pause</string>
     <string name="create">Create</string>
     <string name="create_collection">Create Collection</string>
+    <string name="delete">Delete</string>
     <string name="empty_collections_title">No Collections yet</string>
     <string name="empty_collections_message">Create your first collection to organize your favorite hymns</string>
     <string name="fullscreen">Fullscreen</string>
