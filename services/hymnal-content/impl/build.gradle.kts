@@ -31,6 +31,7 @@ android {
 dependencies {
     api(projects.services.hymnalContent.api)
 
+    implementation(platform(libs.ktor.bom))
     implementation(platform(libs.supabase.bom))
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.core)
