@@ -11,6 +11,7 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
+import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
@@ -24,6 +25,7 @@ import hymnal.services.content.repository.CollectionsRepository
 import hymnal.services.model.HymnsCollection
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Inject
@@ -33,6 +35,7 @@ class CollectionsPresenter(
 ) : Presenter<State> {
     @Composable
     override fun present(): State {
+        val coroutineScope = rememberStableCoroutineScope()
         var overlayState by rememberRetained { mutableStateOf<CollectionOverlayState?>(null) }
         val collectionsState by produceRetainedState<List<HymnsCollection>?>(null) {
             repository.listAll()
@@ -58,7 +61,9 @@ class CollectionsPresenter(
                     navigator.goTo(CollectionHymnsScreen(event.collection.collectionId))
                 }
 
-                is Event.OnDeleteCollectionClicked -> Unit
+                is Event.OnDeleteCollectionClicked -> coroutineScope.launch {
+                    repository.deleteCollection(event.collection.collectionId)
+                }
             }
         }
 

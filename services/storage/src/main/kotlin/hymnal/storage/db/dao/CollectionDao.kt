@@ -58,4 +58,21 @@ interface CollectionDao : BaseDao<CollectionEntity> {
     @Transaction
     @Query("SELECT * FROM collections ORDER BY created DESC")
     fun getAllCollectionsWithHymns(): Flow<List<CollectionWithHymns>>
+
+    /**
+     * Deletes a collection and its relationships.
+     */
+    @Transaction
+    suspend fun deleteCollection(collectionId: String) {
+        // First, remove all hymns associated with this collection from the join table
+        deleteHymnsFromCollection(collectionId)
+        // Then, delete the collection itself
+        deleteCollectionById(collectionId)
+    }
+
+    @Query("DELETE FROM collection_hymn_join WHERE collectionId = :collectionId")
+    suspend fun deleteHymnsFromCollection(collectionId: String)
+
+    @Query("DELETE FROM collections WHERE collectionId = :collectionId")
+    suspend fun deleteCollectionById(collectionId: String)
 }

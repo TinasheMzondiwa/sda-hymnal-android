@@ -12,6 +12,7 @@ import hymnal.services.model.Hymn
 import hymnal.services.model.HymnsCollection
 import hymnal.storage.db.dao.CollectionDao
 import hymnal.storage.db.entity.CollectionEntity
+import hymnal.storage.db.entity.CollectionWithHymns
 import hymnal.storage.db.entity.CollectionHymnCrossRef
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -30,26 +31,7 @@ class CollectionsRepositoryImpl(
 
     override fun listAll(): Flow<List<HymnsCollection>> {
         return collectionsDao.getAllCollectionsWithHymns()
-            .map {
-                it.map { (collection, hymns) ->
-                    HymnsCollection(
-                        collectionId = collection.collectionId,
-                        title = collection.title,
-                        description = collection.description,
-                        hymns = hymns.map { hymn ->
-                            Hymn(
-                                index = hymn.hymnId,
-                                title = hymn.title,
-                                number = hymn.number,
-                                majorKey = hymn.majorKey,
-                                lyrics = emptyList(), // Purposely avoid loading lyrics in collections
-                            )
-                        },
-                        created = collection.created,
-                        color = collection.color,
-                    )
-                }
-            }
+            .map { it.map { collectionWithHymns -> collectionWithHymns.toHymnsCollection() } }
             .flowOn(dispatcherProvider.io)
             .catch {
                 Timber.e(it)
@@ -139,27 +121,39 @@ class CollectionsRepositoryImpl(
 
     override fun getCollectionById(collectionId: String): Flow<HymnsCollection?> {
         return collectionsDao.getHymnsForCollection(collectionId)
-            .map { collection ->
-                collection?.let {
-                    HymnsCollection(
-                        collectionId = it.collection.collectionId,
-                        title = it.collection.title,
-                        description = it.collection.description,
-                        hymns = it.hymns.map { hymn ->
-                            Hymn(
-                                index = hymn.hymnId,
-                                title = hymn.title,
-                                number = hymn.number,
-                                majorKey = hymn.majorKey,
-                                lyrics = emptyList(), // Purposely avoid loading lyrics in collections
-                            )
-                        },
-                        created = it.collection.created,
-                        color = it.collection.color,
-                    )
-                }
-            }
+            .map { it?.toHymnsCollection() }
             .flowOn(dispatcherProvider.io)
             .catch { Timber.e(it) }
+    }
+
+    override suspend fun deleteCollection(collectionId: String): Result<Unit> {
+        return withContext(dispatcherProvider.io) {
+            try {
+                collectionsDao.deleteCollection(collectionId)
+                Result.success(Unit)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+                Result.failure(ex)
+            }
+        }
+    }
+
+    private fun CollectionWithHymns.toHymnsCollection(): HymnsCollection {
+        return HymnsCollection(
+            collectionId = collection.collectionId,
+            title = collection.title,
+            description = collection.description,
+            hymns = hymns.map { hymn ->
+                Hymn(
+                    index = hymn.hymnId,
+                    title = hymn.title,
+                    number = hymn.number,
+                    majorKey = hymn.majorKey,
+                    lyrics = emptyList(), // Purposely avoid loading lyrics in collections
+                )
+            },
+            created = collection.created,
+            color = collection.color,
+        )
     }
 }

@@ -65,4 +65,12 @@ interface CollectionsRepository {
      * @return A [Flow] emitting the [HymnsCollection] object or null if not found.
      */
     fun getCollectionById(collectionId: String): Flow<HymnsCollection?>
+
+    /**
+     * Deletes a collection by its ID.
+     *
+     * @param collectionId The ID of the collection to delete.
+     * @return A [Result] indicating success or failure.
+     */
+    suspend fun deleteCollection(collectionId: String): Result<Unit>
 }
