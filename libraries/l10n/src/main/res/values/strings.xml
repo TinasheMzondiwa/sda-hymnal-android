@@ -30,6 +30,9 @@
     <string name="pref_theme_follow_system">Follow system</string>
     <string name="pref_theme_light">Light</string>
     <string name="sabbath">Sabbath</string>
+    <string name="sabbath_enable_location">Enable Location</string>
+    <string name="sabbath_grant_permission">Grant Permission</string>
+    <string name="sabbath_permission_location_prompt">Please grant location permission to display accurate Sabbath times for your area.</string>
     <string name="save">Save</string>
     <string name="save_to_collection">Save to collection</string>
     <string name="search">Search</string>

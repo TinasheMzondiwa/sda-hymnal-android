@@ -5,4 +5,20 @@ package hymnal.sabbath
 
 import com.slack.circuit.runtime.CircuitUiState
 
-data object State : CircuitUiState
+sealed interface State : CircuitUiState {
+    object Loading : State
+    data class NoLocation(
+        val eventSink: (Event.NoLocation) -> Unit
+    ) : State
+
+    data class SabbathInfo(
+        val location: String,
+    ) : State
+}
+
+sealed interface Event {
+    sealed interface NoLocation : Event {
+        data object OnLocationGranted : NoLocation
+        data object OnLocationDenied : NoLocation
+    }
+}

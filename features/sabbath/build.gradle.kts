@@ -14,6 +14,9 @@ foundry { features { compose() } }
 ksp { arg("circuit.codegen.mode", "metro") }
 
 dependencies {
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.kotlin.coroutines.playservices)
+    implementation(libs.play.services.location)
     implementation(libs.timber)
     implementation(projects.libraries.coreUi)
     implementation(projects.libraries.l10n)

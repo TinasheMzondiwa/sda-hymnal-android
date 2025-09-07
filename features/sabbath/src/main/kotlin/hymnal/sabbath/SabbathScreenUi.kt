@@ -3,25 +3,95 @@
 
 package hymnal.sabbath
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.keepScreenOn
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.slack.circuit.codegen.annotations.CircuitInject
 import dev.zacsweers.metro.AppScope
 import hymnal.libraries.navigation.SabbathScreen
+import hymnal.sabbath.components.NoLocationContent
+import hymnal.sabbath.components.SabbathTopAppBar
+import hymnal.ui.theme.HymnalTheme
+import hymnal.ui.widget.scaffold.HazeScaffold
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @CircuitInject(SabbathScreen::class, AppScope::class)
 @Composable
 fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
-    Scaffold (
-        modifier = modifier.fillMaxSize().keepScreenOn(),
+    val scrollBehavior =
+        TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
+    HazeScaffold(
+        modifier = modifier
+            .fillMaxSize()
+            .keepScreenOn()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = { SabbathTopAppBar(scrollBehavior = scrollBehavior) },
+        blurTopBar = true,
         contentWindowInsets = WindowInsets.safeDrawing,
     ) { contentPadding ->
-        LazyColumn (contentPadding = contentPadding) {  }
+
+        AnimatedContent(
+            targetState = state,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(300))
+                    .togetherWith(fadeOut(animationSpec = tween(300)))
+            },
+            label = "content",
+        ) { targetState ->
+            when (targetState) {
+                State.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(contentPadding),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        LoadingIndicator()
+                    }
+                }
+
+                is State.NoLocation -> {
+                    NoLocationContent(
+                        state = targetState,
+                        modifier = Modifier
+                            .padding(contentPadding),
+                    )
+                }
+
+                is State.SabbathInfo -> {
+                    LazyColumn(contentPadding = contentPadding) {
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun Preview() {
+    HymnalTheme {
+        SabbathScreenUi(State.Loading)
     }
 }
