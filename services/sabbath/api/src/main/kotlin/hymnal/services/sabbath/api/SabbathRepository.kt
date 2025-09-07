@@ -3,6 +3,8 @@
 
 package hymnal.services.sabbath.api
 
+import kotlinx.coroutines.flow.Flow
+
 interface SabbathRepository {
-    suspend fun getSabbathInfo(latitude: Double, longitude: Double): Result<SabbathInfo>
+    fun getSabbathInfo(latitude: Double, longitude: Double): Flow<Result<SabbathInfo>>
 }

@@ -21,7 +21,9 @@ import hymnal.sabbath.state.CurrentLocationStateProducer
 import hymnal.sabbath.state.LocationResult
 import hymnal.services.sabbath.api.SabbathInfo
 import hymnal.services.sabbath.api.SabbathRepository
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Inject
 class SabbathPresenter(
@@ -35,11 +37,13 @@ class SabbathPresenter(
         var locationResult by rememberRetained { mutableStateOf<LocationResult?>(null) }
 
         val sabbathInfoState by produceRetainedState<SabbathInfo?>(null, locationResult) {
-            val location = (locationResult as? LocationResult.Granted)?.location ?: return@produceRetainedState
-            value = sabbathRepository.getSabbathInfo(
+            val location =
+                (locationResult as? LocationResult.Granted)?.location ?: return@produceRetainedState
+            sabbathRepository.getSabbathInfo(
                 latitude = location.latitude,
-                longitude = location.longitude
-            ).getOrNull()
+                longitude = location.longitude,
+            ).catch { Timber.e(it) }
+                .collect { value = it.getOrNull() }
         }
         val sabbathInfo = sabbathInfoState
 
@@ -59,8 +63,8 @@ class SabbathPresenter(
                             }
                         }
                     }
-                }
-            )
+                })
+
             is LocationResult.Granted if sabbathInfo != null -> State.SabbathInfo(
                 location = sabbathInfo.location,
             )

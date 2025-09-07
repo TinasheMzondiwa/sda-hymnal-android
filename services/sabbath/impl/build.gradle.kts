@@ -24,4 +24,5 @@ dependencies {
     implementation(libs.timber)
 
     implementation(projects.libraries.model)
+    implementation(projects.services.storage)
 }

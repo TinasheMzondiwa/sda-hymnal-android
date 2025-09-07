@@ -84,11 +84,6 @@ class SunriseSunsetServiceImpl(val client: HttpClient) : SunriseSunsetService {
         }
     }
 
-    private fun fridayDate(): String =
-        LocalDate.now()
-            .with(TemporalAdjusters.previousOrSame(DayOfWeek.FRIDAY))
-            .format(DateTimeFormatter.ISO_LOCAL_DATE)
-
     private fun saturdayDate(): String =
         LocalDate.now()
             .with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY))
@@ -98,6 +93,11 @@ class SunriseSunsetServiceImpl(val client: HttpClient) : SunriseSunsetService {
         private const val SUNRISE_SUNSET_API_URL = "https://api.sunrise-sunset.org/json"
     }
 }
+
+fun fridayDate(): String =
+    LocalDate.now()
+        .with(TemporalAdjusters.previousOrSame(DayOfWeek.FRIDAY))
+        .format(DateTimeFormatter.ISO_LOCAL_DATE)
 
 @Serializable
 private data class SunriseSunsetResponse(
