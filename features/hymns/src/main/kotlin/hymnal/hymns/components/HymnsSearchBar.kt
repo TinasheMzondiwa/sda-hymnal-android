@@ -50,6 +50,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import hymnal.ui.extensions.LocalWindowWidthSizeClass
 import hymnal.ui.theme.HymnalTheme
+import hymnal.ui.widget.hymn.NumberText
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
