@@ -6,6 +6,7 @@ package app.hymnal.di
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import app.hymnal.BuildConfig
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
@@ -15,6 +16,7 @@ import dev.zacsweers.metro.Multibinds
 import dev.zacsweers.metro.Provider
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
+import hymnal.libraries.model.HymnalAppConfig
 import hymnal.services.content.HymnalContentSyncProvider
 import kotlin.reflect.KClass
 
@@ -42,6 +44,14 @@ interface AppGraph {
             .addUiFactories(uiFactories)
             .build()
     }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    fun provideAppConfig(): HymnalAppConfig = HymnalAppConfig(
+        version = BuildConfig.VERSION_NAME,
+        buildNumber = BuildConfig.VERSION_CODE,
+        isDebug = BuildConfig.DEBUG,
+    )
 
     val contentSyncProvider: HymnalContentSyncProvider
 

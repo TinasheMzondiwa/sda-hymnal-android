@@ -22,6 +22,7 @@ include(
     ":libraries:core-ui",
     ":libraries:foundation:coroutines",
     ":libraries:l10n",
+    ":libraries:model",
     ":libraries:navigation:api",
     ":libraries:navigation:number",
     ":services:hymnal-content:api",
