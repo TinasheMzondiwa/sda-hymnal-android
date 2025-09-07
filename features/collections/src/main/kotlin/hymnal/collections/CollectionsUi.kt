@@ -153,11 +153,16 @@ private fun LazyListScope.collectionsContent(state: State, hapticFeedback: AppHa
             items(items = state.collections, key = { it.collectionId }) { collection ->
                 CollectionCard(
                     collection = collection,
-                    modifier = Modifier.animateItem()
-                ) {
-                    hapticFeedback.performClick()
-                    state.eventSink(Event.OnCollectionClicked(collection))
-                }
+                    modifier = Modifier.animateItem(),
+                    onClick = {
+                        hapticFeedback.performClick()
+                        state.eventSink(Event.OnCollectionClicked(collection))
+                    },
+                    onDelete = {
+                        hapticFeedback.performError()
+                        state.eventSink(Event.OnDeleteCollectionClicked(collection))
+                    }
+                )
             }
         }
     }

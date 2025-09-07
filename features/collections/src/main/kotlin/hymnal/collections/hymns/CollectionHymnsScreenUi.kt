@@ -33,12 +33,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.slack.circuit.sharedelements.PreviewSharedElementTransitionLayout
-import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import dev.zacsweers.metro.AppScope
 import hymnal.collections.components.CollectionColor
 import hymnal.libraries.navigation.CollectionHymnsScreen
-import hymnal.libraries.navigation.key.CollectionSharedTransitionKey
 import hymnal.ui.extensions.copy
 import hymnal.ui.haptics.AppHapticFeedback
 import hymnal.ui.haptics.LocalAppHapticFeedback
@@ -55,20 +52,8 @@ fun CollectionHymnsScreenUi(state: State, modifier: Modifier = Modifier) {
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
-    SharedElementTransitionScope {
         HazeScaffold(
             modifier = modifier
-                .sharedElement(
-                    sharedContentState =
-                        rememberSharedContentState(
-                            CollectionSharedTransitionKey(
-                                id = state.id,
-                                type = CollectionSharedTransitionKey.ElementType.Card,
-                            )
-                        ),
-                    animatedVisibilityScope =
-                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                )
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = { CollectionHymnsTopAppBar(state = state, scrollBehavior = scrollBehavior) },
@@ -87,7 +72,6 @@ fun CollectionHymnsScreenUi(state: State, modifier: Modifier = Modifier) {
                 listContent(state, hapticFeedback)
             }
         }
-    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalSharedTransitionApi::class)
@@ -96,26 +80,12 @@ private fun LazyListScope.listContent(state: State, hapticFeedback: AppHapticFee
         is State.Content -> {
             item("description") {
                 state.description?.let {
-                    SharedElementTransitionScope {
                         CollectionDescription(
                             description = it,
                             color = state.color,
                             modifier = Modifier
-                                .sharedBounds(
-                                    sharedContentState =
-                                        rememberSharedContentState(
-                                            CollectionSharedTransitionKey(
-                                                id = state.id,
-                                                type = CollectionSharedTransitionKey.ElementType.Description,
-                                            )
-                                        ),
-                                    animatedVisibilityScope =
-                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                                )
-                                .animateItem()
                                 .padding(horizontal = 8.dp)
                         )
-                    }
                 }
             }
             items(state.hymns, key = { it.index }) { hymn ->
@@ -161,7 +131,6 @@ private fun LazyListScope.listContent(state: State, hapticFeedback: AppHapticFee
 @PreviewLightDark
 @Composable
 private fun Preview() {
-    PreviewSharedElementTransitionLayout {
         HymnalTheme {
             CollectionHymnsScreenUi(
                 state =
@@ -176,5 +145,4 @@ private fun Preview() {
                     ),
             )
         }
-    }
 }

@@ -40,8 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.slack.circuit.sharedelements.SharedElementTransitionScope
-import hymnal.libraries.navigation.key.CollectionSharedTransitionKey
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.color.toColor
 import hymnal.libraries.l10n.R as L10nR
@@ -59,105 +57,74 @@ internal fun CollectionHymnsTopAppBar(
 ) {
     val hapticFeedback = LocalAppHapticFeedback.current
 
-    SharedElementTransitionScope {
-        LargeTopAppBar(
-            title = {
-                Column(modifier = Modifier.fillMaxWidth().skipToLookaheadSize()) {
-                    Text(
-                        text = (state as? State.Content)?.title ?: "",
-                        modifier = Modifier
-                            .sharedBounds(
-                                sharedContentState =
-                                    rememberSharedContentState(
-                                        CollectionSharedTransitionKey(
-                                            id = state.id,
-                                            type = CollectionSharedTransitionKey.ElementType.Title,
-                                        )
-                                    ),
-                                animatedVisibilityScope =
-                                    requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                            )
-                            .fillMaxWidth(),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+    LargeTopAppBar(
+        title = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = (state as? State.Content)?.title ?: "",
 
-                    AnimatedVisibility(scrollBehavior?.state?.collapsedFraction == 0f) {
-                        Spacer(
-                            Modifier
-                                .padding(top = 16.dp)
-                                .size(48.dp, 4.dp)
-                                .background(
-                                    color = (state as? State.Content)?.color?.toColor()
-                                        ?: MaterialTheme.colorScheme.primary,
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                        )
-                    }
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
+                AnimatedVisibility(scrollBehavior?.state?.collapsedFraction == 0f) {
+                    Spacer(
+                        Modifier
+                            .padding(top = 16.dp)
+                            .size(48.dp, 4.dp)
+                            .background(
+                                color = (state as? State.Content)?.color?.toColor()
+                                    ?: MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                    )
                 }
-            },
-            modifier = modifier.skipToLookaheadSize(),
-            navigationIcon = {
-                IconButton(onClick = {
+            }
+        },
+        modifier = modifier,
+        navigationIcon = {
+            IconButton(onClick = {
+                hapticFeedback.performClick()
+                (state as? State.Content)?.eventSink(Event.OnNavBack)
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = stringResource(L10nR.string.nav_back)
+                )
+            }
+        },
+        actions = {
+            var showMenu by remember { mutableStateOf(false) }
+            IconButton(
+                onClick = {
                     hapticFeedback.performClick()
-                    (state as? State.Content)?.eventSink(Event.OnNavBack)
-                }
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = stringResource(L10nR.string.nav_back)
-                    )
-                }
-            },
-            actions = {
-                var showMenu by remember { mutableStateOf(false) }
-                IconButton(
-                    onClick = {
-                        hapticFeedback.performClick()
-                        showMenu = true
-                    },
-                    modifier = Modifier.sharedBounds(
-                        sharedContentState =
-                            rememberSharedContentState(
-                                CollectionSharedTransitionKey(
-                                    id = state.id,
-                                    type = CollectionSharedTransitionKey.ElementType.MoreButton,
-                                )
-                            ),
-                        animatedVisibilityScope =
-                            requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                    ),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = Color.Black.copy(alpha = 0.04f)
-                    )
-                ) {
-                    Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
-                }
-                DropdownMenu(
-                    expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                    DropdownMenuItem(
-                        text = {
-                            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                Icon(
-                                    imageVector = Icons.Rounded.DeleteForever,
-                                    contentDescription = null
-                                )
-                                Text(stringResource(id = L10nR.string.delete))
-                            }
-                        },
-                        onClick = {
-                            showMenu = false
-                            hapticFeedback.performError()
-                            (state as? State.Content)?.eventSink(Event.OnDeleteCollectionClicked)
-                        }
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent,
-                scrolledContainerColor = Color.Transparent,
-            ),
-            scrollBehavior = scrollBehavior,
-        )
-    }
+                    showMenu = true
+                }, colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = Color.Black.copy(alpha = 0.04f)
+                )
+            ) {
+                Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
+            }
+            DropdownMenu(
+                expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                DropdownMenuItem(text = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Icon(
+                            imageVector = Icons.Rounded.DeleteForever, contentDescription = null
+                        )
+                        Text(stringResource(id = L10nR.string.delete))
+                    }
+                }, onClick = {
+                    showMenu = false
+                    hapticFeedback.performError()
+                    (state as? State.Content)?.eventSink(Event.OnDeleteCollectionClicked)
+                })
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.Transparent,
+            scrolledContainerColor = Color.Transparent,
+        ),
+        scrollBehavior = scrollBehavior,
+    )
 }

@@ -31,6 +31,7 @@ sealed interface State : CircuitUiState {
 
 sealed interface Event: CircuitUiEvent {
     data class OnCollectionClicked(val collection: HymnsCollection) : Event
+    data class OnDeleteCollectionClicked(val collection: HymnsCollection) : Event
     data object OnAddCollectionClicked : Event
 }
 

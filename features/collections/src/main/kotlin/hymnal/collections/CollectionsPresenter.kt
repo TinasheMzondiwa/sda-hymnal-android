@@ -16,6 +16,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.Inject
+import hymnal.collections.CollectionOverlayState.*
 import hymnal.collections.create.CreateCollectionScreen
 import hymnal.libraries.navigation.CollectionHymnsScreen
 import hymnal.libraries.navigation.CollectionsScreen
@@ -45,7 +46,7 @@ class CollectionsPresenter(
             when (event) {
                 Event.OnAddCollectionClicked -> {
                     overlayState =
-                        CollectionOverlayState.BottomSheet(
+                        BottomSheet(
                             screen = CreateCollectionScreen(),
                             skipPartiallyExpanded = true,
                             onResult = { result ->
@@ -56,6 +57,8 @@ class CollectionsPresenter(
                 is Event.OnCollectionClicked -> {
                     navigator.goTo(CollectionHymnsScreen(event.collection.collectionId))
                 }
+
+                is Event.OnDeleteCollectionClicked -> Unit
             }
         }
 
