@@ -11,5 +11,6 @@ foundry { features { compose() } }
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.annotations)
     implementation(libs.androidx.compose.runtime)
 }

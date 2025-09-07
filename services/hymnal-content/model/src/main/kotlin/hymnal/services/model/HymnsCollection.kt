@@ -3,8 +3,10 @@
 
 package hymnal.services.model
 
+import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 
+@Keep
 @Immutable
 data class HymnsCollection(
     val collectionId: String,

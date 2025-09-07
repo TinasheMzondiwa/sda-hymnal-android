@@ -1,3 +1,6 @@
+// Copyright (C) 2025 Tinashe Mzondiwa
+// SPDX-License-Identifier: Apache-2.0
+
 package hymnal.services.model
 
 import androidx.compose.runtime.Stable
