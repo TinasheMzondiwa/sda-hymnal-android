@@ -1,0 +1,112 @@
+// Copyright (C) 2025 Tinashe Mzondiwa
+// SPDX-License-Identifier: Apache-2.0
+
+package hymnal.services.sabbath.impl.service
+
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
+import kotlinx.serialization.Serializable
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+interface SunriseSunsetService {
+    suspend fun getSunriseSunset(
+        latitude: Double,
+        longitude: Double,
+    ): Result<SabbathTimes>
+}
+
+data class SabbathTimes(
+    val friday: String,
+    val saturday: String,
+)
+
+@ContributesBinding(AppScope::class)
+@Inject
+class SunriseSunsetServiceImpl(val client: HttpClient) : SunriseSunsetService {
+
+    // https://api.sunrise-sunset.org/json?lat=36.7201600&lng=-4.4203400&date=2025-09-07
+
+    override suspend fun getSunriseSunset(
+        latitude: Double,
+        longitude: Double,
+    ): Result<SabbathTimes> {
+        return try {
+            val friday = getSunsetTime(
+                latitude = latitude,
+                longitude = longitude,
+                date = fridayDate()
+            )
+            val saturday = getSunsetTime(
+                latitude = latitude,
+                longitude = longitude,
+                date = saturdayDate()
+            )
+            if (friday.isSuccess && saturday.isSuccess) {
+                Result.success(
+                    SabbathTimes(
+                        friday = friday.getOrThrow(),
+                        saturday = saturday.getOrThrow()
+                    )
+                )
+            } else {
+                Result.failure(Exception("Error fetching sunset times"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    private suspend fun getSunsetTime(
+        latitude: Double,
+        longitude: Double,
+        date: String,
+    ): Result<String> {
+        val response: HttpResponse = client.get {
+            url("${BASE_URL}json")
+            parameter("lat", latitude)
+            parameter("lng", longitude)
+            parameter("date", date)
+            parameter("formatted", 0) // ISO 8601 format
+        }
+        return if (response.status.value in 200..299) {
+            val body: SunriseSunsetResponse = response.body()
+            Result.success(body.results.sunset)
+        } else {
+            Result.failure(Exception("Error fetching sunrise/sunset data: ${response.status}"))
+        }
+    }
+
+    private fun fridayDate(): String =
+        LocalDate.now()
+            .with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.FRIDAY))
+            .format(DateTimeFormatter.ISO_LOCAL_DATE)
+
+    private fun saturdayDate(): String =
+        LocalDate.now()
+            .with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY))
+            .format(DateTimeFormatter.ISO_LOCAL_DATE)
+
+    companion object {
+        private const val BASE_URL = "https://api.sunrise-sunset.org/"
+    }
+}
+
+@Serializable
+private data class SunriseSunsetResponse(
+    val results: SunriseSunsetResults,
+    val status: String
+)
+
+@Serializable
+private data class SunriseSunsetResults(
+    val sunset: String,
+)

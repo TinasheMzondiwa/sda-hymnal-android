@@ -21,5 +21,6 @@ dependencies {
     implementation(projects.libraries.coreUi)
     implementation(projects.libraries.l10n)
     implementation(projects.libraries.navigation.api)
+    implementation(projects.services.sabbath.api)
     ksp(libs.circuit.codegen)
 }
