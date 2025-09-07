@@ -52,26 +52,26 @@ fun CollectionHymnsScreenUi(state: State, modifier: Modifier = Modifier) {
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
-        HazeScaffold(
-            modifier = modifier
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = { CollectionHymnsTopAppBar(state = state, scrollBehavior = scrollBehavior) },
-            blurTopBar = true,
-            contentWindowInsets = WindowInsets.safeDrawing,
-        ) { contentPadding ->
-            LazyColumn(
-                contentPadding = contentPadding.copy(
-                    layoutDirection = layoutDirection,
-                    top = contentPadding.calculateTopPadding() + 12.dp,
-                    start = contentPadding.calculateStartPadding(layoutDirection) + 16.dp,
-                    end = contentPadding.calculateEndPadding(layoutDirection) + 16.dp,
-                ),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                listContent(state, hapticFeedback)
-            }
+    HazeScaffold(
+        modifier = modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = { CollectionHymnsTopAppBar(state = state, scrollBehavior = scrollBehavior) },
+        blurTopBar = true,
+        contentWindowInsets = WindowInsets.safeDrawing,
+    ) { contentPadding ->
+        LazyColumn(
+            contentPadding = contentPadding.copy(
+                layoutDirection = layoutDirection,
+                top = contentPadding.calculateTopPadding() + 12.dp,
+                start = contentPadding.calculateStartPadding(layoutDirection) + 16.dp,
+                end = contentPadding.calculateEndPadding(layoutDirection) + 16.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            listContent(state, hapticFeedback)
         }
+    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalSharedTransitionApi::class)
@@ -80,12 +80,12 @@ private fun LazyListScope.listContent(state: State, hapticFeedback: AppHapticFee
         is State.Content -> {
             item("description") {
                 state.description?.let {
-                        CollectionDescription(
-                            description = it,
-                            color = state.color,
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
-                        )
+                    CollectionDescription(
+                        description = it,
+                        color = state.color,
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                    )
                 }
             }
             items(state.hymns, key = { it.index }) { hymn ->
@@ -131,18 +131,18 @@ private fun LazyListScope.listContent(state: State, hapticFeedback: AppHapticFee
 @PreviewLightDark
 @Composable
 private fun Preview() {
-        HymnalTheme {
-            CollectionHymnsScreenUi(
-                state =
-                    State.Content(
-                        id = "collection_1",
-                        title = "Sample Collection",
-                        description = "This is a sample collection description.",
-                        color = CollectionColor.coralOrange.hex,
-                        hymns = persistentListOf(previewHymn),
-                        eventSink = {
-                        }
-                    ),
-            )
-        }
+    HymnalTheme {
+        CollectionHymnsScreenUi(
+            state =
+                State.Content(
+                    id = "collection_1",
+                    title = "Sample Collection",
+                    description = "This is a sample collection description.",
+                    color = CollectionColor.coralOrange.hex,
+                    hymns = persistentListOf(previewHymn),
+                    eventSink = {
+                    }
+                ),
+        )
+    }
 }
