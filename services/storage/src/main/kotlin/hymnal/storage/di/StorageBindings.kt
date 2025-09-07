@@ -12,6 +12,7 @@ import dev.zacsweers.metro.SingleIn
 import hymnal.storage.db.HymnalDatabase
 import hymnal.storage.db.dao.CollectionDao
 import hymnal.storage.db.dao.HymnsDao
+import hymnal.storage.db.dao.SabbathTimesDao
 
 @ContributesTo(AppScope::class)
 @BindingContainer
@@ -28,5 +29,11 @@ object StorageBindings {
     fun provideCollectionDao(
         context: Context
     ): CollectionDao = HymnalDatabase.getInstance(context).collectionsDao()
+
+    @Provides
+    @SingleIn(AppScope::class)
+    fun provideSabbathTimesDao(
+        context: Context
+    ): SabbathTimesDao = HymnalDatabase.getInstance(context).sabbathTimesDao()
 
 }
