@@ -35,7 +35,7 @@ interface SabbathTimesHelper {
      *
      * Week is considered Sunday → Saturday.
      */
-    fun sabbathDayId(end: String? = null): String
+    fun sabbathDayId(end: ZonedDateTime? = null): String
 }
 
 @ContributesBinding(AppScope::class)
@@ -53,13 +53,12 @@ class SabbathTimesHelperImpl(
         return friday.plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE)
     }
 
-    override fun sabbathDayId(end: String?): String {
+    override fun sabbathDayId(end: ZonedDateTime?): String {
         val thisFriday = thisFriday()
 
         // Check if the current time is past the provided end time.
         val shouldUseNextFriday = end?.let {
-            val endTime = ZonedDateTime.parse(it, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-            ZonedDateTime.now(endTime.zone).isAfter(endTime)
+            ZonedDateTime.now(end.zone).isAfter(end)
         } ?: false
 
         // If the end time has passed, get next week's Friday, otherwise use the current week's.

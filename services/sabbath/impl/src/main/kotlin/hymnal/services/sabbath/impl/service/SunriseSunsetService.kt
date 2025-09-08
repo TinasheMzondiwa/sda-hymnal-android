@@ -6,6 +6,7 @@ package hymnal.services.sabbath.impl.service
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
+import hymnal.services.sabbath.impl.service.model.SabbathTimes
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -13,6 +14,8 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import kotlinx.serialization.Serializable
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 interface SunriseSunsetService {
     suspend fun getSabbathTimes(
@@ -20,11 +23,6 @@ interface SunriseSunsetService {
         longitude: Double,
     ): Result<SabbathTimes>
 }
-
-data class SabbathTimes(
-    val friday: String,
-    val saturday: String,
-)
 
 @ContributesBinding(AppScope::class)
 @Inject
@@ -67,13 +65,14 @@ class SunriseSunsetServiceImpl(
         latitude: Double,
         longitude: Double,
         date: String,
-    ): Result<String> {
+    ): Result<ZonedDateTime> {
         val response: HttpResponse = client.get {
             url(SUNRISE_SUNSET_API_URL)
             parameter("lat", latitude)
             parameter("lng", longitude)
             parameter("date", date)
             parameter("formatted", 0) // ISO 8601 format
+            parameter("tzid", ZoneId.systemDefault().id)
         }
         return if (response.status.value in 200..299) {
             val body: SunriseSunsetResponse = response.body()
@@ -97,5 +96,6 @@ private data class SunriseSunsetResponse(
 
 @Serializable
 private data class SunriseSunsetResults(
-    val sunset: String,
+    @Serializable(ZonedDateTimeSerializer::class)
+    val sunset: ZonedDateTime,
 )

@@ -11,7 +11,7 @@ import dev.zacsweers.metro.Inject
 import hymnal.libraries.coroutines.DispatcherProvider
 import hymnal.services.sabbath.api.SabbathInfo
 import hymnal.services.sabbath.api.SabbathRepository
-import hymnal.services.sabbath.impl.service.SabbathTimes
+import hymnal.services.sabbath.impl.service.model.SabbathTimes
 import hymnal.services.sabbath.impl.service.SabbathTimesHelper
 import hymnal.services.sabbath.impl.service.SunriseSunsetService
 import hymnal.storage.db.dao.SabbathTimesDao
@@ -91,7 +91,7 @@ class SabbathRepositoryImpl(
         longitude: Double
     ): SabbathInfo {
         val (friday, saturday) = when (sabbathTimes) {
-            is SabbathTimesEntity -> sabbathTimes.friday to sabbathTimes.saturday
+            is SabbathTimesEntity -> sabbathTimes.friday.asDateTime() to sabbathTimes.saturday.asDateTime()
             is SabbathTimes -> sabbathTimes.friday to sabbathTimes.saturday
             else -> throw IllegalArgumentException("Unsupported type for sabbathTimes: ${sabbathTimes::class.java.name}")
         }
@@ -109,8 +109,8 @@ class SabbathRepositoryImpl(
             sabbathTimesDao.insert(
                 SabbathTimesEntity(
                     id = id,
-                    friday = sabbathTimes.friday,
-                    saturday = sabbathTimes.saturday
+                    friday = sabbathTimes.friday.asDateString(),
+                    saturday = sabbathTimes.saturday.asDateString()
                 )
             )
         }
@@ -122,16 +122,12 @@ class SabbathRepositoryImpl(
      * @param start The start time of Sabbath in the format (2025-09-07T23:44:58+00:00).
      * @param end The end time of Sabbath in the format (2025-09-07T10:45:34+00:00).
      */
-    private fun isSabbathDay(start: String, end: String): Boolean {
-        val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
-        val sabbathStart = ZonedDateTime.parse(start, formatter)
-        val sabbathEnd = ZonedDateTime.parse(end, formatter)
-        val now = ZonedDateTime.now(sabbathStart.zone) // use same timezone as input
-
-        return !now.isBefore(sabbathStart) && !now.isAfter(sabbathEnd)
+    private fun isSabbathDay(start: ZonedDateTime, end: ZonedDateTime): Boolean {
+        val now = ZonedDateTime.now(start.zone) // use same timezone as input
+        return !now.isBefore(start) && !now.isAfter(end)
     }
 
-    fun getCityAndState(latitude: Double, longitude: Double): String {
+    private fun getCityAndState(latitude: Double, longitude: Double): String {
         @Suppress("DEPRECATION")
         val addresses = geocoder.getFromLocation(
             latitude, longitude, 1)
@@ -147,4 +143,10 @@ class SabbathRepositoryImpl(
             }
         } else "Unknown Location"
     }
+
+    private fun String.asDateTime(): ZonedDateTime =
+        ZonedDateTime.parse(this, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
+    private fun ZonedDateTime.asDateString(): String =
+        this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 }

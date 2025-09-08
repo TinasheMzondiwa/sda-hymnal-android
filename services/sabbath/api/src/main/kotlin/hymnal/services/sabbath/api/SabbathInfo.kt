@@ -4,11 +4,12 @@
 package hymnal.services.sabbath.api
 
 import androidx.annotation.Keep
+import java.time.ZonedDateTime
 
 @Keep
 data class SabbathInfo(
     val location: String,
     val isSabbath: Boolean,
-    val sabbathStart: String,
-    val sabbathEnd: String,
+    val sabbathStart: ZonedDateTime,
+    val sabbathEnd: ZonedDateTime,
 )
