@@ -14,6 +14,7 @@ sealed interface State : CircuitUiState {
     data class SabbathInfo(
         val location: String,
         val isSabbath: Boolean,
+        val progress: Float,
         val countDown: String,
         val sabbathStart: String,
         val sabbathEnd: String,

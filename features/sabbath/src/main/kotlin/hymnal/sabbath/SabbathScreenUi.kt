@@ -8,12 +8,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -32,6 +34,8 @@ import dev.zacsweers.metro.AppScope
 import hymnal.libraries.navigation.SabbathScreen
 import hymnal.sabbath.components.NoLocationContent
 import hymnal.sabbath.components.SabbathTopAppBar
+import hymnal.sabbath.components.drawRadialGlow
+import hymnal.sabbath.components.rememberSabbathColors
 import hymnal.sabbath.components.sabbathInfo
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.scaffold.HazeScaffold
@@ -42,6 +46,7 @@ import hymnal.ui.widget.scaffold.HazeScaffold
 fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val colors = rememberSabbathColors(isDark = isSystemInDarkTheme())
 
     HazeScaffold(
         modifier = modifier
@@ -51,6 +56,8 @@ fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
         topBar = { SabbathTopAppBar(scrollBehavior = scrollBehavior) },
         blurTopBar = true,
         contentWindowInsets = WindowInsets.safeDrawing,
+        containerColor = colors.bg,
+        contentColor = colors.text,
     ) { contentPadding ->
 
         AnimatedContent(
@@ -82,12 +89,22 @@ fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
                 }
 
                 is State.SabbathInfo -> {
-                    LazyColumn(
-                        contentPadding = contentPadding,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        sabbathInfo(targetState)
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Box(
+                            modifier = Modifier
+                                .size(420.dp)
+                                .align(Alignment.Center)
+                                .drawRadialGlow(color = colors.accent.copy(alpha = 0.12f))
+                        )
+
+                        LazyColumn(
+                            modifier = Modifier,
+                            contentPadding = contentPadding,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            sabbathInfo(targetState, colors)
+                        }
                     }
                 }
             }

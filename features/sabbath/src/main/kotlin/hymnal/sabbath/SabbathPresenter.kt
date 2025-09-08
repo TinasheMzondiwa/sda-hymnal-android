@@ -25,6 +25,8 @@ import hymnal.services.sabbath.api.SabbathRepository
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.Duration
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 @Inject
@@ -49,6 +51,7 @@ class SabbathPresenter(
         }
 
         val countDownTime by rememberCountDownTime(sabbathInfo)
+        val sabbathProgress by rememberSabbathProgress(sabbathInfo)
 
         return when (locationResult) {
             null -> State.Loading
@@ -67,6 +70,7 @@ class SabbathPresenter(
             is LocationResult.Granted if sabbathInfo != null -> State.SabbathInfo(
                 location = sabbathInfo.location,
                 isSabbath = sabbathInfo.isSabbath,
+                progress = sabbathProgress,
                 countDown = countDownTime,
                 sabbathStart = sabbathInfo.sabbathStart.format(formatter),
                 sabbathEnd = sabbathInfo.sabbathEnd.format(formatter),
@@ -100,6 +104,25 @@ class SabbathPresenter(
                     .collect { value = it }
             }?.run {
                 value = "---"
+            }
+        }
+
+    @Composable
+    private fun rememberSabbathProgress(sabbathInfo: SabbathInfo?) =
+        produceRetainedState(0f, sabbathInfo) {
+            sabbathInfo?.run {
+                val progress = when {
+                    isSabbath -> {
+                        val now = ZonedDateTime.now()
+                        val total = Duration.between(sabbathStart, sabbathEnd).toMillis().coerceAtLeast(1)
+                        val part = Duration.between(sabbathStart, now).toMillis().coerceAtLeast(0)
+                        (part.toFloat() / total.toFloat()).coerceIn(0f, 1f)
+                    }
+                    else -> 0f
+                }
+                value = progress
+            }?.run {
+                value = 0f
             }
         }
 
