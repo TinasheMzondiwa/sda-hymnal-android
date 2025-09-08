@@ -13,10 +13,6 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import kotlinx.serialization.Serializable
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAdjusters
 
 interface SunriseSunsetService {
     suspend fun getSabbathTimes(
@@ -32,7 +28,10 @@ data class SabbathTimes(
 
 @ContributesBinding(AppScope::class)
 @Inject
-class SunriseSunsetServiceImpl(val client: HttpClient) : SunriseSunsetService {
+class SunriseSunsetServiceImpl(
+    val client: HttpClient,
+    val helper: SabbathTimesHelper,
+) : SunriseSunsetService {
 
     override suspend fun getSabbathTimes(
         latitude: Double,
@@ -42,12 +41,12 @@ class SunriseSunsetServiceImpl(val client: HttpClient) : SunriseSunsetService {
             val friday = getSunsetTime(
                 latitude = latitude,
                 longitude = longitude,
-                date = fridayDate()
+                date = helper.fridayDate()
             )
             val saturday = getSunsetTime(
                 latitude = latitude,
                 longitude = longitude,
-                date = saturdayDate()
+                date = helper.saturdayDate()
             )
             if (friday.isSuccess && saturday.isSuccess) {
                 Result.success(
@@ -84,20 +83,11 @@ class SunriseSunsetServiceImpl(val client: HttpClient) : SunriseSunsetService {
         }
     }
 
-    private fun saturdayDate(): String =
-        LocalDate.now()
-            .with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY))
-            .format(DateTimeFormatter.ISO_LOCAL_DATE)
 
     companion object {
         private const val SUNRISE_SUNSET_API_URL = "https://api.sunrise-sunset.org/json"
     }
 }
-
-fun fridayDate(): String =
-    LocalDate.now()
-        .with(TemporalAdjusters.previousOrSame(DayOfWeek.FRIDAY))
-        .format(DateTimeFormatter.ISO_LOCAL_DATE)
 
 @Serializable
 private data class SunriseSunsetResponse(

@@ -12,14 +12,18 @@ import hymnal.libraries.coroutines.DispatcherProvider
 import hymnal.services.sabbath.api.SabbathInfo
 import hymnal.services.sabbath.api.SabbathRepository
 import hymnal.services.sabbath.impl.service.SabbathTimes
+import hymnal.services.sabbath.impl.service.SabbathTimesHelper
 import hymnal.services.sabbath.impl.service.SunriseSunsetService
-import hymnal.services.sabbath.impl.service.fridayDate
 import hymnal.storage.db.dao.SabbathTimesDao
 import hymnal.storage.db.entity.SabbathTimesEntity
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.ZonedDateTime
@@ -30,26 +34,28 @@ import java.util.Locale
 @Inject
 class SabbathRepositoryImpl(
     private val appContext: Context,
+    private val helper: SabbathTimesHelper,
     private val sabbathTimesDao: SabbathTimesDao,
     private val sunriseSunsetService: SunriseSunsetService,
     private val dispatcherProvider: DispatcherProvider,
 ) : SabbathRepository {
 
+    private val sabbathIdFlow = MutableStateFlow(helper.sabbathDayId())
     private val geocoder: Geocoder by lazy { Geocoder(appContext, Locale.getDefault())  }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getSabbathInfo(
         latitude: Double,
         longitude: Double
     ): Flow<Result<SabbathInfo>> {
-        val id = fridayDate()
-
-        return sabbathTimesDao.getSabbathTimes(id)
+        return sabbathIdFlow
+            .flatMapLatest { sabbathTimesDao.getSabbathTimes(it) }
             .map { cachedSabbathTimes ->
                 if (cachedSabbathTimes != null) {
                     Result.success(createSabbathInfo(cachedSabbathTimes, latitude, longitude))
                 } else {
                     // If not in cache, fetch from network
-                    fetchAndCacheSabbathInfo(id, latitude, longitude)
+                    fetchAndCacheSabbathInfo(latitude, longitude)
                 }
             }
             .flowOn(dispatcherProvider.io)
@@ -60,7 +66,6 @@ class SabbathRepositoryImpl(
     }
 
     suspend fun fetchAndCacheSabbathInfo(
-        id: String,
         latitude: Double,
         longitude: Double
     ): Result<SabbathInfo> {
@@ -71,7 +76,7 @@ class SabbathRepositoryImpl(
             )
 
             response.map { sabbathTimes ->
-                cacheSabbathTimes(id = id, sabbathTimes)
+                cacheSabbathTimes(sabbathTimes)
                 createSabbathInfo(sabbathTimes, latitude, longitude)
             }
         }
@@ -95,10 +100,11 @@ class SabbathRepositoryImpl(
             isSabbath = isSabbathDay(start = friday, end = saturday),
             sabbathStart = friday,
             sabbathEnd = saturday,
-        )
+        ).also { sabbathIdFlow.update { helper.sabbathDayId(end = saturday) } }
     }
 
-    private suspend fun cacheSabbathTimes(id: String, sabbathTimes: SabbathTimes) {
+    private suspend fun cacheSabbathTimes(sabbathTimes: SabbathTimes) {
+        val id = sabbathIdFlow.value
         withContext(dispatcherProvider.io) {
             sabbathTimesDao.insert(
                 SabbathTimesEntity(
