@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,11 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.keepScreenOn
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import dev.zacsweers.metro.AppScope
 import hymnal.libraries.navigation.SabbathScreen
 import hymnal.sabbath.components.NoLocationContent
 import hymnal.sabbath.components.SabbathTopAppBar
+import hymnal.sabbath.components.sabbathInfo
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.scaffold.HazeScaffold
 
@@ -79,7 +82,12 @@ fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
                 }
 
                 is State.SabbathInfo -> {
-                    LazyColumn(contentPadding = contentPadding) {
+                    LazyColumn(
+                        contentPadding = contentPadding,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        sabbathInfo(targetState)
                     }
                 }
             }

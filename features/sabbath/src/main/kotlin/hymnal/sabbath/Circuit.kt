@@ -13,6 +13,10 @@ sealed interface State : CircuitUiState {
 
     data class SabbathInfo(
         val location: String,
+        val isSabbath: Boolean,
+        val countDown: String,
+        val sabbathStart: String,
+        val sabbathEnd: String,
     ) : State
 }
 
