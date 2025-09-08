@@ -51,7 +51,7 @@ internal fun rememberSabbathColors(isDark: Boolean): SabbathColors = remember(is
             gradientTop = Color(0x1AFFE3B0),   // ~10% alpha
             gradientBottom = Color(0x1AFFD1B3),
             outline = Color(0x1A000000),        // ~10% black for light mode
-            thumbSurface = Color(0xFFFFFFFF)    
+            thumbSurface = Color(0xFFFFFFFF)
         )
     }
 }
