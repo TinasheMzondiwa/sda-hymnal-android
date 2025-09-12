@@ -30,7 +30,7 @@ class CountdownStateProducerImpl(private val dispatcherProvider: DispatcherProvi
 
             // If the duration is negative or zero, the target time has been reached.
             if (duration.isNegative || duration.isZero) {
-                emit("0d 0h 00m")
+                emit("-- -- --")
                 break
             }
 
@@ -39,17 +39,34 @@ class CountdownStateProducerImpl(private val dispatcherProvider: DispatcherProvi
             val hours = duration.toHours() % 24
             val minutes = duration.toMinutes() % 60
 
-            // Format the output string with a two-digit minutes value.
-            val formattedString = if (isSabbath) {
-                String.format(Locale.getDefault(), "%dh %02dm", hours, minutes)
-            } else {
-                String.format(Locale.getDefault(), "%dd %dh %02dm", days, hours, minutes)
-            }
+            val formattedString = formattedString(days, hours, minutes, isSabbath)
             emit(formattedString)
-            println("Emitted countdown: $formattedString")
 
             // Wait for one minute before the next calculation and emission.
             delay(60 * 1000L)
         }
     }.flowOn(dispatcherProvider.default)
+
+    private fun formattedString(days: Long, hours: Long, minutes: Long, isSabbath: Boolean): String {
+        return buildString {
+            if (isSabbath) {
+                if (hours > 0) {
+                    append(String.format(Locale.getDefault(), "%dh ", hours))
+                    append("${minutes}m")
+                } else if (minutes > 0) {
+                    append(String.format(Locale.getDefault(), "%02dm", minutes))
+                }
+            } else {
+                if (days > 0) append(String.format(Locale.getDefault(), "%dd ", days))
+                if (hours > 0) {
+                    append(String.format(Locale.getDefault(), "%dh ", hours))
+                    append("${minutes}m")
+                } else if (minutes > 0) {
+                    append(String.format(Locale.getDefault(), "%02dm", minutes))
+                }
+            }
+
+            if (isEmpty()) append("0m") // fallback when everything is 0
+        }.trim()
+    }
 }
