@@ -22,5 +22,12 @@ dependencies {
     implementation(projects.libraries.l10n)
     implementation(projects.libraries.navigation.api)
     implementation(projects.services.sabbath.api)
+
+    testImplementation(libs.test.coroutines)
+    testImplementation(libs.test.junit)
+    testImplementation(libs.test.truth)
+    testImplementation(libs.test.turbine)
+    testImplementation(projects.libraries.foundation.coroutines.test)
+
     ksp(libs.circuit.codegen)
 }

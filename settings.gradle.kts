@@ -21,6 +21,7 @@ include(
     ":features:sing",
     ":libraries:core-ui",
     ":libraries:foundation:coroutines",
+    ":libraries:foundation:coroutines:test",
     ":libraries:l10n",
     ":libraries:model",
     ":libraries:navigation:api",
