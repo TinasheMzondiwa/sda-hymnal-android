@@ -54,7 +54,8 @@ class CountdownStateProducerImpl(private val dispatcherProvider: DispatcherProvi
                     append(String.format(Locale.getDefault(), "%dh ", hours))
                     append("${minutes}m")
                 } else if (minutes > 0) {
-                    append(String.format(Locale.getDefault(), "%d minutes", minutes))
+                    val format = if (minutes == 1L) "%d minute" else "%d minutes"
+                    append(String.format(Locale.getDefault(), format, minutes))
                 }
             } else {
                 if (days > 0) {
@@ -64,7 +65,8 @@ class CountdownStateProducerImpl(private val dispatcherProvider: DispatcherProvi
                         append(String.format(Locale.getDefault(), "%dh ", hours))
                         append("${minutes}m")
                     } else if (minutes > 0) {
-                        append(String.format(Locale.getDefault(), "%d minutes", minutes))
+                        val format = if (minutes == 1L) "%d minute" else "%d minutes"
+                        append(String.format(Locale.getDefault(), format, minutes))
                     }
                 }
             }
