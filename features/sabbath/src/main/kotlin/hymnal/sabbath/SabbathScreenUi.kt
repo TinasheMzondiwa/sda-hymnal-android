@@ -4,6 +4,7 @@
 package hymnal.sabbath
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -20,9 +21,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -48,6 +52,15 @@ fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val colors = rememberSabbathColors(isDark = isSystemInDarkTheme())
 
+    val containerColor by animateColorAsState(
+        targetValue = if (state is State.SabbathInfo) colors.bg else MaterialTheme.colorScheme.background,
+    )
+    val contentColor by animateColorAsState(
+        targetValue = if (state is State.SabbathInfo) colors.text else contentColorFor(
+            containerColor
+        ),
+    )
+
     HazeScaffold(
         modifier = modifier
             .fillMaxSize()
@@ -56,8 +69,8 @@ fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
         topBar = { SabbathTopAppBar(scrollBehavior = scrollBehavior) },
         blurTopBar = true,
         contentWindowInsets = WindowInsets.safeDrawing,
-        containerColor = colors.bg,
-        contentColor = colors.text,
+        containerColor = containerColor,
+        contentColor = contentColor,
     ) { contentPadding ->
 
         AnimatedContent(
@@ -89,7 +102,11 @@ fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
                 }
 
                 is State.SabbathInfo -> {
-                    Box(modifier = Modifier.fillMaxSize()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(contentPadding)
+                    ) {
                         Box(
                             modifier = Modifier
                                 .size(420.dp)
