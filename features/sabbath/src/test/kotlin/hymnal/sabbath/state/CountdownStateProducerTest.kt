@@ -48,7 +48,7 @@ class CountdownStateProducerTest {
 
         producer.invoke(targetDateTime = target, isSabbath = false).test {
             val first = awaitItem()
-            assertThat(first).isEqualTo("3d 3h 03m")
+            assertThat(first).isEqualTo("3d 3h")
             cancelAndIgnoreRemainingEvents()
         }
     }

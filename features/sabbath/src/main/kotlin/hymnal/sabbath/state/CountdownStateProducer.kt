@@ -42,8 +42,13 @@ class CountdownStateProducerImpl(private val dispatcherProvider: DispatcherProvi
             val formattedString = formattedString(days, hours, minutes, isSabbath)
             emit(formattedString)
 
-            // Wait for one minute before the next calculation and emission.
-            delay(60 * 1000L)
+            if (days > 1) {
+                // Wait for one hour before the next calculation and emission.
+                delay(ONE_HOUR)
+            } else {
+                // Wait for one minute before the next calculation and emission.
+                delay(ONE_MINUTE)
+            }
         }
     }.flowOn(dispatcherProvider.default)
 
@@ -59,7 +64,19 @@ class CountdownStateProducerImpl(private val dispatcherProvider: DispatcherProvi
                 }
             } else {
                 if (days > 0) {
-                    append(String.format(Locale.getDefault(), "%dd %dh %02dm", days, hours, minutes))
+                    if (days > 1) {
+                        append(String.format(Locale.getDefault(), "%dd %dh", days, hours))
+                    } else {
+                        append(
+                            String.format(
+                                Locale.getDefault(),
+                                "%dd %dh %02dm",
+                                days,
+                                hours,
+                                minutes
+                            )
+                        )
+                    }
                 } else {
                     if (hours > 0) {
                         append(String.format(Locale.getDefault(), "%dh ", hours))
@@ -73,5 +90,10 @@ class CountdownStateProducerImpl(private val dispatcherProvider: DispatcherProvi
 
             if (isEmpty()) append("0m") // fallback when everything is 0
         }.trim()
+    }
+
+    private companion object {
+        const val ONE_MINUTE = 60 * 1000L
+        const val ONE_HOUR = 60 * ONE_MINUTE
     }
 }

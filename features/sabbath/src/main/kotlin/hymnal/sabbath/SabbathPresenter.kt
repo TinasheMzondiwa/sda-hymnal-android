@@ -51,7 +51,7 @@ class SabbathPresenter(
         }
 
         val countDownTime by rememberCountDownTime(sabbathInfo)
-        val sabbathProgress by rememberSabbathProgress(sabbathInfo)
+        val sabbathProgress by rememberSabbathProgress(sabbathInfo, countDownTime)
 
         return when (locationResult) {
             null -> State.Loading
@@ -102,14 +102,12 @@ class SabbathPresenter(
                 }
                 flow.catch { Timber.e(it) }
                     .collect { value = it }
-            }?.run {
-                value = "---"
             }
         }
 
     @Composable
-    private fun rememberSabbathProgress(sabbathInfo: SabbathInfo?) =
-        produceRetainedState(0f, sabbathInfo) {
+    private fun rememberSabbathProgress(sabbathInfo: SabbathInfo?, key: Any) =
+        produceRetainedState(0f, sabbathInfo, key2 = key) {
             sabbathInfo?.run {
                 val progress = when {
                     isSabbath -> {
@@ -121,8 +119,6 @@ class SabbathPresenter(
                     else -> 0f
                 }
                 value = progress
-            }?.run {
-                value = 0f
             }
         }
 
