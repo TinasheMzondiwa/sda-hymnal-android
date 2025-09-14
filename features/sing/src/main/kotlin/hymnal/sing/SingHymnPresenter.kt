@@ -53,7 +53,7 @@ class SingHymnPresenter(
         }
         val hymn = _hymn
 
-        val topBarState = topBarStateProducer(navigator = navigator, hymnId = hymn?.index)
+        val topBarState = topBarStateProducer(navigator = navigator, hymn = hymn)
         val bottomBarState = bottomBarStateProducer(hymn) { hymnIndex = it }
 
         return when {

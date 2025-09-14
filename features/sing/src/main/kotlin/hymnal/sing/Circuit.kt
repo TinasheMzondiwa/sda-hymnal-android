@@ -3,6 +3,7 @@
 
 package hymnal.sing
 
+import android.content.Context
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
@@ -46,7 +47,7 @@ data class TopBarState(
         data object OnStyleClick : Event
         data object OnSaveClick : Event
         data object OnFullscreenClick : Event
-        data object OnShareClick : Event
+        data class OnShareClick(val context: Context) : Event
     }
 }
 

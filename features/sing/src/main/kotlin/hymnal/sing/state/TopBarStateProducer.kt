@@ -3,6 +3,8 @@
 
 package hymnal.sing.state
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -16,14 +18,18 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.navigation.AddToCollectionScreen
 import hymnal.services.content.repository.CollectionsRepository
+import hymnal.services.model.HymnLyrics
 import hymnal.sing.SingOverlayState
 import hymnal.sing.TopBarState
+import hymnal.sing.components.HymnContent
 import hymnal.sing.components.text.TextStyleScreen
+import kotlinx.coroutines.flow.catch
+import timber.log.Timber
 
 @Stable
 interface TopBarStateProducer {
     @Composable
-    operator fun invoke(navigator: Navigator, hymnId: String?): TopBarState
+    operator fun invoke(navigator: Navigator, hymn: HymnContent?): TopBarState
 }
 
 @Inject
@@ -32,10 +38,12 @@ class TopBarStateProducerImpl(
     private val collectionsRepository: CollectionsRepository
 ) : TopBarStateProducer {
     @Composable
-    override fun invoke(navigator: Navigator, hymnId: String?): TopBarState {
+    override fun invoke(navigator: Navigator, hymn: HymnContent?): TopBarState {
+        val hymnId = hymn?.index
         val collections by produceRetainedState(emptyList(), hymnId) {
             hymnId?.let { id ->
                 collectionsRepository.getHymnCollections(id)
+                    .catch { Timber.e(it) }
                     .collect { value = it }
             }
         }
@@ -57,7 +65,12 @@ class TopBarStateProducerImpl(
                                 ) { overlayState = null }
                         }
                     }
-                    TopBarState.Event.OnShareClick -> Unit
+                    is TopBarState.Event.OnShareClick -> hymn?.let {
+                        shareHymnText(
+                            event.context,
+                            it
+                        )
+                    }
                     TopBarState.Event.OnStyleClick -> {
                         overlayState =
                             SingOverlayState.BottomSheet(
@@ -68,5 +81,50 @@ class TopBarStateProducerImpl(
                 }
             }
         )
+    }
+}
+
+private fun shareHymnText(context: Context, hymn: HymnContent) {
+    var chorusAdded = false
+    val shareText = buildString {
+        append(hymn.number)
+        append(" - ")
+        append(hymn.title)
+        append("\n\n")
+        hymn.lyrics.forEach { verse ->
+            when (verse) {
+                is HymnLyrics.Chorus -> {
+                    if (!chorusAdded) {
+                        append("Chorus:\n")
+                        verse.lines.forEach {
+                            append(it)
+                            append("\n")
+                        }
+                        append("\n")
+                        chorusAdded = true
+                    }
+                }
+                is HymnLyrics.Verse -> {
+                    verse.lines.forEach {
+                        append(it)
+                        append("\n")
+                    }
+                    append("\n")
+                }
+            }
+
+        }
+        append("\n\n")
+    }
+
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, shareText)
+        type = "text/plain"
+    }
+
+    val shareIntent = Intent.createChooser(sendIntent, "Share Hymn")
+    if (sendIntent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(shareIntent)
     }
 }
