@@ -43,6 +43,7 @@ class MainActivity(
             val themeStyle by prefs.themeStyle()
                 .collectAsStateWithLifecycle(ThemeStyle())
             val appTheme = themeStyle.theme
+            val dynamicColors = themeStyle.dynamicColors
 
             val isSystemInDarkTheme = isSystemInDarkTheme()
             val isDarkTheme by remember(appTheme) {
@@ -55,6 +56,7 @@ class MainActivity(
                 circuit = circuit,
                 windowWidthSizeClass = calculateWindowSizeClass(this).widthSizeClass,
                 isDarkTheme = isDarkTheme,
+                dynamicColor = dynamicColors,
             )
         }
     }

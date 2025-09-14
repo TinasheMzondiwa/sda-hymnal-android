@@ -31,8 +31,9 @@ fun HymnalApp(
     circuit: Circuit,
     windowWidthSizeClass: WindowWidthSizeClass,
     isDarkTheme: Boolean,
+    dynamicColor: Boolean,
 ) {
-    HymnalTheme(darkTheme = isDarkTheme) {
+    HymnalTheme(darkTheme = isDarkTheme, dynamicColor = dynamicColor) {
         CompositionLocalProvider(
             LocalWindowWidthSizeClass provides windowWidthSizeClass,
         ) {

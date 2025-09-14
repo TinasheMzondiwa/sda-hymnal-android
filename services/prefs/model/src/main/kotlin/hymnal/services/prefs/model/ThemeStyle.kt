@@ -7,4 +7,5 @@ data class ThemeStyle(
     val theme: AppTheme = AppTheme.FOLLOW_SYSTEM,
     val font: AppFont = AppFont.POPPINS,
     val textSize: Float = 18f,
+    val dynamicColors: Boolean = false,
 )
