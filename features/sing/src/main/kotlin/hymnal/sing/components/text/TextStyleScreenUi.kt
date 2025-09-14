@@ -6,11 +6,14 @@ package hymnal.sing.components.text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.TextDecrease
 import androidx.compose.material.icons.rounded.TextIncrease
@@ -27,6 +30,8 @@ import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,12 +51,15 @@ import hymnal.services.prefs.model.AppTheme
 import hymnal.services.prefs.model.ThemeStyle
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
+import hymnal.ui.theme.ThemeCard
 import hymnal.ui.theme.type.AdventSansFontFamily
 import hymnal.ui.theme.type.GentiumFontFamily
 import hymnal.ui.theme.type.LatoFontFamily
 import hymnal.ui.theme.type.LoraFontFamily
 import hymnal.ui.theme.type.Poppins
 import hymnal.ui.theme.type.ProximaFontFamily
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import hymnal.libraries.l10n.R as L10nR
 import hymnal.sing.components.text.TextStyleScreen.Event as UiEvent
 import hymnal.sing.components.text.TextStyleScreen.State as UiState
@@ -66,9 +74,9 @@ fun TextStyleScreenUi(state: UiState, modifier: Modifier = Modifier) {
             .padding(bottom = 16.dp), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        AppThemeSelector(
-            selectedTheme = state.style.theme,
-            onSelected = { state.eventSink(UiEvent.OnThemeChange(it)) }
+        TextSizeSelector(
+            selected = state.style.textSize,
+            onSelected = { state.eventSink(UiEvent.OnTextSizeChange(it)) }
         )
 
         HorizontalDivider(
@@ -85,10 +93,17 @@ fun TextStyleScreenUi(state: UiState, modifier: Modifier = Modifier) {
             modifier = Modifier.padding(vertical = 6.dp),
             thickness = 0.5.dp,
         )
-
-        TextSizeSelector(
-            selected = state.style.textSize,
-            onSelected = { state.eventSink(UiEvent.OnTextSizeChange(it)) }
+        AppThemeSelector(
+            selectedTheme = state.style.theme,
+            dynamicColors = state.style.dynamicColors,
+            onSelected = { theme, dynamicColors ->
+                state.eventSink(
+                    UiEvent.OnThemeChange(
+                        theme,
+                        dynamicColors
+                    )
+                )
+            }
         )
 
         Spacer(
@@ -103,8 +118,9 @@ fun TextStyleScreenUi(state: UiState, modifier: Modifier = Modifier) {
 @Composable
 private fun AppThemeSelector(
     selectedTheme: AppTheme,
+    dynamicColors: Boolean,
     modifier: Modifier = Modifier,
-    onSelected: (AppTheme) -> Unit = {},
+    onSelected: (AppTheme, Boolean) -> Unit = { theme, colors -> },
 ) {
     val hapticFeedback = LocalAppHapticFeedback.current
     Text(
@@ -115,34 +131,49 @@ private fun AppThemeSelector(
         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
     )
 
-    FlowRow(
-        modifier
-            .padding(horizontal = 20.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-        verticalArrangement = Arrangement.spacedBy(2.dp),
+    val options: ImmutableList<Pair<Boolean?, Boolean>> = remember {
+        persistentListOf(
+            Pair(false, false),
+            Pair(false, true),
+            Pair(true, false),
+            Pair(true, true),
+        )
+    }
+    var selectedPair by rememberSaveable(selectedTheme, dynamicColors) {
+        mutableStateOf(selectedTheme.isDarkTheme() to dynamicColors)
+    }
+
+    LazyRow(
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 20.dp)
     ) {
-        AppTheme.entries.forEachIndexed { index, appTheme ->
-            ToggleButton(
-                checked = selectedTheme == appTheme,
-                onCheckedChange = {
-                    if (it) {
-                        hapticFeedback.performToggleSwitch(true)
-                        onSelected(appTheme)
-                    }
-                },
-                shapes =
-                    when (index) {
-                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                        AppTheme.entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                    },
-                modifier = Modifier.semantics { role = Role.RadioButton },
-            ) {
-                Text(text = stringResource(appTheme.label))
-            }
+        items(options) { (darkTheme, dynamicColor) ->
+            ThemeCard(
+                selected = selectedPair.first == darkTheme && selectedPair.second == dynamicColor,
+                darkTheme = darkTheme,
+                dynamicColor = dynamicColor,
+                modifier = Modifier.padding(horizontal = 8.dp),
+                onClick = {
+                    selectedPair = darkTheme to dynamicColor
+                    hapticFeedback.performToggleSwitch(it)
+                    onSelected(
+                        when (darkTheme) {
+                            null -> AppTheme.FOLLOW_SYSTEM
+                            true -> AppTheme.DARK
+                            false -> AppTheme.LIGHT
+                        },
+                        dynamicColor
+                    )
+                }
+            )
         }
     }
+}
+
+private fun AppTheme.isDarkTheme(): Boolean? = when (this) {
+    AppTheme.FOLLOW_SYSTEM -> null
+    AppTheme.LIGHT -> false
+    AppTheme.DARK -> true
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

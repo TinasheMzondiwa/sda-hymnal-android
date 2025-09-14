@@ -3,6 +3,7 @@ package hymnal.services.prefs.impl
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -31,8 +32,18 @@ class HymnalPrefsImpl(
 ) : HymnalPrefs {
 
     override fun themeStyle(): Flow<ThemeStyle> =
-        combine(appTheme, textSize, typeface) { appTheme, textSize, typeface ->
-            ThemeStyle(theme = appTheme, font = typeface, textSize = textSize)
+        combine(
+            appTheme,
+            textSize,
+            typeface,
+            dynamicColors,
+        ) { appTheme, textSize, typeface, dynamicColors ->
+            ThemeStyle(
+                theme = appTheme,
+                font = typeface,
+                textSize = textSize,
+                dynamicColors = dynamicColors,
+            )
         }.flowOn(dispatcherProvider.io)
 
     override suspend fun updateThemeStyle(theme: ThemeStyle) {
@@ -40,6 +51,7 @@ class HymnalPrefsImpl(
             updateAppTheme(theme.theme)
             updateTypeface(theme.font.name)
             updateFontSize(theme.textSize)
+            updateDynamicColors(theme.dynamicColors)
         }
     }
 
@@ -52,6 +64,10 @@ class HymnalPrefsImpl(
     }
     private val typeface: Flow<AppFont> = context.dataStore.data.map { preferences ->
         AppFont.fromName(preferences[PreferenceKeys.TYPEFACE_NAME])
+    }
+
+    private val dynamicColors: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferenceKeys.DYNAMIC_COLORS] ?: false
     }
 
     private suspend fun updateAppTheme(theme: AppTheme) {
@@ -72,9 +88,16 @@ class HymnalPrefsImpl(
         }
     }
 
+    private suspend fun updateDynamicColors(dynamicColors: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.DYNAMIC_COLORS] = dynamicColors
+        }
+    }
+
     // Define preference keys
     private object PreferenceKeys {
         val APP_THEME = stringPreferencesKey("app_theme")
+        val DYNAMIC_COLORS = booleanPreferencesKey("dynamic_colors")
         val FONT_SIZE = floatPreferencesKey("font_size")
         val TYPEFACE_NAME = stringPreferencesKey("typeface_name")
     }

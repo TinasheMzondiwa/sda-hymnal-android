@@ -19,7 +19,7 @@ object TextStyleScreen : Screen {
     ) : CircuitUiState
 
     sealed interface Event {
-        data class OnThemeChange(val theme: AppTheme): Event
+        data class OnThemeChange(val theme: AppTheme, val dynamicColors: Boolean): Event
         data class OnFontChange(val font: AppFont): Event
         data class OnTextSizeChange(val textSize: Float): Event
     }
