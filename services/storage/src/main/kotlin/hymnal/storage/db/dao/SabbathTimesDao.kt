@@ -6,11 +6,10 @@ package hymnal.storage.db.dao
 import androidx.room.Dao
 import androidx.room.Query
 import hymnal.storage.db.entity.SabbathTimesEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SabbathTimesDao : BaseDao<SabbathTimesEntity> {
 
     @Query("SELECT * FROM sabbath_times WHERE id = :id")
-    fun getSabbathTimes(id: String): Flow<SabbathTimesEntity?>
+    suspend fun get(id: String) : SabbathTimesEntity?
 }

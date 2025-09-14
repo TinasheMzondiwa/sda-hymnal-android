@@ -11,21 +11,19 @@ import dev.zacsweers.metro.Inject
 import hymnal.libraries.coroutines.DispatcherProvider
 import hymnal.services.sabbath.api.SabbathInfo
 import hymnal.services.sabbath.api.SabbathRepository
-import hymnal.services.sabbath.impl.service.model.SabbathTimes
 import hymnal.services.sabbath.impl.service.SabbathTimesHelper
 import hymnal.services.sabbath.impl.service.SunriseSunsetService
+import hymnal.services.sabbath.impl.service.model.SabbathTimes
 import hymnal.storage.db.dao.SabbathTimesDao
 import hymnal.storage.db.entity.SabbathTimesEntity
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.time.Duration
+import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -34,52 +32,110 @@ import java.util.Locale
 @Inject
 class SabbathRepositoryImpl(
     private val appContext: Context,
-    private val helper: SabbathTimesHelper,
     private val sabbathTimesDao: SabbathTimesDao,
     private val sunriseSunsetService: SunriseSunsetService,
+    private val helper: SabbathTimesHelper,
     private val dispatcherProvider: DispatcherProvider,
 ) : SabbathRepository {
 
-    private val sabbathIdFlow = MutableStateFlow(helper.sabbathDayId())
-    private val geocoder: Geocoder by lazy { Geocoder(appContext, Locale.getDefault())  }
+    private val geocoder: Geocoder by lazy { Geocoder(appContext, Locale.getDefault()) }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getSabbathInfo(
         latitude: Double,
         longitude: Double
-    ): Flow<Result<SabbathInfo>> {
-        return sabbathIdFlow
-            .flatMapLatest { sabbathTimesDao.getSabbathTimes(it) }
-            .map { cachedSabbathTimes ->
-                if (cachedSabbathTimes != null) {
-                    Result.success(createSabbathInfo(cachedSabbathTimes, latitude, longitude))
-                } else {
-                    // If not in cache, fetch from network
-                    fetchAndCacheSabbathInfo(latitude, longitude)
-                }
-            }
-            .flowOn(dispatcherProvider.io)
-            .catch {
-                Timber.e(it)
-                emit(Result.failure(it))
-            }
-    }
+    ): Flow<Result<SabbathInfo>> = flow {
+        val now = ZonedDateTime.now()
 
-    suspend fun fetchAndCacheSabbathInfo(
-        latitude: Double,
-        longitude: Double
-    ): Result<SabbathInfo> {
-        return withContext(dispatcherProvider.default) {
-            val response = sunriseSunsetService.getSabbathTimes(
-                latitude = latitude,
-                longitude = longitude,
+        // Determine which week we should use (handles Sat night rollover)
+        val (tFri, _) = helper.weekForQuery(now, sabbathEndIfKnown = null)
+        var key = weekKeyIso(tFri)
+        val tCache = sabbathTimesDao.get(key)?.let { createSabbathInfo(it, latitude, longitude) }
+        val (fri, sat) = helper.weekForQuery(now, sabbathEndIfKnown = tCache?.sabbathEnd)
+        key = weekKeyIso(fri)
+
+        val cached = withContext(dispatcherProvider.io) {
+            sabbathTimesDao.get(key)?.let { createSabbathInfo(it, latitude, longitude) }
+        }
+
+        if (cached != null) {
+            emit(Result.success(cached))
+        }
+
+        // Decide if we need a refresh:
+        val needsNetwork = cached == null || shouldRefresh(cached, now)
+
+        if (needsNetwork) {
+            emit(
+                Result.success(
+                    fetchFromNetwork(
+                        latitude = latitude,
+                        longitude = longitude,
+                        fri = fri,
+                        sat = sat,
+                        now = now
+                    )
+                )
             )
 
-            response.map { sabbathTimes ->
-                cacheSabbathTimes(sabbathTimes)
-                createSabbathInfo(sabbathTimes, latitude, longitude)
-            }
         }
+    }.flowOn(dispatcherProvider.io)
+        .catch { Timber.e(it) }
+
+    private suspend fun fetchFromNetwork(
+        latitude: Double,
+        longitude: Double,
+        fri: LocalDate,
+        sat: LocalDate,
+        now: ZonedDateTime
+    ): SabbathInfo {
+        var fridaySunset = withContext(dispatcherProvider.default) {
+            sunriseSunsetService.getSunsetTime(
+                latitude = latitude,
+                longitude = longitude,
+                date = weekKeyIso(fri)
+            )
+        }.getOrThrow()
+        var saturdaySunset = withContext(dispatcherProvider.default) {
+            sunriseSunsetService.getSunsetTime(
+                latitude = latitude,
+                longitude = longitude,
+                date = weekKeyIso(sat)
+            )
+        }.getOrThrow()
+
+        if (now.isAfter(saturdaySunset)) {
+            val nextFri = fri.plusWeeks(1)
+            val nextSat = nextFri.plusDays(1)
+
+            fridaySunset = withContext(dispatcherProvider.default) {
+                sunriseSunsetService.getSunsetTime(
+                    latitude = latitude,
+                    longitude = longitude,
+                    date = weekKeyIso(nextFri)
+                )
+            }.getOrThrow()
+            saturdaySunset = withContext(dispatcherProvider.default) {
+                sunriseSunsetService.getSunsetTime(
+                    latitude = latitude,
+                    longitude = longitude,
+                    date = weekKeyIso(nextSat)
+                )
+            }.getOrThrow()
+        }
+        cacheSabbathTimes(
+            id = weekKeyIso(fridaySunset.toLocalDate()),
+            sabbathTimes = SabbathTimes(
+                friday = fridaySunset,
+                saturday = saturdaySunset
+            )
+        )
+
+        return SabbathInfo(
+            location = getCityAndState(latitude, longitude),
+            isSabbath = helper.isWithinSabbath(now, fridaySunset, saturdaySunset),
+            sabbathStart = fridaySunset,
+            sabbathEnd = saturdaySunset,
+        )
     }
 
     /**
@@ -97,40 +153,39 @@ class SabbathRepositoryImpl(
         }
         return SabbathInfo(
             location = getCityAndState(latitude, longitude),
-            isSabbath = isSabbathDay(start = friday, end = saturday),
+            isSabbath = helper.isWithinSabbath(
+                now = ZonedDateTime.now(),
+                start = friday,
+                end = saturday
+            ),
             sabbathStart = friday,
             sabbathEnd = saturday,
-        ).also { sabbathIdFlow.update { helper.sabbathDayId(end = saturday) } }
+        )
     }
 
-    private suspend fun cacheSabbathTimes(sabbathTimes: SabbathTimes) {
-        val id = sabbathIdFlow.value
-        withContext(dispatcherProvider.io) {
-            sabbathTimesDao.insert(
-                SabbathTimesEntity(
-                    id = id,
-                    friday = sabbathTimes.friday.asDateString(),
-                    saturday = sabbathTimes.saturday.asDateString()
-                )
-            )
-        }
-    }
+    private fun String.asDateTime(): ZonedDateTime =
+        ZonedDateTime.parse(this, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
-    /**
-     * Check if today is the Sabbath.
-     *
-     * @param start The start time of Sabbath in the format (2025-09-07T23:44:58+00:00).
-     * @param end The end time of Sabbath in the format (2025-09-07T10:45:34+00:00).
+    private fun ZonedDateTime.asDateString(): String =
+        this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
+    private fun weekKeyIso(friday: LocalDate): String = friday.toString() // YYYY-MM-DD
+
+    /** Refresh policy:
+     * - If both start/end are in the past relative to now, refresh.
+     * - If record older than 7 days (paranoia / API corrections), refresh.
      */
-    private fun isSabbathDay(start: ZonedDateTime, end: ZonedDateTime): Boolean {
-        val now = ZonedDateTime.now(start.zone) // use same timezone as input
-        return !now.isBefore(start) && !now.isAfter(end)
+    private fun shouldRefresh(cached: SabbathInfo, now: ZonedDateTime): Boolean {
+        val bothPast = now.isAfter(cached.sabbathEnd)
+        val stale = Duration.between(cached.sabbathStart, now).toDays() >= 7
+        return bothPast || stale
     }
 
     private fun getCityAndState(latitude: Double, longitude: Double): String {
         @Suppress("DEPRECATION")
         val addresses = geocoder.getFromLocation(
-            latitude, longitude, 1)
+            latitude, longitude, 1
+        )
 
         return if (!addresses.isNullOrEmpty()) {
             val city = addresses[0].locality      // e.g., "Toronto"
@@ -144,9 +199,15 @@ class SabbathRepositoryImpl(
         } else "Unknown Location"
     }
 
-    private fun String.asDateTime(): ZonedDateTime =
-        ZonedDateTime.parse(this, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-
-    private fun ZonedDateTime.asDateString(): String =
-        this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+    private suspend fun cacheSabbathTimes(id: String, sabbathTimes: SabbathTimes) {
+        withContext(dispatcherProvider.io) {
+            sabbathTimesDao.insert(
+                SabbathTimesEntity(
+                    id = id,
+                    friday = sabbathTimes.friday.asDateString(),
+                    saturday = sabbathTimes.saturday.asDateString()
+                )
+            )
+        }
+    }
 }

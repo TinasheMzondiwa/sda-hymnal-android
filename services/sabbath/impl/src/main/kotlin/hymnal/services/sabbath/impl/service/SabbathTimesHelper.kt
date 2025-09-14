@@ -9,33 +9,26 @@ import dev.zacsweers.metro.Inject
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAdjusters
 
 interface SabbathTimesHelper {
 
-    /**
-     * Get the date of the current week's Friday in ISO format (yyyy-MM-dd).
-     * Week is considered Sunday -> Saturday.
-     *
-     * @return A string representing the current week's Friday's date.
-     */
-    fun fridayDate(): String
+    /** Friday for the “Sabbath week” containing `anchor` (local). */
+    fun fridayOfWeek(anchor: ZonedDateTime): LocalDate
+
+    /** Saturday for the same week. */
+    fun saturdayOfWeek(anchor: ZonedDateTime): LocalDate
 
     /**
-     * Get the date of the current week's Saturday in ISO format (yyyy-MM-dd).
-     * Week is considered Sunday -> Saturday.
-     *
-     * @return A string representing the current week's Saturday's date.
+     * Compute the effective “week” to use.
+     * If it's Saturday night and the sabbathEnd has already passed, roll to next week's Fri/Sat.
      */
-    fun saturdayDate(): String
+    fun weekForQuery(
+        now: ZonedDateTime,
+        sabbathEndIfKnown: ZonedDateTime?
+    ): Pair<LocalDate, LocalDate>
 
-    /**
-     * Get the date of the current week's Friday in ISO format (yyyy-MM-dd).
-     * If the current time is now past the [end] then return the next week's Friday.
-     *
-     * Week is considered Sunday → Saturday.
-     */
-    fun sabbathDayId(end: ZonedDateTime? = null): String
+    fun isWithinSabbath(now: ZonedDateTime, start: ZonedDateTime, end: ZonedDateTime): Boolean
 }
 
 @ContributesBinding(AppScope::class)
@@ -44,34 +37,42 @@ class SabbathTimesHelperImpl(
     private val today: () -> LocalDate = { LocalDate.now() }
 ) : SabbathTimesHelper {
 
-    override fun fridayDate(): String {
-        return thisFriday().format(DateTimeFormatter.ISO_LOCAL_DATE)
-    }
+    /** Friday for the “Sabbath week” containing `anchor` (local). */
+    override fun fridayOfWeek(anchor: ZonedDateTime): LocalDate =
+        anchor.toLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.FRIDAY))
 
-    override fun saturdayDate(): String {
-        val friday = thisFriday()
-        return friday.plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE)
-    }
+    /** Saturday for the same week. */
+    override fun saturdayOfWeek(anchor: ZonedDateTime): LocalDate =
+        anchor.toLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY))
 
-    override fun sabbathDayId(end: ZonedDateTime?): String {
-        val thisFriday = thisFriday()
+    /**
+     * Compute the effective “week” to use.
+     * If it's Saturday night and the sabbathEnd has already passed, roll to next week's Fri/Sat.
+     */
+    override fun weekForQuery(
+        now: ZonedDateTime,
+        sabbathEndIfKnown: ZonedDateTime?
+    ): Pair<LocalDate, LocalDate> {
+        val fri = fridayOfWeek(now)
+        val sat = saturdayOfWeek(now)
 
-        // Check if the current time is past the provided end time.
-        val shouldUseNextFriday = end?.let {
-            ZonedDateTime.now(end.zone).isAfter(end)
-        } ?: false
-
-        // If the end time has passed, get next week's Friday, otherwise use the current week's.
-        val targetFriday = if (shouldUseNextFriday) {
-            thisFriday.plusWeeks(1)
-        } else {
-            thisFriday
+        // If we already know today’s sabbathEnd and the current time is after it, roll forward.
+        if (sabbathEndIfKnown != null && now.isAfter(sabbathEndIfKnown)) {
+            val nextFri = fri.plusWeeks(1)
+            return nextFri to nextFri.plusDays(1)
         }
 
-        return targetFriday.format(DateTimeFormatter.ISO_LOCAL_DATE)
+        return fri to sat
     }
 
-    private fun thisFriday(): LocalDate {
+    override fun isWithinSabbath(
+        now: ZonedDateTime,
+        start: ZonedDateTime,
+        end: ZonedDateTime
+    ): Boolean =
+        !now.isBefore(start) && now.isBefore(end) // [start, end)
+
+    private fun thisFriday(end: ZonedDateTime?): LocalDate {
         val today = today()
         val daysToAdd = when (today.dayOfWeek) {
             DayOfWeek.SUNDAY -> 5 // Sunday to Friday
@@ -80,8 +81,15 @@ class SabbathTimesHelperImpl(
             DayOfWeek.WEDNESDAY -> 2 // Wednesday to Friday
             DayOfWeek.THURSDAY -> 1 // Thursday to Friday
             DayOfWeek.FRIDAY -> 0  // Friday is today
-            DayOfWeek.SATURDAY -> 0 // Saturday to Friday (Don't go forward, stay on this week's Friday)
+            DayOfWeek.SATURDAY -> -1 // Saturday to Friday (Don't go forward, stay on this week's Friday)
         }
-        return today.plusDays(daysToAdd.toLong())
+        val friday = today.plusDays(daysToAdd.toLong())
+
+        return if (end != null && ZonedDateTime.now(end.zone).isAfter(end)) {
+            // If the current time is past the end time, return next week's Friday
+            friday.plusWeeks(1)
+        } else {
+            friday
+        }
     }
 }
