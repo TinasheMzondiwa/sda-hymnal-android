@@ -3,26 +3,17 @@
 
 package hymnal.hymns.components
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -61,115 +52,110 @@ fun HymnCard(
                 )
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
-            AnimatedContent(targetState = sortType) { targetSortType ->
-                Row(
-                    modifier = modifier
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-
-                    if (targetSortType == SortType.NUMBER) {
-                        NumberText(
-                            number = hymn.number,
-                            modifier = Modifier
-                                .sharedBounds(
-                                    sharedContentState =
-                                        rememberSharedContentState(
-                                            HymnSharedTransitionKey(
-                                                id = hymn.index,
-                                                type = HymnSharedTransitionKey.ElementType.Number,
-                                            )
-                                        ),
-                                    animatedVisibilityScope =
-                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                                )
-                                .padding(end = 8.dp)
-                        )
-                    }
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        Text(
-                            text = hymn.title,
-                            modifier = Modifier
-                                .sharedBounds(
-                                    sharedContentState =
-                                        rememberSharedContentState(
-                                            HymnSharedTransitionKey(
-                                                id = hymn.index,
-                                                type = HymnSharedTransitionKey.ElementType.Title,
-                                            )
-                                        ),
-                                    animatedVisibilityScope =
-                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                                ),
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontSize = 18.sp
-                            ),
-                        )
-
-                        hymn.lyrics.firstOrNull()?.let { verse ->
-                            Text(
-                                text = verse.lines.take(3).joinToString(separator = "\n"),
-                                modifier = Modifier.sharedBounds(
-                                    sharedContentState =
-                                        rememberSharedContentState(
-                                            HymnSharedTransitionKey(
-                                                id = hymn.index,
-                                                type = HymnSharedTransitionKey.ElementType.Lyrics,
-                                            )
-                                        ),
-                                    animatedVisibilityScope =
-                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                                ),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    fontSize = 14.sp
-                                )
-                            )
-                        }
-                    }
-
-                    if (targetSortType == SortType.TITLE) {
-                        NumberText(
-                            number = hymn.number,
-                            modifier = Modifier
-                                .sharedBounds(
-                                    sharedContentState =
-                                        rememberSharedContentState(
-                                            HymnSharedTransitionKey(
-                                                id = hymn.index,
-                                                type = HymnSharedTransitionKey.ElementType.Number,
-                                            )
-                                        ),
-                                    animatedVisibilityScope =
-                                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                                )
-                        )
-                    }
-
-                    IconButton(
-                        onClick = {},
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = Color.Black.copy(
-                                alpha = 0.04f
-                            )
-                        )
-                    ) {
-                        Icon(Icons.Rounded.MoreVert, contentDescription = null)
-                    }
-                }
-
-            }
+            CardContent(
+                hymn = hymn,
+                sortType = sortType,
+                modifier = Modifier
+            )
         }
     }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedElementTransitionScope.CardContent(
+    hymn: Hymn,
+    sortType: SortType,
+    modifier: Modifier = Modifier,
+) {
+    ListItem(
+        headlineContent = {
+            Text(
+                text = hymn.title,
+                modifier = Modifier
+                    .sharedBounds(
+                        sharedContentState =
+                            rememberSharedContentState(
+                                HymnSharedTransitionKey(
+                                    id = hymn.index,
+                                    type = HymnSharedTransitionKey.ElementType.Title,
+                                )
+                            ),
+                        animatedVisibilityScope =
+                            requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                    ),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontSize = 18.sp
+                ),
+            )
+        },
+        modifier = modifier,
+        leadingContent = {
+            AnimatedVisibility(visible = sortType == SortType.NUMBER) {
+                NumberText(
+                    number = hymn.number,
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedContentState =
+                                rememberSharedContentState(
+                                    HymnSharedTransitionKey(
+                                        id = hymn.index,
+                                        type = HymnSharedTransitionKey.ElementType.Number,
+                                    )
+                                ),
+                            animatedVisibilityScope =
+                                requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                        )
+
+                )
+            }
+        },
+        supportingContent = {
+            hymn.lyrics.firstOrNull()?.let { verse ->
+                Text(
+                    text = verse.lines.take(3).joinToString(separator = "\n"),
+                    modifier = Modifier.sharedBounds(
+                        sharedContentState =
+                            rememberSharedContentState(
+                                HymnSharedTransitionKey(
+                                    id = hymn.index,
+                                    type = HymnSharedTransitionKey.ElementType.Lyrics,
+                                )
+                            ),
+                        animatedVisibilityScope =
+                            requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 14.sp
+                    )
+                )
+            }
+        },
+        trailingContent = {
+            AnimatedVisibility(visible = sortType == SortType.TITLE) {
+                NumberText(
+                    number = hymn.number,
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedContentState =
+                                rememberSharedContentState(
+                                    HymnSharedTransitionKey(
+                                        id = hymn.index,
+                                        type = HymnSharedTransitionKey.ElementType.Number,
+                                    )
+                                ),
+                            animatedVisibilityScope =
+                                requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                        )
+                )
+            }
+        }
+    )
 }
 
 internal val previewHymn = Hymn(
