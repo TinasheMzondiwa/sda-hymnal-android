@@ -20,6 +20,7 @@ include(
     ":features:sabbath",
     ":features:sing",
     ":libraries:core-ui",
+    ":libraries:di",
     ":libraries:foundation:coroutines",
     ":libraries:foundation:coroutines:test",
     ":libraries:l10n",

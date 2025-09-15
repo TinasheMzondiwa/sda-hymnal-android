@@ -55,6 +55,7 @@ dependencies {
     implementation(projects.features.sabbath)
     implementation(projects.features.sing)
     implementation(projects.libraries.coreUi)
+    implementation(projects.libraries.di)
     implementation(projects.libraries.foundation.coroutines)
     implementation(projects.libraries.l10n)
     implementation(projects.libraries.model)

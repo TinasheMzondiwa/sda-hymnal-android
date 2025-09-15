@@ -14,8 +14,10 @@ foundry { features { compose() } }
 ksp { arg("circuit.codegen.mode", "metro") }
 
 dependencies {
+    implementation(libs.androidx.activity.compose)
     implementation(libs.timber)
     implementation(projects.libraries.coreUi)
+    implementation(projects.libraries.di)
     implementation(projects.libraries.l10n)
     implementation(projects.libraries.navigation.api)
     implementation(projects.libraries.navigation.number)

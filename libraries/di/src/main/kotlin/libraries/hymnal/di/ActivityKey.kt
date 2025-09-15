@@ -1,7 +1,9 @@
-// Copyright (C) 2025 Tinashe Mzondiwa
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * Copyright (C) 2025 Tinashe Mzondiwa
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
-package app.hymnal.di
+package libraries.hymnal.di
 
 import android.app.Activity
 import dev.zacsweers.metro.MapKey
