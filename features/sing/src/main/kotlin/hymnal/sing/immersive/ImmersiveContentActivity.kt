@@ -57,12 +57,7 @@ class ImmersiveContentActivity(
             contentView.performClick()
         }
 
-        // Add a listener to update the behavior of the toggle fullscreen button when
-        // the system bars are hidden or revealed.
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { view, windowInsets ->
-            // You can hide the caption bar even when the other system bars are visible.
-            // To account for this, explicitly check the visibility of navigationBars()
-            // and statusBars() rather than checking the visibility of systemBars().
             if (windowInsets.isVisible(WindowInsetsCompat.Type.navigationBars())
                 || windowInsets.isVisible(WindowInsetsCompat.Type.statusBars())
             ) {

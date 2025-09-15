@@ -4,18 +4,24 @@
 package hymnal.sing.immersive
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -26,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import dev.zacsweers.metro.AppScope
+import hymnal.ui.extensions.plus
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.collections.immutable.persistentListOf
 import hymnal.sing.immersive.ImmersiveContentScreen.State as UiState
@@ -33,13 +40,23 @@ import hymnal.sing.immersive.ImmersiveContentScreen.State as UiState
 @CircuitInject(ImmersiveContentScreen::class, AppScope::class)
 @Composable
 fun ImmersiveContent(state: UiState, modifier: Modifier = Modifier) {
-    Surface(
-        color = Color.Black,
-        contentColor = Color.White
-    ) {
+    val layoutDirection = LocalLayoutDirection.current
+    Scaffold (
+        containerColor = Color.Black,
+        contentColor = Color.White,
+        contentWindowInsets = WindowInsets.safeDrawing,
+    ) { contentPadding ->
         VerticalPager(
             state = rememberPagerState { state.pages.size },
-            modifier = modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize(),
+            contentPadding = contentPadding.plus(
+                layoutDirection = layoutDirection,
+                start = 16.dp,
+                top = 32.dp,
+                end = 16.dp,
+                bottom = 32.dp
+            ),
+            pageSpacing = 32.dp,
         ) {
             val page = state.pages[it]
 
@@ -60,9 +77,7 @@ fun ImmersiveContent(state: UiState, modifier: Modifier = Modifier) {
             }
 
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(32.dp),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -70,9 +85,9 @@ fun ImmersiveContent(state: UiState, modifier: Modifier = Modifier) {
                     modifier = Modifier,
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    lineHeight = 50.sp,
+                    lineHeight = 48.sp,
                     autoSize = TextAutoSize.StepBased(
-                        minFontSize = 24.sp,
+                        minFontSize = 18.sp,
                         maxFontSize = 40.sp,
                         stepSize = 2.sp
                     )
