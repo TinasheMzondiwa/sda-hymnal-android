@@ -46,7 +46,7 @@ data class TopBarState(
         data object OnNavBack : Event
         data object OnStyleClick : Event
         data object OnSaveClick : Event
-        data object OnFullscreenClick : Event
+        data class OnFullscreenClick(val context: Context) : Event
         data class OnShareClick(val context: Context) : Event
     }
 }

@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
+import com.slack.circuitx.android.IntentScreen
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
@@ -23,6 +24,7 @@ import hymnal.sing.SingOverlayState
 import hymnal.sing.TopBarState
 import hymnal.sing.components.HymnContent
 import hymnal.sing.components.text.TextStyleScreen
+import hymnal.sing.immersive.ImmersiveContentActivity
 import kotlinx.coroutines.flow.catch
 import timber.log.Timber
 
@@ -55,7 +57,12 @@ class TopBarStateProducerImpl(
             eventSink = { event ->
                 when (event) {
                     is TopBarState.Event.OnNavBack -> navigator.pop()
-                    TopBarState.Event.OnFullscreenClick -> Unit
+                    is TopBarState.Event.OnFullscreenClick -> {
+                        hymnId?.let {
+                            val intent = ImmersiveContentActivity.launchIntent(event.context, it)
+                            navigator.goTo(IntentScreen(intent))
+                        }
+                    }
                     TopBarState.Event.OnSaveClick -> {
                         hymnId?.let {
                             overlayState =

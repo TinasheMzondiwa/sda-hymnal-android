@@ -1,0 +1,12 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application>
+        <activity
+            android:name=".immersive.ImmersiveContentActivity"
+            android:screenOrientation="userLandscape"
+            tools:ignore="DiscouragedApi" />
+
+    </application>
+
+</manifest>

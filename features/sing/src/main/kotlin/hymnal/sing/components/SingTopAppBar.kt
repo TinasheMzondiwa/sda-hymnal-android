@@ -82,7 +82,7 @@ fun SingTopAppBar(
             }
             IconButton(onClick = {
                 hapticFeedback.performClick()
-                state.eventSink(TopBarEvent.OnFullscreenClick)
+                state.eventSink(TopBarEvent.OnFullscreenClick(context))
             }) {
                 Icon(
                     painterResource(SingR.drawable.ic_mobile_landscape),

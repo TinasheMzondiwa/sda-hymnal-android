@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import app.hymnal.ui.home.HomeScreen
@@ -21,6 +22,7 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.sharedelements.SharedElementTransitionLayout
+import com.slack.circuitx.android.rememberAndroidScreenAwareNavigator
 import com.slack.circuitx.gesturenavigation.GestureNavigationDecorationFactory
 import hymnal.ui.extensions.LocalWindowWidthSizeClass
 import hymnal.ui.theme.HymnalTheme
@@ -41,7 +43,8 @@ fun HymnalApp(
                 SharedElementTransitionLayout {
                     ContentWithOverlays {
                         val backstack = rememberSaveableBackStack(HomeScreen)
-                        val navigator = rememberCircuitNavigator(backstack)
+                        val circuitNavigator = rememberCircuitNavigator(backstack)
+                        val navigator = rememberAndroidScreenAwareNavigator(circuitNavigator, LocalContext.current)
 
                         NavigableCircuitContent(
                             navigator = navigator,
