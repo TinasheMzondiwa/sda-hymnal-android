@@ -65,7 +65,11 @@ class CountdownStateProducerImpl(private val dispatcherProvider: DispatcherProvi
             } else {
                 if (days > 0) {
                     if (days > 1) {
-                        append(String.format(Locale.getDefault(), "%dd %dh", days, hours))
+                        if (hours > 1) {
+                            append(String.format(Locale.getDefault(), "%dd %dh", days, hours))
+                        } else {
+                            append(String.format(Locale.getDefault(), "%d days", days))
+                        }
                     } else {
                         append(
                             String.format(
