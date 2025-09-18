@@ -48,8 +48,8 @@ interface HymnsDao : BaseDao<HymnEntity> {
         val lyricsText = lyricsWithOwnerId.joinToString(separator = "\n") { lyricPart ->
             lyricPart.lines.joinToString(separator = "\n")
         }
-        // Combine title, number (as string), and lyrics for FTS
-        val searchableContent = "${hymn.title}\n${hymn.number}\n$lyricsText"
+        // Combine title, number (as string), major key, author, and lyrics for FTS
+        val searchableContent = "${hymn.title}\n${hymn.number}\n${hymn.majorKey.orEmpty()}\n${hymn.author.orEmpty()}\n$lyricsText"
 
         if (searchableContent.isNotBlank()) {
             insertHymnFts(HymnFtsEntity(hymnId = hymn.hymnId, lyricsContent = searchableContent))

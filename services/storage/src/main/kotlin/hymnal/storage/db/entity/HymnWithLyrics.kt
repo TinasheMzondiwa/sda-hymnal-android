@@ -23,6 +23,7 @@ data class HymnWithLyrics(
             title = hymn.title,
             number = hymn.number,
             majorKey = hymn.majorKey,
+            author = hymn.author,
             lyrics = lyricParts.map { part ->
                 when (part.type) {
                     DbLyricType.VERSE -> HymnLyrics.Verse(

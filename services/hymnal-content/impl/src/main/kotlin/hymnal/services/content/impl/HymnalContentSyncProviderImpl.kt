@@ -51,7 +51,8 @@ class HymnalContentSyncProviderImpl(
                 hymnId = hymn.index,
                 number = hymn.number,
                 title = hymn.title,
-                majorKey = null // majorKey is not provided in the Hymn model yet
+                majorKey = hymn.majorKey,
+                author = hymn.author,
             )
 
             val lyricParts = hymn.lyrics.map { lyrics ->

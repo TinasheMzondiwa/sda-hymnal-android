@@ -11,7 +11,7 @@ internal enum class LyricType {
     VERSE,
     @SerialName("refrain")
     REFRAIN,
-    UNKNOWN // A sensible default or handle unknown types as errors
+    UNKNOWN,
 }
 
 @OptIn(InternalSerializationApi::class)
@@ -20,6 +20,8 @@ internal data class RemoteHymn(
     val index: String,
     val number: Int,
     val title: String,
+    val majorKey: String?,
+    val author: String?,
     val lyrics: List<LyricSection>
 )
 
