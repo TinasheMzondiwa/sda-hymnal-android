@@ -11,6 +11,7 @@ import hymnal.libraries.navigation.CollectionsScreen
 import hymnal.libraries.navigation.HymnsScreen
 import hymnal.libraries.navigation.SabbathScreen
 import hymnal.libraries.l10n.R as L10nR
+import hymnal.ui.R as UiR
 
 enum class HomeRoute(
     val icon: RouteIcon,
@@ -48,8 +49,8 @@ data class RouteIcon(
         )
 
         val Sabbath = RouteIcon(
-            icon = R.drawable.ic_sun_horizon,
-            filledIcon = R.drawable.ic_sun_horizon_fill,
+            icon = UiR.drawable.ic_sunset,
+            filledIcon = UiR.drawable.ic_sunset_fill,
         )
     }
 }

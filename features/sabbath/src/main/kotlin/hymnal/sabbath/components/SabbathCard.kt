@@ -44,12 +44,14 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import hymnal.ui.R as UiR
 
 @Composable
 internal fun SabbathCard(
@@ -59,7 +61,7 @@ internal fun SabbathCard(
     isSabbath: Boolean,
     progress: Float,
     colors: SabbathColors,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val shimmer by rememberInfiniteTransition().animateFloat(
         initialValue = 0.85f,
@@ -140,7 +142,10 @@ internal fun SabbathCard(
 
 @Composable
 private fun SunsetTime(
-    label: String, time: String, colors: SabbathColors, alignedEnd: Boolean
+    label: String,
+    time: String,
+    colors: SabbathColors,
+    alignedEnd: Boolean,
 ) {
     Column(
         horizontalAlignment = if (alignedEnd) Alignment.End else Alignment.Start,
@@ -151,10 +156,10 @@ private fun SunsetTime(
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Icon(
-                imageVector = Icons.Outlined.WbTwilight,
+                painter = painterResource(UiR.drawable.ic_sunset_fill),
                 contentDescription = null,
                 tint = colors.accent,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(24.dp)
             )
 
             Text(
@@ -166,7 +171,9 @@ private fun SunsetTime(
         }
 
         Text(
-            text = time, color = colors.text, fontSize = 16.sp
+            text = time,
+            color = colors.text,
+            fontSize = 16.sp,
         )
     }
 }

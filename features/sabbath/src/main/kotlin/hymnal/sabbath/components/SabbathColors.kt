@@ -4,11 +4,11 @@
 package hymnal.sabbath.components
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 
-@Stable
+@Immutable
 internal data class SabbathColors(
     val bg: Color,
     val card: Color,
