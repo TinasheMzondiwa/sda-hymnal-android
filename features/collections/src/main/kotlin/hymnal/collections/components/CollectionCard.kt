@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.sharedelements.PreviewSharedElementTransitionLayout
 import hymnal.services.model.HymnsCollection
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.theme.color.toColor
 import hymnal.libraries.l10n.R as L10nR
@@ -49,70 +50,83 @@ internal fun CollectionCard(
     onClick: () -> Unit = { },
     onDelete: () -> Unit = { },
 ) {
+    val hapticFeedback = LocalAppHapticFeedback.current
     OutlinedCard(
         onClick = onClick,
         modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
-        ListItem(headlineContent = {
-            Text(
-                text = collection.title,
-                modifier = Modifier,
-            )
-        }, modifier = Modifier, supportingContent = {
-            Column(
-                modifier = Modifier
-            ) {
-                collection.description?.takeUnless { it.isEmpty() }?.let {
-                    Text(
-                        text = it,
-                        modifier = Modifier,
-                    )
+        ListItem(
+            headlineContent = {
+                Text(
+                    text = collection.title,
+                    modifier = Modifier,
+                )
+            },
+            modifier = Modifier,
+            supportingContent = {
+                Column(
+                    modifier = Modifier
+                ) {
+                    collection.description?.takeUnless { it.isEmpty() }?.let {
+                        Text(
+                            text = it,
+                            modifier = Modifier,
+                        )
+                    }
+
+                    val count = collection.hymns.size
+                    if (count > 0) {
+                        Text(
+                            text = pluralStringResource(
+                                id = L10nR.plurals.hymns_count,
+                                count = count,
+                                count,
+                            ),
+                            modifier = Modifier.padding(top = 4.dp),
+                        )
+                    }
+                }
+            },
+            leadingContent = {
+                Box(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .size(24.dp)
+                        .background(collection.color.toColor(), CircleShape)
+                )
+            },
+            trailingContent = {
+                var showMenu by remember { mutableStateOf(false) }
+
+                IconButton(
+                    onClick = {
+                        hapticFeedback.performClick()
+                        showMenu = true
+                    },
+                    modifier = Modifier,
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = Color.Black.copy(alpha = 0.04f)
+                    ),
+                ) {
+                    Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
                 }
 
-                val count = collection.hymns.size
-                Text(
-                    text = pluralStringResource(
-                        L10nR.plurals.hymns_count, count, count
-                    )
-                )
-            }
-        }, leadingContent = {
-            Box(
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .size(24.dp)
-                    .background(collection.color.toColor(), CircleShape)
-            )
-        }, trailingContent = {
-            var showMenu by remember { mutableStateOf(false) }
-
-            IconButton(
-                onClick = {
-                    showMenu = true
-                },
-                modifier = Modifier,
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.Black.copy(alpha = 0.04f)
-                ),
-            ) {
-                Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
-            }
-
-            DropdownMenu(
-                expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                DropdownMenuItem(text = {
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Icon(
-                            imageVector = Icons.Rounded.DeleteForever, contentDescription = null
-                        )
-                        Text(stringResource(id = L10nR.string.delete))
-                    }
-                }, onClick = {
-                    showMenu = false
-                    onDelete()
-                })
-            }
-        })
+                DropdownMenu(
+                    expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                    DropdownMenuItem(text = {
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Icon(
+                                imageVector = Icons.Rounded.DeleteForever,
+                                contentDescription = null,
+                            )
+                            Text(stringResource(id = L10nR.string.delete))
+                        }
+                    }, onClick = {
+                        showMenu = false
+                        onDelete()
+                    })
+                }
+            })
     }
 }
 
