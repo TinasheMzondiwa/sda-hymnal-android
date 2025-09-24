@@ -4,12 +4,16 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.foundry.base)
     alias(libs.plugins.ksp)
-    id("dev.zacsweers.metro")
 }
 
 android { namespace = "hymnal.sing" }
 
-foundry { features { compose() } }
+foundry {
+    features {
+        compose()
+        metro()
+    }
+}
 
 ksp { arg("circuit.codegen.mode", "metro") }
 

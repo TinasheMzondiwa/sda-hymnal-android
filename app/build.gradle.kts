@@ -7,10 +7,14 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.foundry.base)
     alias(libs.plugins.ksp)
-    id("dev.zacsweers.metro")
 }
 
-foundry { features { compose() } }
+foundry {
+    features {
+        compose()
+        metro()
+    }
+}
 
 android {
     namespace = "app.hymnal"

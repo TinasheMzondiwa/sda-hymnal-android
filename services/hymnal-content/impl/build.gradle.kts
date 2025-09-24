@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    id("dev.zacsweers.metro")
 }
 
 val propertiesFile = rootProject.file("release/api-keys.properties")
@@ -27,6 +26,8 @@ android {
         buildConfig = true
     }
 }
+
+foundry { features { metro() } }
 
 dependencies {
     api(projects.services.hymnalContent.api)
