@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2025 Tinashe Mzondiwa
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="UnusedResources">
     <plurals name="hymns_count">
-        <item quantity="zero">@string/hymn_count_zero</item>
-        <item quantity="one">@string/hymn_count_one</item>
-        <item quantity="other">@string/hymn_count_other</item>
+        <item quantity="zero">No Hymns</item>
+        <item quantity="one">One Hymn</item>
+        <item quantity="other">%d Hymns</item>
     </plurals>
 </resources>

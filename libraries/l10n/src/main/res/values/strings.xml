@@ -16,9 +16,6 @@
     <string name="empty_collections_title">No Collections yet</string>
     <string name="empty_collections_message">Create your first collection to organize your favorite hymns</string>
     <string name="fullscreen">Fullscreen</string>
-    <string name="hymn_count_one">One Hymn</string>
-    <string name="hymn_count_other">%1$d Hymns</string>
-    <string name="hymn_count_zero">No Hymns</string>
     <string name="hymn_number">Hymn %1d</string>
     <string name="hymns">Hymns</string>
     <string name="label_color">Color</string>
@@ -37,7 +34,6 @@
     <string name="sabbath_permission_location_prompt">Please grant location permission to display accurate Sabbath times for your area.</string>
     <string name="save">Save</string>
     <string name="save_to_collection">Save to collection</string>
-    <string name="search">Search</string>
     <string name="settings_text_size">Text size</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_typeface">Typeface</string>
