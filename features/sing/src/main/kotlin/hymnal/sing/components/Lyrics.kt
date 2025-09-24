@@ -114,8 +114,8 @@ internal fun LazyListScope.hymnLyrics(
 private fun Verse(
     index: Int,
     lines: ImmutableList<String>,
-    modifier: Modifier = Modifier,
     textStyle: TextStyleSpec,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -144,8 +144,8 @@ private fun Verse(
 @Composable
 private fun Chorus(
     lines: ImmutableList<String>,
-    modifier: Modifier = Modifier,
     textStyle: TextStyleSpec,
+    modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
     val borderColor = MaterialTheme.colorScheme.onSecondaryContainer

@@ -3,6 +3,7 @@
 
 package hymnal.sing.components.text
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -123,13 +124,6 @@ private fun AppThemeSelector(
     onSelected: (AppTheme, Boolean) -> Unit = { theme, colors -> },
 ) {
     val hapticFeedback = LocalAppHapticFeedback.current
-    Text(
-        text = stringResource(L10nR.string.settings_theme),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 4.dp),
-        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-    )
 
     val options: ImmutableList<Pair<Boolean?, Boolean>> = remember {
         persistentListOf(
@@ -143,29 +137,39 @@ private fun AppThemeSelector(
         mutableStateOf(selectedTheme.isDarkTheme() to dynamicColors)
     }
 
-    LazyRow(
-        modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 20.dp)
-    ) {
-        items(options) { (darkTheme, dynamicColor) ->
-            ThemeCard(
-                selected = selectedPair.first == darkTheme && selectedPair.second == dynamicColor,
-                darkTheme = darkTheme,
-                dynamicColor = dynamicColor,
-                modifier = Modifier.padding(horizontal = 8.dp),
-                onClick = {
-                    selectedPair = darkTheme to dynamicColor
-                    hapticFeedback.performToggleSwitch(it)
-                    onSelected(
-                        when (darkTheme) {
-                            null -> AppTheme.FOLLOW_SYSTEM
-                            true -> AppTheme.DARK
-                            false -> AppTheme.LIGHT
-                        },
-                        dynamicColor
-                    )
-                }
-            )
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(L10nR.string.settings_theme),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 4.dp),
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+        )
+
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 20.dp)
+        ) {
+            items(options) { (darkTheme, dynamicColor) ->
+                ThemeCard(
+                    selected = selectedPair.first == darkTheme && selectedPair.second == dynamicColor,
+                    darkTheme = darkTheme,
+                    dynamicColor = dynamicColor,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    onClick = {
+                        selectedPair = darkTheme to dynamicColor
+                        hapticFeedback.performToggleSwitch(it)
+                        onSelected(
+                            when (darkTheme) {
+                                null -> AppTheme.FOLLOW_SYSTEM
+                                true -> AppTheme.DARK
+                                false -> AppTheme.LIGHT
+                            },
+                            dynamicColor
+                        )
+                    }
+                )
+            }
         }
     }
 }
@@ -178,49 +182,52 @@ private fun AppTheme.isDarkTheme(): Boolean? = when (this) {
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
+@SuppressLint("DeprecatedCall")
 private fun AppFontSelector(
     selectedFont: AppFont,
     modifier: Modifier = Modifier,
     onSelected: (AppFont) -> Unit = {},
 ) {
     val hapticFeedback = LocalAppHapticFeedback.current
-    Text(
-        text = stringResource(L10nR.string.settings_typeface),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 4.dp),
-        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-    )
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(L10nR.string.settings_typeface),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 4.dp),
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+        )
 
-    FlowRow(
-        modifier = modifier
-            .padding(horizontal = 20.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-        verticalArrangement = Arrangement.spacedBy(2.dp),
-    ) {
-        AppFont.entries.forEachIndexed { index, font ->
-            ToggleButton(
-                checked = selectedFont == font,
-                onCheckedChange = {
-                    if (it) {
-                        hapticFeedback.performToggleSwitch(true)
-                        onSelected(font)
-                    }
-                },
-                shapes =
-                    when (index) {
-                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                        AppFont.entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+        FlowRow(
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            AppFont.entries.forEachIndexed { index, font ->
+                ToggleButton(
+                    checked = selectedFont == font,
+                    onCheckedChange = {
+                        if (it) {
+                            hapticFeedback.performToggleSwitch(true)
+                            onSelected(font)
+                        }
                     },
-                modifier = Modifier.semantics { role = Role.RadioButton },
-            ) {
-                Text(
-                    text = font.label,
-                    fontFamily = font.toFamily(),
-                    fontWeight = FontWeight.Medium,
-                )
+                    shapes =
+                        when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            AppFont.entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        },
+                    modifier = Modifier.semantics { role = Role.RadioButton },
+                ) {
+                    Text(
+                        text = font.label,
+                        fontFamily = font.toFamily(),
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
             }
         }
     }
@@ -236,38 +243,40 @@ private fun TextSizeSelector(
     val hapticFeedback = LocalAppHapticFeedback.current
     var sliderPosition by rememberSaveable(selected) { mutableFloatStateOf(selected) }
 
-    Text(
-        text = stringResource(L10nR.string.settings_text_size),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 4.dp),
-        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-    )
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Icon(Icons.Rounded.TextDecrease, contentDescription = null)
-        Slider(
-            value = sliderPosition,
-            onValueChange = {
-                sliderPosition = it
-                hapticFeedback.performGestureEnd()
-                onSelected(it)
-            },
-            modifier = modifier.weight(1f),
-            steps = 5,
-            valueRange = MIN_FONT_SIZE..MAX_FONT_SIZE,
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(L10nR.string.settings_text_size),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 4.dp),
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
         )
 
-        Icon(
-            imageVector = Icons.Rounded.TextIncrease,
-            contentDescription = null,
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Icon(Icons.Rounded.TextDecrease, contentDescription = null)
+            Slider(
+                value = sliderPosition,
+                onValueChange = {
+                    sliderPosition = it
+                    hapticFeedback.performGestureEnd()
+                    onSelected(it)
+                },
+                modifier = Modifier.weight(1f),
+                steps = 5,
+                valueRange = MIN_FONT_SIZE..MAX_FONT_SIZE,
+            )
+
+            Icon(
+                imageVector = Icons.Rounded.TextIncrease,
+                contentDescription = null,
+            )
+        }
     }
 }
 
@@ -288,7 +297,7 @@ private const val MAX_FONT_SIZE = 30f
 private fun Preview() {
     HymnalTheme {
         Surface {
-            TextStyleScreenUi(state = UiState(ThemeStyle(), {}))
+            TextStyleScreenUi(state = UiState(ThemeStyle()) {})
         }
     }
 }

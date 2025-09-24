@@ -3,45 +3,53 @@
 
 package hymnal.ui.extensions.placeholder
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
+import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.dp
-
-/**
- * Applies a placeholder modifier used in loading states.
- */
-fun Modifier.asPlaceholder(
-    visible: Boolean,
-    shape: Shape = RoundedCornerShape(8.dp),
-    color: Color,
-    highlightColor: Color
-) = placeholder(
-    visible = visible,
-    color = color,
-    shape = shape,
-    highlight = PlaceholderHighlight.Companion.fade(
-        highlightColor = highlightColor
-    )
-)
 
 /**
  * Applies a placeholder modifier
  */
-@SuppressLint("UnnecessaryComposedModifier")
 fun Modifier.asPlaceholder(
     visible: Boolean,
     color: Color? = null,
     shape: Shape = RoundedCornerShape(8.dp)
-) = composed {
-    asPlaceholder(
+): Modifier = this.then(
+    PlaceholderElement(
         visible = visible,
-        shape = shape,
-        color = color ?: MaterialTheme.colorScheme.inverseOnSurface,
-        highlightColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.75f)
+        color = color,
+        shape = shape
     )
+)
+
+private data class PlaceholderElement(
+    val visible: Boolean,
+    val color: Color?,
+    val shape: Shape
+) : ModifierNodeElement<PlaceholderNode>() {
+
+    override fun create(): PlaceholderNode = PlaceholderNode(visible, color, shape)
+
+    override fun update(node: PlaceholderNode) {
+        node.visible = visible
+        node.color = color
+        node.shape = shape
+    }
+
+    override fun InspectorInfo.inspectableProperties() {
+        name = "asPlaceholder"
+        properties["visible"] = visible
+        properties["color"] = color
+        properties["shape"] = shape
+    }
 }
+
+private class PlaceholderNode(
+    var visible: Boolean,
+    var color: Color?,
+    var shape: Shape
+) : Modifier.Node()

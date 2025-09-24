@@ -9,4 +9,8 @@
     <issue id="MissingTranslation" severity="ignore" />
     <issue id="ExtraTranslation" severity="ignore" />
     <issue id="UnknownIssueId" severity="ignore" />
+
+    <issue id="ComposeCompositionLocalUsage">
+        <option name="allowed-composition-locals" value="LocalWindowWidthSizeClass,LocalAppHapticFeedback" />
+    </issue>
 </lint>

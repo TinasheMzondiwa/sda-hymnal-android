@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.foundry.root)
     alias(libs.plugins.foundry.base)
-    alias(libs.plugins.spotless) apply false
+    alias(libs.plugins.spotless)
     alias(libs.plugins.gradle.cache.fix) apply false
     alias(libs.plugins.gradle.retry) apply false
     alias(libs.plugins.sortDependencies) apply false

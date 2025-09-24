@@ -39,6 +39,7 @@ internal class SimpleTunePlayer(
     private val context: Context
 ) : DefaultLifecycleObserver {
 
+    @Suppress("RawDispatchersUse")
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private val _playbackState = MutableStateFlow(PlaybackState.IDLE)
@@ -174,8 +175,8 @@ internal class SimpleTunePlayer(
         progressJob = scope.launch {
             while (isActive && mediaPlayer != null) {
                 val mp = mediaPlayer ?: break
-                val dur = max(0, runCatching { mp.duration }.getOrDefault(0))
-                val pos = max(0, runCatching { mp.currentPosition }.getOrDefault(0))
+                val dur = max(0, mp.duration)
+                val pos = max(0, mp.currentPosition)
                 _progress.value = PlaybackProgress(pos, dur)
 
                 // If playback has stopped unexpectedly, break out.

@@ -11,7 +11,7 @@ import hymnal.services.prefs.model.ThemeStyle
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-object TextStyleScreen : Screen {
+data object TextStyleScreen : Screen {
 
     data class State(
         val style: ThemeStyle,

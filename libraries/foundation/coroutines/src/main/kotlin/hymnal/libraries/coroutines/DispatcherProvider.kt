@@ -17,6 +17,7 @@ interface DispatcherProvider {
 
 @ContributesBinding(AppScope::class)
 @Inject
+@Suppress("RawDispatchersUse")
 class DefaultDispatcherProvider : DispatcherProvider {
     override val io: CoroutineDispatcher = Dispatchers.IO
     override val main: CoroutineDispatcher = Dispatchers.Main

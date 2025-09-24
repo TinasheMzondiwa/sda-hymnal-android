@@ -3,8 +3,11 @@
 
 package hymnal.services.sabbath.impl
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Address
 import android.location.Geocoder
+import android.os.Build
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
@@ -20,6 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.Duration
@@ -141,7 +145,7 @@ class SabbathRepositoryImpl(
     /**
      * Creates a [SabbathInfo] object from [SabbathTimesEntity] or [SabbathTimes].
      */
-    private fun createSabbathInfo(
+    private suspend fun createSabbathInfo(
         sabbathTimes: Any,
         latitude: Double,
         longitude: Double
@@ -181,22 +185,34 @@ class SabbathRepositoryImpl(
         return bothPast || stale
     }
 
-    private fun getCityAndState(latitude: Double, longitude: Double): String {
-        @Suppress("DEPRECATION")
-        val addresses = geocoder.getFromLocation(
-            latitude, longitude, 1
-        )
+    @SuppressLint("DeprecatedCall")
+    private suspend fun getCityAndState(latitude: Double, longitude: Double): String =
+        suspendCancellableCoroutine { continuation ->
+            val handleResult: (List<Address>?) -> Unit = { addresses ->
+                val result = if (!addresses.isNullOrEmpty()) {
+                    val city = addresses[0].locality      // e.g., "Toronto"
+                    val state = addresses[0].adminArea    // e.g., "Ontario"
 
-        return if (!addresses.isNullOrEmpty()) {
-            val city = addresses[0].locality      // e.g., "Toronto"
-            val state = addresses[0].adminArea    // e.g., "Ontario"
+                    when {
+                        city != null && state != null -> "$city $state"
+                        city != null -> city
+                        else -> "Unknown Location"
+                    }
+                } else {
+                    "Unknown Location"
+                }
 
-            if (city != null && state != null) {
-                "$city $state"
-            } else {
-                city
+                continuation.resumeWith(Result.success(result))
             }
-        } else "Unknown Location"
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                geocoder.getFromLocation(latitude, longitude, 1, handleResult)
+            } else {
+                @Suppress("DEPRECATION")
+                val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+
+                handleResult(addresses)
+            }
     }
 
     private suspend fun cacheSabbathTimes(id: String, sabbathTimes: SabbathTimes) {

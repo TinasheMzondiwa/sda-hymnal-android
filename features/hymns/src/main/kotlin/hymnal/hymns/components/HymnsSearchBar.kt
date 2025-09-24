@@ -59,6 +59,7 @@ import kotlinx.coroutines.launch
 fun HymnsSearchBar(
     results: ImmutableList<SearchResult>,
     onSearch: (CharSequence) -> Unit,
+    modifier: Modifier = Modifier,
     onResultClick: (SearchResult) -> Unit = {},
     trailingIcon: @Composable () -> Unit = {}
 ) {
@@ -146,6 +147,7 @@ fun HymnsSearchBar(
         scrollBehavior = scrollBehavior,
         state = searchBarState,
         inputField = inputField,
+        modifier = modifier,
         colors = SearchBarDefaults.appBarWithSearchColors(appBarContainerColor = Color.Transparent),
     )
 
