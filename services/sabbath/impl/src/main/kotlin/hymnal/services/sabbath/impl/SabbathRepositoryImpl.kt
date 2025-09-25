@@ -52,10 +52,10 @@ class SabbathRepositoryImpl(
 
         // Determine which week we should use (handles Sat night rollover)
         val (tFri, _) = helper.weekForQuery(now, sabbathEndIfKnown = null)
-        var key = weekKeyIso(tFri)
+        var key = weekDbKey(tFri, latitude, longitude)
         val tCache = sabbathTimesDao.get(key)?.let { createSabbathInfo(it, latitude, longitude) }
         val (fri, sat) = helper.weekForQuery(now, sabbathEndIfKnown = tCache?.sabbathEnd)
-        key = weekKeyIso(fri)
+        key = weekDbKey(fri, latitude, longitude)
 
         val cached = withContext(dispatcherProvider.io) {
             sabbathTimesDao.get(key)?.let { createSabbathInfo(it, latitude, longitude) }
@@ -76,7 +76,7 @@ class SabbathRepositoryImpl(
                         longitude = longitude,
                         fri = fri,
                         sat = sat,
-                        now = now
+                        now = now,
                     )
                 )
             )
@@ -127,7 +127,7 @@ class SabbathRepositoryImpl(
             }.getOrThrow()
         }
         cacheSabbathTimes(
-            id = weekKeyIso(fridaySunset.toLocalDate()),
+            id = weekDbKey(fridaySunset.toLocalDate(), latitude, longitude),
             sabbathTimes = SabbathTimes(
                 friday = fridaySunset,
                 saturday = saturdaySunset
@@ -174,6 +174,9 @@ class SabbathRepositoryImpl(
         this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
     private fun weekKeyIso(friday: LocalDate): String = friday.toString() // YYYY-MM-DD
+
+    private fun weekDbKey(friday: LocalDate, latitude: Double, longitude: Double): String =
+        "${weekKeyIso(friday)}-${helper.hashKey(latitude, longitude)}"
 
     /** Refresh policy:
      * - If both start/end are in the past relative to now, refresh.
