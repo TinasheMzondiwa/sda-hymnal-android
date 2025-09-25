@@ -3,6 +3,7 @@
 
 package hymnal.services.sabbath.impl.service
 
+import androidx.annotation.Keep
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
@@ -58,12 +59,14 @@ class SunriseSunsetServiceImpl(
     }
 }
 
+@Keep
 @Serializable
 private data class SunriseSunsetResponse(
     val results: SunriseSunsetResults,
     val status: String
 )
 
+@Keep
 @Serializable
 private data class SunriseSunsetResults(
     @Serializable(ZonedDateTimeSerializer::class)

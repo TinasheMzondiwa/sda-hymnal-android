@@ -3,8 +3,10 @@
 
 package hymnal.services.sabbath.impl.service.model
 
+import androidx.annotation.Keep
 import java.time.ZonedDateTime
 
+@Keep
 data class SabbathTimes(
     val friday: ZonedDateTime,
     val saturday: ZonedDateTime,

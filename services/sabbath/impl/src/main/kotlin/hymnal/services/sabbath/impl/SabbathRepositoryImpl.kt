@@ -83,7 +83,10 @@ class SabbathRepositoryImpl(
 
         }
     }.flowOn(dispatcherProvider.io)
-        .catch { Timber.e(it) }
+        .catch {
+            Timber.e(it)
+            emit(Result.failure(it))
+        }
 
     private suspend fun fetchFromNetwork(
         latitude: Double,

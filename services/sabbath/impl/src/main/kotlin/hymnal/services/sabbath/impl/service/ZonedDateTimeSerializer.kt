@@ -3,6 +3,7 @@
 
 package hymnal.services.sabbath.impl.service
 
+import androidx.annotation.Keep
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -11,6 +12,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import java.time.ZonedDateTime
 
+@Keep
 internal object ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ZonedDateTime", PrimitiveKind.STRING)
 
