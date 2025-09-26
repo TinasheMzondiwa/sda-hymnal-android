@@ -13,6 +13,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -26,11 +27,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.WbTwilight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,10 +47,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.R as UiR
 
 @Composable
@@ -297,4 +299,25 @@ internal fun Modifier.drawRadialGlow(color: Color) = drawBehind {
         radius = r,
         center = center
     )
+}
+
+@PreviewLightDark
+@Composable
+private fun SabbathCardPreview() {
+    HymnalTheme {
+        val colors = rememberSabbathColors(isDark = isSystemInDarkTheme())
+        Surface {
+            SabbathCard(
+                bigCountdown = "12:34:56",
+                sabbathStart = "Fri 7:45 PM",
+                sabbathEnd = "Sat 8:56 PM",
+                isSabbath = true,
+                progress = 0.65f,
+                colors = colors,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            )
+        }
+    }
 }
