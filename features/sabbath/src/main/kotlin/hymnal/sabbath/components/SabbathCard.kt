@@ -4,11 +4,7 @@
 package hymnal.sabbath.components
 
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -65,12 +61,6 @@ internal fun SabbathCard(
     colors: SabbathColors,
     modifier: Modifier = Modifier,
 ) {
-    val shimmer by rememberInfiniteTransition().animateFloat(
-        initialValue = 0.85f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(2200), RepeatMode.Reverse)
-    )
-
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = colors.card),
@@ -110,7 +100,6 @@ internal fun SabbathCard(
                 GlowingText(
                     text = bigCountdown,
                     colors = colors,
-                    intensity = shimmer,
                     fontSize = 44.sp,
                     fontWeight = FontWeight.SemiBold,
                 )
@@ -271,7 +260,6 @@ private fun SunsetProgress(
 private fun GlowingText(
     text: String,
     colors: SabbathColors,
-    intensity: Float,
     fontSize: TextUnit,
     fontWeight: FontWeight,
     modifier: Modifier = Modifier,
@@ -280,23 +268,30 @@ private fun GlowingText(
         // Glow underlay
         Text(
             text = text,
-            color = colors.accent.copy(alpha = 0.55f * intensity),
+            color = colors.accent.copy(alpha = 0.55f),
             fontSize = fontSize,
             fontWeight = fontWeight,
             modifier = Modifier.blur(12.dp, BlurredEdgeTreatment.Unbounded)
         )
         // Foreground text
         Text(
-            text = text, color = colors.accent, fontSize = fontSize, fontWeight = fontWeight
+            text = text,
+            color = colors.accent,
+            fontSize = fontSize,
+            fontWeight = fontWeight,
         )
     }
 }
 
 internal fun Modifier.drawRadialGlow(color: Color) = drawBehind {
-    val r = (size.minDimension / 2f)
+    val radius = (size.minDimension / 2f)
     drawCircle(
-        brush = Brush.radialGradient(listOf(color, Color.Transparent), center = center, radius = r),
-        radius = r,
+        brush = Brush.radialGradient(
+            colors = listOf(color, Color.Transparent),
+            center = center,
+            radius = radius,
+        ),
+        radius = radius,
         center = center
     )
 }

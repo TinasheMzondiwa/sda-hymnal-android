@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.annotation.RequiresPermission
+import androidx.compose.runtime.Stable
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -16,6 +17,7 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.tasks.await
 
+@Stable
 interface CurrentLocationStateProducer {
     suspend operator fun invoke(): LocationResult
 }

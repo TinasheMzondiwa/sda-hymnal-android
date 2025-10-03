@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
@@ -40,7 +41,6 @@ import hymnal.sabbath.components.NoLocationContent
 import hymnal.sabbath.components.SabbathTopAppBar
 import hymnal.sabbath.components.drawRadialGlow
 import hymnal.sabbath.components.rememberSabbathColors
-import hymnal.sabbath.components.sabbathInfo
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.scaffold.HazeScaffold
 
@@ -120,7 +120,12 @@ fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            sabbathInfo(targetState, colors)
+                            items(targetState.items, key = { it.id }) { item ->
+                                item.Content(
+                                    colors = colors,
+                                    modifier = Modifier.animateItem(),
+                                )
+                            }
                         }
                     }
                 }

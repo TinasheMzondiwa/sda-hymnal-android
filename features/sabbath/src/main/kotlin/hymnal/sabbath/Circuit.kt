@@ -4,6 +4,8 @@
 package hymnal.sabbath
 
 import com.slack.circuit.runtime.CircuitUiState
+import hymnal.sabbath.components.SabbathInfoItem
+import kotlinx.collections.immutable.ImmutableList
 
 sealed interface State : CircuitUiState {
     object Loading : State
@@ -12,12 +14,7 @@ sealed interface State : CircuitUiState {
     ) : State
 
     data class SabbathInfo(
-        val location: String,
-        val isSabbath: Boolean,
-        val progress: Float,
-        val countDown: String,
-        val sabbathStart: String,
-        val sabbathEnd: String,
+        val items: ImmutableList<SabbathInfoItem>,
     ) : State
 }
 
@@ -25,5 +22,9 @@ sealed interface Event {
     sealed interface NoLocation : Event {
         data object OnLocationGranted : NoLocation
         data object OnLocationDenied : NoLocation
+    }
+
+    sealed interface SabbathInfo : Event {
+        data class OnReminderToggled(val enabled: Boolean) : SabbathInfo
     }
 }

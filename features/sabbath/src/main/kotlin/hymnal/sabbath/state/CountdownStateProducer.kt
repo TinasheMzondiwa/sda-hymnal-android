@@ -3,6 +3,7 @@
 
 package hymnal.sabbath.state
 
+import androidx.compose.runtime.Stable
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
@@ -15,6 +16,7 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.Locale
 
+@Stable
 interface CountdownStateProducer {
     operator fun invoke(targetDateTime: ZonedDateTime, isSabbath: Boolean): Flow<String>
 }

@@ -17,26 +17,21 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.navigation.SabbathScreen
-import hymnal.sabbath.state.CountdownStateProducer
 import hymnal.sabbath.state.CurrentLocationStateProducer
 import hymnal.sabbath.state.LocationResult
+import hymnal.sabbath.state.SabbathInfoStateProducer
 import hymnal.services.sabbath.api.SabbathInfo
 import hymnal.services.sabbath.api.SabbathRepository
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.Duration
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 @Inject
 class SabbathPresenter(
-    private val countdownStateProducer: CountdownStateProducer,
     private val currentLocationStateProducer: CurrentLocationStateProducer,
+    private val sabbathInfoStateProducer: SabbathInfoStateProducer,
     private val sabbathRepository: SabbathRepository
 ) : Presenter<State> {
-
-    private val formatter = DateTimeFormatter.ofPattern("EE, h:mm a")
 
     @Composable
     override fun present(): State {
@@ -49,9 +44,6 @@ class SabbathPresenter(
         LaunchedEffect(Unit) {
             locationResult = currentLocationStateProducer()
         }
-
-        val countDownTime by rememberCountDownTime(sabbathInfo)
-        val sabbathProgress by rememberSabbathProgress(sabbathInfo, countDownTime)
 
         return when (locationResult) {
             null -> State.Loading
@@ -68,12 +60,7 @@ class SabbathPresenter(
                 })
 
             is LocationResult.Granted if sabbathInfo != null -> State.SabbathInfo(
-                location = sabbathInfo.location,
-                isSabbath = sabbathInfo.isSabbath,
-                progress = sabbathProgress,
-                countDown = countDownTime,
-                sabbathStart = sabbathInfo.sabbathStart.format(formatter),
-                sabbathEnd = sabbathInfo.sabbathEnd.format(formatter),
+                items = sabbathInfoStateProducer(sabbathInfo)
             )
             else -> State.Loading
         }
@@ -89,37 +76,6 @@ class SabbathPresenter(
                 longitude = location.longitude,
             ).catch { Timber.e(it) }
                 .collect { value = it.getOrNull() }
-        }
-
-    @Composable
-    private fun rememberCountDownTime(sabbathInfo: SabbathInfo?) =
-        produceRetainedState("", sabbathInfo) {
-            sabbathInfo?.run {
-                val flow = if (isSabbath) {
-                    countdownStateProducer(sabbathEnd, true)
-                } else {
-                    countdownStateProducer(sabbathStart, false)
-                }
-                flow.catch { Timber.e(it) }
-                    .collect { value = it }
-            }
-        }
-
-    @Composable
-    private fun rememberSabbathProgress(sabbathInfo: SabbathInfo?, key: Any) =
-        produceRetainedState(0f, sabbathInfo, key2 = key) {
-            sabbathInfo?.run {
-                val progress = when {
-                    isSabbath -> {
-                        val now = ZonedDateTime.now()
-                        val total = Duration.between(sabbathStart, sabbathEnd).toMillis().coerceAtLeast(1)
-                        val part = Duration.between(sabbathStart, now).toMillis().coerceAtLeast(0)
-                        (part.toFloat() / total.toFloat()).coerceIn(0f, 1f)
-                    }
-                    else -> 0f
-                }
-                value = progress
-            }
         }
 
     @CircuitInject(SabbathScreen::class, AppScope::class)

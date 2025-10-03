@@ -9,7 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 
 @Immutable
-internal data class SabbathColors(
+data class SabbathColors(
     val bg: Color,
     val card: Color,
     val text: Color,
