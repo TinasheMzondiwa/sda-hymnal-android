@@ -6,10 +6,9 @@ package hymnal.sabbath.state
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
+import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
@@ -18,10 +17,12 @@ import hymnal.sabbath.components.SabbathInfoItem
 import hymnal.sabbath.components.info.LocationInfoItem
 import hymnal.sabbath.components.info.ReminderInfoItem
 import hymnal.sabbath.components.info.SabbathInfoCard
+import hymnal.services.prefs.HymnalPrefs
 import hymnal.services.sabbath.api.SabbathInfo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -38,23 +39,27 @@ interface SabbathInfoStateProducer {
 @Inject
 class SabbathInfoStateProducerImpl(
     private val countdownStateProducer: CountdownStateProducer,
+    private val prefs: HymnalPrefs,
 ) : SabbathInfoStateProducer {
 
     private val formatter = DateTimeFormatter.ofPattern("EE, h:mm a")
 
     @Composable
     override fun invoke(sabbathInfo: SabbathInfo): ImmutableList<SabbathInfoItem> {
+        val coroutineScope = rememberStableCoroutineScope()
         val countDownTime by rememberCountDownTime(sabbathInfo)
         val sabbathProgress by rememberSabbathProgress(sabbathInfo, countDownTime)
-        var sabbathRemindersEnabled by rememberRetained { mutableStateOf(false) }
+        val sabbathRemindersEnabled by produceRetainedState(false) {
+            prefs.sabbathRemindersEnabled().collect { value = it }
+        }
 
         val eventSink: (Event.SabbathInfo) -> Unit = rememberRetained {
             { event ->
                 when (event) {
                     is Event.SabbathInfo.OnReminderToggled -> {
-                        sabbathRemindersEnabled = event.enabled
-
-                        // save to prefs
+                        coroutineScope.launch {
+                            prefs.setSabbathRemindersEnabled(event.enabled)
+                        }
                     }
                 }
             }

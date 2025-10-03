@@ -15,4 +15,16 @@ interface HymnalPrefs {
      * @param theme The new theme style to store.
      */
     suspend fun updateThemeStyle(theme: ThemeStyle)
+
+    /**
+     * Whether the user has enabled Sabbath reminders.
+     */
+    fun sabbathRemindersEnabled(): Flow<Boolean>
+
+    /**
+     * Updates the Sabbath reminders preference.
+     * @param enabled True if Sabbath reminders are enabled, false otherwise.
+     */
+    suspend fun setSabbathRemindersEnabled(enabled: Boolean)
+
 }

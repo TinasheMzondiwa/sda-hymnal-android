@@ -94,17 +94,30 @@ class HymnalPrefsImpl(
         }
     }
 
+    override fun sabbathRemindersEnabled(): Flow<Boolean> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferenceKeys.SABBATH_REMINDER] ?: false
+        }.flowOn(dispatcherProvider.io)
+    }
+
+    override suspend fun setSabbathRemindersEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.SABBATH_REMINDER] = enabled
+        }
+    }
+
     // Define preference keys
     private object PreferenceKeys {
         val APP_THEME = stringPreferencesKey("app_theme")
         val DYNAMIC_COLORS = booleanPreferencesKey("dynamic_colors")
         val FONT_SIZE = floatPreferencesKey("font_size")
         val TYPEFACE_NAME = stringPreferencesKey("typeface_name")
+        val SABBATH_REMINDER = booleanPreferencesKey("sabbath_reminders_enabled")
     }
 
     // Default values
     companion object {
-        const val DEFAULT_FONT_SIZE = 18f // Example default font size
+        private const val DEFAULT_FONT_SIZE = 18f // Example default font size
     }
 
 }
