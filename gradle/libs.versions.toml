@@ -8,6 +8,7 @@ androidx-datastore-prefs = "1.1.7"
 androidx-lifecyle = "2.9.4"
 androidx-room = "2.8.1"
 androidx-startup = "1.2.0"
+androidx-work = "2.10.5"
 cash-app-turbine = "1.2.1"
 circuit = "0.30.0"
 coil = "3.3.0"
@@ -60,6 +61,7 @@ androidx-room = { module = "androidx.room:room-ktx", version.ref = "androidx-roo
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
 androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "androidx-startup" }
+androidx-work = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
 circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
 circuit-codegen-annotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
 circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
