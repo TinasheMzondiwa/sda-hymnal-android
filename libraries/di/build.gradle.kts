@@ -7,3 +7,7 @@ plugins {
 foundry {
     features { metro() }
 }
+
+dependencies {
+    implementation(libs.androidx.work)
+}

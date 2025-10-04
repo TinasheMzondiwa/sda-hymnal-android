@@ -43,6 +43,11 @@
                 android:value="androidx.startup" />
         </provider>
 
+        <!-- Remove to use Application workManagerConfiguration -->
+        <meta-data
+            android:name="androidx.work.WorkManagerInitializer"
+            android:value="androidx.startup"
+            tools:node="remove" />
 
     </application>
 

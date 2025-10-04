@@ -6,6 +6,8 @@ package app.hymnal.di
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import androidx.work.ListenableWorker
+import androidx.work.WorkManager
 import app.hymnal.BuildConfig
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.runtime.presenter.Presenter
@@ -18,13 +20,11 @@ import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
 import hymnal.libraries.model.HymnalAppConfig
 import hymnal.services.content.HymnalContentSyncProvider
+import libraries.hymnal.di.MetroWorkerFactory
 import kotlin.reflect.KClass
 
 @DependencyGraph(AppScope::class)
 interface AppGraph {
-
-    @Provides
-    fun provideApplicationContext(application: Application): Context = application
 
     /**
      * A multibinding map of activity classes to their providers accessible for
@@ -32,6 +32,22 @@ interface AppGraph {
      */
     @Multibinds
     val activityProviders: Map<KClass<out Activity>, Provider<Activity>>
+
+    @Multibinds
+    val workerProviders:
+            Map<KClass<out ListenableWorker>, Provider<MetroWorkerFactory.WorkerInstanceFactory<*>>>
+
+    val workerFactory: MetroWorkerFactory
+
+    @Provides
+    fun provideApplicationContext(application: Application): Context = application
+
+    @Provides
+    @SingleIn(AppScope::class)
+    fun providesWorkManager(application: Context): WorkManager {
+        return WorkManager.getInstance(application)
+    }
+
 
     @Provides
     @SingleIn(AppScope::class)
