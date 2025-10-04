@@ -24,7 +24,8 @@ dependencies {
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.timber)
-
+    implementation(projects.libraries.di)
+    implementation(projects.libraries.l10n)
     implementation(projects.libraries.model)
     implementation(projects.services.storage)
 
