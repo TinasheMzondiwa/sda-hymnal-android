@@ -11,4 +11,5 @@ data class SabbathTimesEntity(
     @PrimaryKey val id: String,
     val friday: String,
     val saturday: String,
+    val location: String,
 )

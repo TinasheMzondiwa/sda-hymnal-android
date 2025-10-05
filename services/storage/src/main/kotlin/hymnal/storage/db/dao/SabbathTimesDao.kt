@@ -12,4 +12,10 @@ interface SabbathTimesDao : BaseDao<SabbathTimesEntity> {
 
     @Query("SELECT * FROM sabbath_times WHERE id = :id")
     suspend fun get(id: String) : SabbathTimesEntity?
+
+    @Query("SELECT * FROM sabbath_times LIMIT 1")
+    suspend fun get(): SabbathTimesEntity?
+
+    @Query("DELETE FROM sabbath_times WHERE id != :id")
+    suspend fun deleteNotIn(id: String)
 }
