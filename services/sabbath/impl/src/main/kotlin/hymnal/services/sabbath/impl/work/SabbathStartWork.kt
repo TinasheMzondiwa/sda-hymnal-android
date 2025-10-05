@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
+import androidx.work.ListenableWorker
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -24,7 +25,8 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.binding
-import libraries.hymnal.di.MetroWorkerFactory
+import hymnal.services.prefs.HymnalPrefs
+import libraries.hymnal.di.AssistedWorkerFactory
 import libraries.hymnal.di.WorkerKey
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -33,15 +35,28 @@ import hymnal.libraries.l10n.R as L10nR
 import hymnal.services.sabbath.impl.R as SabbathR
 
 @AssistedInject
-class SabbathStartWork(context: Context, @Assisted params: WorkerParameters) :
-    CoroutineWorker(context, params) {
+class SabbathStartWork(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val prefs: HymnalPrefs,
+) : CoroutineWorker(context, params) {
+
+    @WorkerKey(SabbathStartWork::class)
+    @ContributesIntoMap(
+        scope = AppScope::class,
+        binding = binding<AssistedWorkerFactory<out ListenableWorker>>(),
+    )
+    @AssistedFactory
+    fun interface Factory : AssistedWorkerFactory<SabbathStartWork>
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override suspend fun doWork(): Result {
+        val prefEnabled = prefs.isSabbathRemindersEnabled()
+
         return if (ActivityCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED && prefEnabled
         ) {
             showNotification()
             Result.success()
@@ -79,15 +94,8 @@ class SabbathStartWork(context: Context, @Assisted params: WorkerParameters) :
         notificationManager.createNotificationChannel(notificationChannel)
     }
 
-    @WorkerKey(SabbathStartWork::class)
-    @ContributesIntoMap(
-        AppScope::class,
-        binding = binding<MetroWorkerFactory.WorkerInstanceFactory<*>>(),
-    )
-    @AssistedFactory
-    abstract class Factory : MetroWorkerFactory.WorkerInstanceFactory<SabbathStartWork>
-
     companion object {
+        const val UNIQUE_NAME = "sabbath_start_work"
         private const val NOTIFICATION_CHANNEL_ID = "sabbath_notifications"
         private const val NOTIFICATION_ID = 18026
 
@@ -102,11 +110,11 @@ class SabbathStartWork(context: Context, @Assisted params: WorkerParameters) :
 
             val workRequest = OneTimeWorkRequestBuilder<SabbathStartWork>()
                 .setInitialDelay(delay, TimeUnit.MILLISECONDS)
-                .addTag("sabbath_schedule")
+                .addTag(UNIQUE_NAME)
                 .build()
 
             workManager
-                .enqueueUniqueWork("sabbath_schedule", ExistingWorkPolicy.REPLACE, workRequest)
+                .enqueueUniqueWork(UNIQUE_NAME, ExistingWorkPolicy.REPLACE, workRequest)
         }
     }
 }
