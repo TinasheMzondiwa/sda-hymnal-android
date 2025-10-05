@@ -18,6 +18,7 @@ import hymnal.services.prefs.model.AppTheme
 import hymnal.services.prefs.model.ThemeStyle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -98,6 +99,13 @@ class HymnalPrefsImpl(
         return context.dataStore.data.map { preferences ->
             preferences[PreferenceKeys.SABBATH_REMINDER] ?: false
         }.flowOn(dispatcherProvider.io)
+    }
+
+    override suspend fun isSabbathRemindersEnabled(): Boolean {
+        return withContext(dispatcherProvider.io) {
+            val preferences = context.dataStore.data.first()
+            preferences[PreferenceKeys.SABBATH_REMINDER] ?: false
+        }
     }
 
     override suspend fun setSabbathRemindersEnabled(enabled: Boolean) {

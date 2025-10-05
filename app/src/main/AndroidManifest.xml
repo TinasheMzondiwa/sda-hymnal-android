@@ -41,13 +41,12 @@
             <meta-data
                 android:name="app.hymnal.initializer.TimberInitializer"
                 android:value="androidx.startup" />
+            <!-- Remove to use Application workManagerConfiguration -->
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
         </provider>
-
-        <!-- Remove to use Application workManagerConfiguration -->
-        <meta-data
-            android:name="androidx.work.WorkManagerInitializer"
-            android:value="androidx.startup"
-            tools:node="remove" />
 
     </application>
 

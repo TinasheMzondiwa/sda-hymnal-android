@@ -27,6 +27,7 @@ dependencies {
     implementation(projects.libraries.di)
     implementation(projects.libraries.l10n)
     implementation(projects.libraries.model)
+    implementation(projects.services.prefs.api)
     implementation(projects.services.storage)
 
     testImplementation(libs.test.coroutines)

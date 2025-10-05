@@ -21,6 +21,8 @@ interface HymnalPrefs {
      */
     fun sabbathRemindersEnabled(): Flow<Boolean>
 
+    suspend fun isSabbathRemindersEnabled(): Boolean
+
     /**
      * Updates the Sabbath reminders preference.
      * @param enabled True if Sabbath reminders are enabled, false otherwise.
