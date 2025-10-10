@@ -15,7 +15,7 @@ import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import hymnal.libraries.navigation.SabbathScreen
 import hymnal.sabbath.state.CurrentLocationStateProducer
 import hymnal.sabbath.state.LocationResult
@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-@Inject
+@AssistedInject
 class SabbathPresenter(
     private val currentLocationStateProducer: CurrentLocationStateProducer,
     private val sabbathInfoStateProducer: SabbathInfoStateProducer,

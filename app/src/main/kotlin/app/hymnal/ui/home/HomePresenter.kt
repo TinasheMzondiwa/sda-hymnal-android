@@ -17,10 +17,10 @@ import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.collections.immutable.toImmutableList
 
-@Inject
+@AssistedInject
 class HomePresenter(@Assisted private val navigator: Navigator) : Presenter<State> {
 
     @Composable

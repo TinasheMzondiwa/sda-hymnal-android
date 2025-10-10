@@ -15,7 +15,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.services.content.HymnalContentProvider
 import hymnal.services.prefs.HymnalPrefs
@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
-@Inject
+@AssistedInject
 class SingHymnPresenter(
     @Assisted private val navigator: Navigator,
     @Assisted private val screen: SingHymnScreen,
@@ -41,8 +41,9 @@ class SingHymnPresenter(
     override fun present(): State {
         var hymnIndex by rememberRetained { mutableStateOf(screen.index) }
         var overlayState by rememberRetained { mutableStateOf<SingOverlayState?>(null) }
-        val _hymn by produceRetainedState<HymnContent?>(null, hymnIndex) {
+        val hymnContent by produceRetainedState<HymnContent?>(null, hymnIndex) {
             contentProvider.hymn(hymnIndex)
+                .catch { Timber.e(it) }
                 .collect { value = it?.let { HymnContent(it) } }
         }
         val textStyle by produceRetainedState(TextStyleSpec()) {
@@ -51,7 +52,7 @@ class SingHymnPresenter(
                 .catch { Timber.e(it) }
                 .collect { value = it }
         }
-        val hymn = _hymn
+        val hymn = hymnContent
 
         val topBarState = topBarStateProducer(navigator = navigator, hymn = hymn)
         val bottomBarState = bottomBarStateProducer(hymn) { hymnIndex = it }

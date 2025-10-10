@@ -44,7 +44,7 @@ import com.slack.circuit.runtime.screen.Screen
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.parcelize.Parcelize
@@ -71,7 +71,7 @@ data class NumPadPopResult(
     val number: Int,
 ) : PopResult
 
-@Inject
+@AssistedInject
 class PadContentPresenter(@Assisted private val navigator: Navigator) :
     Presenter<UiState> {
 
@@ -217,14 +217,14 @@ private fun NumberButton(
     TextButton(
         onClick = onClick,
         modifier = modifier,
-        enabled,
+        enabled = enabled,
         colors = ButtonDefaults.textButtonColors(
             contentColor = MaterialTheme.colorScheme.onSurface
         ),
     ) {
         Text(
             text = number.toString(),
-            style = MaterialTheme.typography.headlineLarge
+            style = MaterialTheme.typography.headlineLarge,
         )
     }
 }

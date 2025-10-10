@@ -15,7 +15,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import hymnal.hymns.components.SearchResult
 import hymnal.libraries.navigation.HymnsScreen
 import hymnal.libraries.navigation.SingHymnScreen
@@ -23,7 +23,7 @@ import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.content.HymnalContentProvider
 import kotlinx.collections.immutable.toImmutableList
 
-@Inject
+@AssistedInject
 class HymnsPresenter (
     @Assisted private val navigator: Navigator,
     private val contentProvider: HymnalContentProvider,

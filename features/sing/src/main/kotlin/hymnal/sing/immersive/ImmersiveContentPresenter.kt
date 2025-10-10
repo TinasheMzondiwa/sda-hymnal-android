@@ -11,7 +11,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import hymnal.services.content.HymnalContentProvider
 import hymnal.services.model.Hymn
 import hymnal.services.model.HymnLyrics
@@ -21,7 +21,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.catch
 import timber.log.Timber
 
-@Inject
+@AssistedInject
 class ImmersiveContentPresenter(
     @Assisted private val screen: ImmersiveContentScreen,
     private val contentProvider: HymnalContentProvider,
@@ -67,7 +67,7 @@ class ImmersiveContentPresenter(
 
             add(
                 ContentPage(
-                    lines = (listOf(title) + lines).toImmutableList()
+                    lines = (persistentListOf(title) + lines).toImmutableList()
                 )
             )
         }

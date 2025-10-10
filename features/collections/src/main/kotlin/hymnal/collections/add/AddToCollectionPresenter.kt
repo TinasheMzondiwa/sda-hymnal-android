@@ -13,7 +13,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import hymnal.collections.create.CreateCollectionScreen
 import hymnal.libraries.navigation.AddToCollectionScreen
 import hymnal.services.content.repository.CollectionsRepository
@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-@Inject
+@AssistedInject
 class AddToCollectionPresenter(
     @Assisted private val navigator: Navigator,
     @Assisted private val screen: AddToCollectionScreen,

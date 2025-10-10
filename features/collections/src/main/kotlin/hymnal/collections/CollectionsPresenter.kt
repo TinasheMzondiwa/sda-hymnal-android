@@ -16,8 +16,8 @@ import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
-import hymnal.collections.CollectionOverlayState.*
+import dev.zacsweers.metro.AssistedInject
+import hymnal.collections.CollectionOverlayState.BottomSheet
 import hymnal.collections.create.CreateCollectionScreen
 import hymnal.libraries.navigation.CollectionHymnsScreen
 import hymnal.libraries.navigation.CollectionsScreen
@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-@Inject
+@AssistedInject
 class CollectionsPresenter(
     @Assisted private val navigator: Navigator,
     private val repository: CollectionsRepository,

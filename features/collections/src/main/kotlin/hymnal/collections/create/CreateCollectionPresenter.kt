@@ -15,7 +15,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import hymnal.collections.components.CollectionColor
 import hymnal.services.content.repository.CollectionsRepository
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ import timber.log.Timber
 import hymnal.collections.create.CreateCollectionScreen.Event as UiEvent
 import hymnal.collections.create.CreateCollectionScreen.State as UiState
 
-@Inject
+@AssistedInject
 class CreateCollectionPresenter(
     @Assisted private val navigator: Navigator,
     @Assisted private val screen: CreateCollectionScreen,

@@ -10,7 +10,7 @@ import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import hymnal.services.prefs.HymnalPrefs
 import hymnal.services.prefs.model.ThemeStyle
 import kotlinx.coroutines.flow.catch
@@ -19,7 +19,7 @@ import timber.log.Timber
 import hymnal.sing.components.text.TextStyleScreen.Event as UiEvent
 import hymnal.sing.components.text.TextStyleScreen.State as UiState
 
-@Inject
+@AssistedInject
 class TextStylePresenter(
     private val prefs: HymnalPrefs,
 ) : Presenter<UiState> {

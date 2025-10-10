@@ -88,8 +88,6 @@ fun ImmersiveContent(state: UiState, modifier: Modifier = Modifier) {
                     )
                 )
             }
-
-
         }
     }
 }
