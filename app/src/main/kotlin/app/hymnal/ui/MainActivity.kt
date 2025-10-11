@@ -75,15 +75,19 @@ class MainActivity(
         val dataUri = intent.data ?: return null
         val screens = mutableListOf<Screen>()
 
-        dataUri.pathSegments.filter { it.isNotBlank() }.forEach { pathSegment ->
-            when (pathSegment) {
+        // Combine host and path segments to check for navigation targets
+        val parts = mutableListOf<String>()
+        dataUri.host?.let { parts.add(it) }
+        parts.addAll(dataUri.pathSegments)
+
+        parts.filter { it.isNotBlank() }.forEach { part ->
+            when (part) {
                 "sabbath" -> screens.add(HomeScreen(HomeRoute.Sabbath))
                 "collections" -> screens.add(HomeScreen(HomeRoute.Collections))
-                else -> Timber.d("Unknown path segment: $pathSegment")
+                else -> Timber.d("Unknown deep-link part: $part")
             }
         }
 
         return screens.takeIf { it.isNotEmpty() }?.toImmutableList()
     }
 }
-
