@@ -4,6 +4,7 @@
 package app.hymnal.ui
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,8 +16,10 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import libraries.hymnal.di.ActivityKey
+import app.hymnal.ui.home.HomeRoute
+import app.hymnal.ui.home.HomeScreen
 import com.slack.circuit.foundation.Circuit
+import com.slack.circuit.runtime.screen.Screen
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
@@ -24,7 +27,11 @@ import dev.zacsweers.metro.binding
 import hymnal.services.prefs.HymnalPrefs
 import hymnal.services.prefs.model.AppTheme
 import hymnal.services.prefs.model.ThemeStyle
-import kotlinx.coroutines.flow.map
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import libraries.hymnal.di.ActivityKey
+import timber.log.Timber
 
 @ContributesIntoMap(AppScope::class, binding<Activity>())
 @ActivityKey(MainActivity::class)
@@ -52,13 +59,31 @@ class MainActivity(
                 }
             }
 
+            val stackedScreens = parseDeepLink(intent) ?: persistentListOf(HomeScreen())
+
             HymnalApp(
                 circuit = circuit,
+                initialScreens = stackedScreens,
                 windowWidthSizeClass = calculateWindowSizeClass(this).widthSizeClass,
                 isDarkTheme = isDarkTheme,
                 dynamicColor = dynamicColors,
             )
         }
+    }
+
+    private fun parseDeepLink(intent: Intent): ImmutableList<Screen>? {
+        val dataUri = intent.data ?: return null
+        val screens = mutableListOf<Screen>()
+
+        dataUri.pathSegments.filter { it.isNotBlank() }.forEach { pathSegment ->
+            when (pathSegment) {
+                "sabbath" -> screens.add(HomeScreen(HomeRoute.Sabbath))
+                "collections" -> screens.add(HomeScreen(HomeRoute.Collections))
+                else -> Timber.d("Unknown path segment: $pathSegment")
+            }
+        }
+
+        return screens.takeIf { it.isNotEmpty() }?.toImmutableList()
     }
 }
 

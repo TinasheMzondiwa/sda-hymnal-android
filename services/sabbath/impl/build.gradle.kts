@@ -15,6 +15,7 @@ dependencies {
 
     implementation(platform(libs.ktor.bom))
     implementation(libs.androidx.annotations)
+    implementation(libs.androidx.core)
     implementation(libs.androidx.work)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.ktor.client.android)

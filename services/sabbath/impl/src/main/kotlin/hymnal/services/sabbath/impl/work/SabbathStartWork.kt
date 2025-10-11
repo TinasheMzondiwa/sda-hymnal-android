@@ -7,12 +7,15 @@ import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
 import androidx.work.ListenableWorker
@@ -73,7 +76,8 @@ class SabbathStartWork(
         val notification = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(SabbathR.drawable.ic_stat_sda)
             .setContentTitle(applicationContext.getString(L10nR.string.sabbath_notification_title))
-            .setContentTitle(applicationContext.getString(L10nR.string.sabbath_notification_message))
+            .setContentText(applicationContext.getString(L10nR.string.sabbath_notification_message))
+            .setContentIntent(contentIntent())
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .build()
@@ -92,6 +96,20 @@ class SabbathStartWork(
         notificationChannel.setShowBadge(true)
         notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
         notificationManager.createNotificationChannel(notificationChannel)
+    }
+
+    private fun contentIntent(): PendingIntent? {
+        val intent =
+            applicationContext.packageManager.getLaunchIntentForPackage(applicationContext.packageName)
+                ?.apply {
+                    data =
+                        "${applicationContext.getString(L10nR.string.app_scheme)}//sabbath".toUri()
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
+
+        return intent?.let {
+            PendingIntent.getActivity(applicationContext, 0, it, PendingIntent.FLAG_IMMUTABLE)
+        }
     }
 
     companion object {

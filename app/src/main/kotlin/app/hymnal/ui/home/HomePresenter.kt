@@ -21,11 +21,14 @@ import dev.zacsweers.metro.AssistedInject
 import kotlinx.collections.immutable.toImmutableList
 
 @AssistedInject
-class HomePresenter(@Assisted private val navigator: Navigator) : Presenter<State> {
+class HomePresenter(
+    @Assisted private val navigator: Navigator,
+    @Assisted private val screen: HomeScreen,
+) : Presenter<State> {
 
     @Composable
     override fun present(): State {
-        var currentRoute by rememberRetained { mutableStateOf(HomeRoute.Hymns) }
+        var currentRoute by rememberRetained { mutableStateOf(screen.route) }
         val routes = rememberRetained { HomeRoute.entries.toImmutableList() }
 
         return State(
@@ -43,7 +46,7 @@ class HomePresenter(@Assisted private val navigator: Navigator) : Presenter<Stat
     @CircuitInject(HomeScreen::class, AppScope::class)
     @AssistedFactory
     fun interface Factory {
-        fun create(navigator: Navigator): HomePresenter
+        fun create(navigator: Navigator, screen: HomeScreen): HomePresenter
     }
 
 }

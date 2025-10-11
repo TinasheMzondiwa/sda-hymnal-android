@@ -12,7 +12,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data object HomeScreen: Screen, Parcelable {
+data class HomeScreen(
+    val route: HomeRoute = HomeRoute.Hymns,
+) : Screen, Parcelable {
     data class State(
         val currentRoute: HomeRoute,
         val routes: ImmutableList<HomeRoute>,

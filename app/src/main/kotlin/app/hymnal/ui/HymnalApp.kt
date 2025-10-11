@@ -14,23 +14,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import app.hymnal.ui.home.HomeScreen
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.ContentWithOverlays
+import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.sharedelements.SharedElementTransitionLayout
 import com.slack.circuitx.android.rememberAndroidScreenAwareNavigator
 import com.slack.circuitx.gesturenavigation.GestureNavigationDecorationFactory
 import hymnal.ui.extensions.LocalWindowWidthSizeClass
 import hymnal.ui.theme.HymnalTheme
+import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HymnalApp(
     circuit: Circuit,
+    initialScreens: ImmutableList<Screen>,
     windowWidthSizeClass: WindowWidthSizeClass,
     isDarkTheme: Boolean,
     dynamicColor: Boolean,
@@ -42,7 +44,7 @@ fun HymnalApp(
             CircuitCompositionLocals(circuit = circuit) {
                 SharedElementTransitionLayout {
                     ContentWithOverlays {
-                        val backstack = rememberSaveableBackStack(HomeScreen)
+                        val backstack = rememberSaveableBackStack(initialScreens)
                         val circuitNavigator = rememberCircuitNavigator(backstack)
                         val navigator = rememberAndroidScreenAwareNavigator(circuitNavigator, LocalContext.current)
 
