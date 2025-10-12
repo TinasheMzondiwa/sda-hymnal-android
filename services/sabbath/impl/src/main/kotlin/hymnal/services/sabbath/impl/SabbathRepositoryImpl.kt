@@ -85,7 +85,6 @@ class SabbathRepositoryImpl(
 
         if (cached != null) {
             emit(Result.success(cached))
-            withContext(dispatcherProvider.io) { sabbathTimesDao.deleteNotIn(key) }
         }
 
         // Decide if we need a refresh:
@@ -103,8 +102,6 @@ class SabbathRepositoryImpl(
                     )
                 )
             )
-
-            withContext(dispatcherProvider.io) { sabbathTimesDao.deleteNotIn(key) }
         }
     }.onEach { result ->
         if (prefs.isSabbathRemindersEnabled()) {
@@ -253,7 +250,7 @@ class SabbathRepositoryImpl(
         location: String,
     ) {
         withContext(dispatcherProvider.io) {
-            sabbathTimesDao.insert(
+            sabbathTimesDao.replace(
                 SabbathTimesEntity(
                     id = id,
                     friday = sabbathTimes.friday.asDateString(),
