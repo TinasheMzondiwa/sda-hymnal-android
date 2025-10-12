@@ -18,6 +18,7 @@ include(
     ":features:collections",
     ":features:hymns",
     ":features:sabbath",
+    ":features:sabbath:widget",
     ":features:sing",
     ":libraries:core-ui",
     ":libraries:di",

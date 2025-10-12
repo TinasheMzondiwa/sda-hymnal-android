@@ -5,6 +5,7 @@ androidx-compose-bom = "2025.10.00"
 androidx-compose-material3 = "1.5.0-alpha06"
 androidx-core = "1.17.0"
 androidx-datastore-prefs = "1.1.7"
+androidx-glance = "1.2.0-beta01"
 androidx-lifecyle = "2.9.4"
 androidx-room = "2.8.2"
 androidx-startup = "1.2.0"
@@ -56,6 +57,11 @@ androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util" }
 androidx-compose-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "androidx-compose-material3" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-datastore-prefs = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore-prefs" }
+androidx-glance = { module = "androidx.glance:glance", version.ref = "androidx-glance" }
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidx-glance" }
+androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "androidx-glance" }
+androidx-glance-preview = { group = "androidx.glance", name = "glance-preview", version.ref = "androidx-glance" }
+androidx-glance-appwidget-preview = { group = "androidx.glance", name = "glance-appwidget-preview", version.ref = "androidx-glance" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecyle" }
 androidx-room = { module = "androidx.room:room-ktx", version.ref = "androidx-room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }

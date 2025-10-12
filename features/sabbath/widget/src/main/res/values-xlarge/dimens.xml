@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <integer name="sample_long_text_target_cell_width">2</integer>
+  <integer name="sample_long_text_target_cell_height">2</integer>
+  <dimen name="sample_long_text_widget_min_width">180dp</dimen>
+  <dimen name="sample_long_text_widget_min_height">184dp</dimen>
+  <dimen name="sample_long_text_min_resize_width">180dp</dimen>
+  <dimen name="sample_long_text_min_resize_height">184dp</dimen>
+  <dimen name="sample_long_text_max_resize_width">488dp</dimen>
+  <dimen name="sample_long_text_max_resize_height">488dp</dimen>
+</resources>

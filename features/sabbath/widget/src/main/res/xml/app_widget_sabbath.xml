@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2025 Tinashe Mzondiwa
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:description="@string/sabbath_widget_description"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:maxResizeHeight="@dimen/sample_long_text_max_resize_height"
+    android:maxResizeWidth="@dimen/sample_long_text_max_resize_width"
+    android:targetCellWidth="@integer/sample_long_text_target_cell_width"
+    android:targetCellHeight="@integer/sample_long_text_target_cell_height"
+    android:minHeight="@dimen/sample_long_text_widget_min_height"
+    android:minResizeHeight="@dimen/sample_long_text_min_resize_height"
+    android:minResizeWidth="@dimen/sample_long_text_min_resize_width"
+    android:minWidth="@dimen/sample_long_text_widget_min_width"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="home_screen"
+    tools:targetApi="31" />

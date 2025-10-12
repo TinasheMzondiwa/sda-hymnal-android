@@ -13,3 +13,7 @@ interface Scopable {
 fun ioScopable(dispatcherProvider: DispatcherProvider): Scopable = object : Scopable {
     override val scope: CoroutineScope = CoroutineScope(SupervisorJob() + dispatcherProvider.io)
 }
+
+fun defaultScopable(dispatcherProvider: DispatcherProvider): Scopable = object : Scopable {
+    override val scope: CoroutineScope = CoroutineScope(SupervisorJob() + dispatcherProvider.default)
+}
