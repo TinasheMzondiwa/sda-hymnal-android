@@ -29,9 +29,4 @@ import androidx.glance.preview.Preview
 @Preview(widthDp = 172, heightDp = 234) // pixel 6a - smaller phone (2x2 in 4x5 grid - portrait)
 @Preview(widthDp = 172, heightDp = 224) // pixel 7 pro - larger phone (2x2 in 4x5 grid - portrait)
 @Preview(widthDp = 304, heightDp = 229) // Pixel tablet (2x2 in 6x5 grid - landscape)
-// Min / max sizes
-@Preview(widthDp = 109, heightDp = 115) // min handheld
-@Preview(widthDp = 306, heightDp = 276) // max handheld
-@Preview(widthDp = 180, heightDp = 184) // min tablet
-@Preview(widthDp = 304, heightDp = 304) // max tablet
 annotation class SmallWidgetPreview

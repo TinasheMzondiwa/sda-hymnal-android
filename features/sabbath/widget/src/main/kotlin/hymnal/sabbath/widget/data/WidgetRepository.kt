@@ -7,7 +7,6 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.coroutines.DispatcherProvider
-import hymnal.services.sabbath.api.SabbathInfo
 import hymnal.storage.db.dao.SabbathTimesDao
 import hymnal.storage.db.entity.SabbathTimesEntity
 import kotlinx.coroutines.flow.Flow
@@ -39,19 +38,36 @@ class WidgetRepositoryImpl(
             .flowOn(dispatcherProvider.io)
     }
 
-    private fun SabbathTimesEntity.toInfo(): SabbathInfo {
+    private fun SabbathTimesEntity.toInfo(): WidgetSabbathInfo {
         val start = friday.asDateTime()
         val end = saturday.asDateTime()
+        val dateNow = ZonedDateTime.now()
 
-        return SabbathInfo(
+        val isSabbath = isWithinSabbath(
+            now = dateNow,
+            start = start,
+            end = end
+        )
+        val (label, date) = if (isSabbath) {
+            "Sabbath ends" to end
+        } else {
+            "Sabbath starts" to start
+        }
+
+        val dayLabel = if (!isSabbath && date.dayOfWeek != dateNow.dayOfWeek) {
+            date.format(DateTimeFormatter.ofPattern("EEEE, MMM d"))
+        } else {
+            null
+        }
+
+        return WidgetSabbathInfo(
             location = location,
-            isSabbath = isWithinSabbath(
-                now = ZonedDateTime.now(),
-                start = start,
-                end = end
-            ),
-            sabbathStart = start,
-            sabbathEnd = end,
+            label = label,
+            dayLabel = dayLabel,
+            time = date
+                .toLocalDateTime()
+                .format(DateTimeFormatter.ofPattern("h:mm a"))
+                .uppercase(),
         )
     }
 

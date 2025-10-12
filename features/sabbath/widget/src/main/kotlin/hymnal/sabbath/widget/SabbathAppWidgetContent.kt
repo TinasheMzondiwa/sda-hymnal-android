@@ -31,13 +31,11 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
+import hymnal.sabbath.widget.data.WidgetSabbathInfo
 import hymnal.sabbath.widget.data.WidgetState
 import hymnal.sabbath.widget.theme.HymnalGlanceTheme
-import hymnal.services.sabbath.api.SabbathInfo
-import java.time.DayOfWeek
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import hymnal.libraries.l10n.R as L10nR
 import hymnal.ui.R as UiR
 
@@ -70,7 +68,7 @@ fun SabbathAppWidgetContent(
             when (state) {
                 is WidgetState.Loading -> LoadingContent()
                 is WidgetState.Data -> SuccessContent(state)
-                is WidgetState.Error -> Text(text = "Error")
+                is WidgetState.Error -> ErrorContent()
             }
         }
     }
@@ -125,17 +123,6 @@ private fun LoadingContent(modifier: GlanceModifier = GlanceModifier) {
 @Composable
 private fun SuccessContent(state: WidgetState.Data, modifier: GlanceModifier = GlanceModifier) {
     val sabbathInfo = state.sabbathInfo
-    val (label, date) = if (sabbathInfo.isSabbath) {
-        "Sabbath ends" to sabbathInfo.sabbathEnd
-    } else {
-        "Sabbath starts" to sabbathInfo.sabbathStart
-    }
-
-    val dayLabel = if (!sabbathInfo.isSabbath && date.dayOfWeek != ZonedDateTime.now().dayOfWeek) {
-        date.format(DateTimeFormatter.ofPattern("EEEE, MMM d"))
-    } else {
-        null
-    }
 
     Column(
         modifier = modifier.fillMaxSize().padding(8.dp),
@@ -145,7 +132,7 @@ private fun SuccessContent(state: WidgetState.Data, modifier: GlanceModifier = G
         Spacer(GlanceModifier.defaultWeight())
 
         Text(
-            text = label,
+            text = sabbathInfo.label,
             modifier = GlanceModifier,
             style = TextStyle(
                 color = GlanceTheme.colors.onSurface,
@@ -154,7 +141,7 @@ private fun SuccessContent(state: WidgetState.Data, modifier: GlanceModifier = G
             )
         )
 
-        dayLabel?.let {
+        sabbathInfo.dayLabel?.let {
             Text(
                 text = it, modifier = GlanceModifier,
                 style = TextStyle(
@@ -165,10 +152,7 @@ private fun SuccessContent(state: WidgetState.Data, modifier: GlanceModifier = G
         }
 
         Text(
-            text = date
-                .toLocalDateTime()
-                .format(DateTimeFormatter.ofPattern("h:mm a"))
-                .uppercase(),
+            text = sabbathInfo.time,
             style = TextStyle(
                 color = GlanceTheme.colors.onBackground,
                 fontSize = 32.sp,
@@ -180,6 +164,20 @@ private fun SuccessContent(state: WidgetState.Data, modifier: GlanceModifier = G
     }
 }
 
+@Composable
+private fun ErrorContent(modifier: GlanceModifier = GlanceModifier) {
+    Text(
+        text = "Tap to update Sabbath times",
+        modifier = modifier.fillMaxWidth()
+            .padding(8.dp),
+        style = TextStyle(
+            color = GlanceTheme.colors.onSurfaceVariant,
+            fontSize = 13.sp,
+            textAlign = TextAlign.Center,
+        )
+    )
+}
+
 @SmallWidgetPreview
 @Composable
 private fun Preview() {
@@ -187,15 +185,37 @@ private fun Preview() {
         Box(modifier = GlanceModifier.padding(8.dp)) {
             SabbathAppWidgetContent(
                 state = WidgetState.Data(
-                    sabbathInfo = SabbathInfo(
+                    sabbathInfo = WidgetSabbathInfo(
                         location = "Springfield, IL",
-                        isSabbath = false,
-                        sabbathStart = ZonedDateTime.now().with(DayOfWeek.FRIDAY).withHour(18)
-                            .withMinute(45),
-                        sabbathEnd = ZonedDateTime.now().with(DayOfWeek.SATURDAY).withHour(18)
-                            .withMinute(30),
+                        label = "Sabbath starts",
+                        dayLabel = "Friday, Oct 4",
+                        time = "7:12 PM",
                     )
                 )
+            )
+        }
+    }
+}
+
+@SmallWidgetPreview
+@Composable
+private fun PreviewLoading() {
+    HymnalGlanceTheme {
+        Box(modifier = GlanceModifier.padding(8.dp)) {
+            SabbathAppWidgetContent(
+                state = WidgetState.Loading
+            )
+        }
+    }
+}
+
+@SmallWidgetPreview
+@Composable
+private fun PreviewError() {
+    HymnalGlanceTheme {
+        Box(modifier = GlanceModifier.padding(8.dp)) {
+            SabbathAppWidgetContent(
+                state = WidgetState.Error
             )
         }
     }

@@ -11,11 +11,12 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import dev.zacsweers.metro.createGraphFactory
+import hymnal.sabbath.widget.data.WidgetSabbathInfo
 import hymnal.sabbath.widget.data.WidgetState
 import hymnal.sabbath.widget.theme.HymnalGlanceTheme
-import hymnal.services.sabbath.api.SabbathInfo
 import java.time.DayOfWeek
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 class SabbathAppWidget : GlanceAppWidget() {
 
@@ -40,17 +41,20 @@ class SabbathAppWidget : GlanceAppWidget() {
 
     override suspend fun providePreview(context: Context, widgetCategory: Int) {
         super.providePreview(context, widgetCategory)
+        val sabbathDay = ZonedDateTime.now().with(DayOfWeek.FRIDAY).withHour(18)
+            .withMinute(45)
+
         provideContent {
             HymnalGlanceTheme {
                 SabbathAppWidgetContent(
                     state = WidgetState.Data(
-                        sabbathInfo = SabbathInfo(
+                        sabbathInfo = WidgetSabbathInfo(
                             location = "Springfield, IL",
-                            isSabbath = false,
-                            sabbathStart = ZonedDateTime.now().with(DayOfWeek.FRIDAY).withHour(18)
-                                .withMinute(45),
-                            sabbathEnd = ZonedDateTime.now().with(DayOfWeek.SATURDAY).withHour(18)
-                                .withMinute(30),
+                            label = "Sabbath starts",
+                            dayLabel = sabbathDay
+                                .format(DateTimeFormatter.ofPattern("EEEE, MMM d")),
+                            time = sabbathDay.toLocalDateTime()
+                                .format(DateTimeFormatter.ofPattern("h:mm a"))
                         )
                     )
                 )

@@ -5,13 +5,18 @@ package hymnal.sabbath.widget.data
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import hymnal.services.sabbath.api.SabbathInfo
 
 @Stable
 sealed interface WidgetState {
     data object Loading : WidgetState
     data object Error : WidgetState
-
-    @Immutable
-    data class Data(val sabbathInfo: SabbathInfo) : WidgetState
+    data class Data(val sabbathInfo: WidgetSabbathInfo) : WidgetState
 }
+
+@Immutable
+data class WidgetSabbathInfo(
+    val location: String,
+    val label: String,
+    val dayLabel: String?,
+    val time: String,
+)
