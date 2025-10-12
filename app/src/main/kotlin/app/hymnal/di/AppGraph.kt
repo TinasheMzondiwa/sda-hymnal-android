@@ -19,10 +19,10 @@ import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
 import hymnal.libraries.model.HymnalAppConfig
 import hymnal.services.content.HymnalContentSyncProvider
+import hymnal.services.sabbath.api.SabbathWidgetHelper
 import libraries.hymnal.di.MetroWorkerFactory
 import kotlin.reflect.KClass
 
-@SingleIn(AppScope::class)
 @DependencyGraph(AppScope::class)
 interface AppGraph {
 
@@ -34,6 +34,7 @@ interface AppGraph {
     val activityProviders: Map<KClass<out Activity>, Provider<Activity>>
 
     val workerFactory: MetroWorkerFactory
+    val sabbathWidgetHelper: SabbathWidgetHelper
 
     @Provides
     fun provideApplicationContext(application: Application): Context = application

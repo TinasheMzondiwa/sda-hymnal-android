@@ -15,4 +15,9 @@ class HymnalApplication : Application(), Configuration.Provider {
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder().setWorkerFactory(appGraph.workerFactory).build()
+
+    override fun onCreate() {
+        super.onCreate()
+        appGraph.sabbathWidgetHelper.refreshPreview()
+    }
 }
