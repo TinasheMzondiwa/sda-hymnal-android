@@ -16,7 +16,9 @@ rootProject.name = "sda-hymnal-android"
 include(
     ":app",
     ":features:collections",
+    ":features:donate",
     ":features:hymns",
+    ":features:info",
     ":features:sabbath",
     ":features:sabbath:widget",
     ":features:sing",

@@ -18,6 +18,7 @@
     <string name="fullscreen">Fullscreen</string>
     <string name="hymn_number">Hymn %1d</string>
     <string name="hymns">Hymns</string>
+    <string name="info">Info</string>
     <string name="label_color">Color</string>
     <string name="label_description">Description (optional)</string>
     <string name="label_title">Title</string>
