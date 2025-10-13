@@ -37,7 +37,7 @@ internal fun LazyListScope.hymnInfo(
     hymn: HymnContent,
     textStyle: TextStyleSpec,
 ) {
-    item(key = hymn.index) {
+    item(key = "hymn_info_${hymn.index}") {
         HymnInfo(
             hymn = hymn,
             textStyle = textStyle,
@@ -59,7 +59,7 @@ private fun HymnInfo(
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
 
             Text(
@@ -103,7 +103,7 @@ private fun HymnInfo(
 
              hymn.author?.let {
                 Text(
-                    text = stringResource(L10nR.string.prefix_author, it),
+                    text = it,
                     style = MaterialTheme.typography.bodySmallEmphasized.copy(
                         fontFamily = textStyle.font.toFamily(),
                         fontSize = (textStyle.textSize * 0.8).sp,
@@ -132,7 +132,7 @@ private fun HymnInfo(
                     style = MaterialTheme.typography.bodySmallEmphasized.copy(
                         fontFamily = textStyle.font.toFamily(),
                         fontSize = textStyle.textSize.sp,
-                        fontStyle = FontStyle.Italic,
+                        fontStyle = FontStyle.Normal,
                     ),
                     textAlign = TextAlign.Center
                 )
