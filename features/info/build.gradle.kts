@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+android { namespace = "hymnal.info" }
+
 foundry {
     features {
         compose()
@@ -16,9 +18,11 @@ foundry {
 ksp { arg("circuit.codegen.mode", "metro") }
 
 dependencies {
+    implementation(libs.androidx.core)
     implementation(libs.timber)
     implementation(projects.libraries.coreUi)
     implementation(projects.libraries.l10n)
+    implementation(projects.libraries.model)
     implementation(projects.libraries.navigation.api)
 
     ksp(libs.circuit.codegen)
