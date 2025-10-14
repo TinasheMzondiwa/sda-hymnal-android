@@ -9,6 +9,8 @@
     <string name="app_name">SDA Hymnal</string>
     <string name="app_name_info">SDA Hymnal App</string>
     <string name="app_share_message">Get the SDA Hymnal App!\n\n%1$s</string>
+    <string name="back">Back</string>
+    <string name="clear_search">Clear search</string>
     <string name="collections">Collections</string>
     <string name="community">Community</string>
     <string name="content_description_add_collection">Add collection</string>
@@ -50,6 +52,8 @@
     <string name="sabbath_widget_title">Sabbath widget</string>
     <string name="save">Save</string>
     <string name="save_to_collection">Save to collection</string>
+    <string name="search_hymnal">Search Hymnal</string>
+    <string name="search_prompt_voice">Speak to search</string>
     <string name="settings_text_size">Text size</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_typeface">Typeface</string>
@@ -57,9 +61,10 @@
     <string name="sort_number">Number</string>
     <string name="sort_title">Title</string>
     <string name="support">Support</string>
+    <string name="submit">Submit</string>
     <string name="text_format">Text format</string>
     <string name="tune_tooltip_action">Got it</string>
     <string name="tune_tooltip_description">Tap to play or pause the tune. Long press to stop playback or restart from the beginning.</string>
     <string name="tune_tooltip_title">Play or Pause tune</string>
-    <string name="submit">Submit</string>
+    <string name="voice_search">Voice Search</string>
 </resources>

@@ -3,6 +3,12 @@
 
 package hymnal.hymns.components
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.speech.RecognizerIntent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Clear
@@ -43,16 +50,21 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import hymnal.ui.extensions.LocalWindowWidthSizeClass
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.hymn.NumberText
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +79,28 @@ fun HymnsSearchBar(
     val searchBarState = rememberSearchBarState()
     val scope = rememberCoroutineScope()
     val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
+    val hapticFeedback = LocalAppHapticFeedback.current
+
+    // Launcher for voice input
+    val voiceInputLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            val recognitionResults = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            recognitionResults?.firstOrNull()?.let { spokenText ->
+                textFieldState.setTextAndPlaceCursorAtEnd(spokenText)
+            }
+        }
+    }
+
+    val voicePrompt = stringResource(id = L10nR.string.search_prompt_voice)
+    val voiceIntent: Intent = remember {
+        Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_PROMPT, voicePrompt)
+        }
+    }
+
 
     // Clear the text field when the search bar collapses
     LaunchedEffect(searchBarState.targetValue) {
@@ -89,7 +123,7 @@ fun HymnsSearchBar(
                 textStyle = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
-                placeholder = { Text("Search Hymnal") },
+                placeholder = { Text(stringResource(id = L10nR.string.search_hymnal)) },
                 leadingIcon = {
                     AnimatedContent(targetState = searchBarState.currentValue) { searchBarValue ->
                         if (searchBarValue == SearchBarValue.Expanded) {
@@ -98,7 +132,7 @@ fun HymnsSearchBar(
                                     TooltipDefaults.rememberTooltipPositionProvider(
                                         TooltipAnchorPosition.Above
                                     ),
-                                tooltip = { PlainTooltip { Text("Back") } },
+                                tooltip = { PlainTooltip { Text(stringResource(id = L10nR.string.back)) } },
                                 state = rememberTooltipState(),
                             ) {
                                 IconButton(
@@ -107,14 +141,14 @@ fun HymnsSearchBar(
                                     }
                                 ) {
                                     Icon(
-                                        Icons.AutoMirrored.Rounded.ArrowBack,
-                                        contentDescription = "Back",
+                                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                        contentDescription = stringResource(id = L10nR.string.back),
                                     )
                                 }
                             }
                         } else {
                             Icon(
-                                Icons.Rounded.Search,
+                                imageVector = Icons.Rounded.Search,
                                 contentDescription = null
                             )
                         }
@@ -127,12 +161,28 @@ fun HymnsSearchBar(
                             SearchBarValue.Expanded -> {
                                 AnimatedContent(textFieldState.text.isEmpty()) { isEmpty ->
                                     if (isEmpty) {
-                                        IconButton(onClick = {}) {
-                                            Icon(Icons.Rounded.Mic, null)
+                                        IconButton(onClick = {
+                                            hapticFeedback.performClick()
+                                            try {
+                                                voiceInputLauncher.launch(voiceIntent)
+                                            } catch (e: ActivityNotFoundException) {
+                                                Timber.e(e, "Voice recognition not available")
+                                            }
+                                        }) {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Mic,
+                                                contentDescription = stringResource(id = L10nR.string.voice_search)
+                                            )
                                         }
                                     } else {
-                                        IconButton(onClick = { textFieldState.clearText() }) {
-                                            Icon(Icons.Rounded.Clear, null)
+                                        IconButton(onClick = {
+                                            hapticFeedback.performClick()
+                                            textFieldState.clearText()
+                                        }) {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Clear,
+                                                contentDescription = stringResource(id = L10nR.string.clear_search)
+                                            )
                                         }
                                     }
                                 }
@@ -189,7 +239,9 @@ private fun SearchResults(
     }
 
     LaunchedEffect(results) {
-        listState.requestScrollToItem(0)
+        if (results.isNotEmpty()) {
+            listState.animateScrollToItem(0)
+        }
     }
 }
 
