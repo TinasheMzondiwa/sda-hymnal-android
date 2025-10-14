@@ -66,7 +66,7 @@ fun HymnalApp(
 
 @Composable
 private fun SystemUiEffect(
-    lightStatusBar: Boolean, 
+    lightStatusBar: Boolean,
     isSystemInDarkTheme: Boolean = isSystemInDarkTheme(),
 ) {
     val localView = LocalView.current
