@@ -3,6 +3,7 @@
 
 package hymnal.info.components
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,10 +22,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.slack.circuit.sharedelements.SharedElementTransitionScope
+import hymnal.libraries.navigation.key.DonateSharedTransitionKey
 import hymnal.info.R as InfoR
 import hymnal.libraries.l10n.R as L10nR
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun InfoTopAppBar(
     modifier: Modifier = Modifier,
@@ -35,16 +38,29 @@ fun InfoTopAppBar(
         title = { Text(text = stringResource(L10nR.string.info)) },
         modifier = modifier,
         actions = {
-            FilledTonalButton(
-                onClick = onDonateClick,
-                elevation = ButtonDefaults.filledTonalButtonElevation(defaultElevation = 4.dp)
-            ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Icon(
-                        painter = painterResource(InfoR.drawable.ic_heart_smile),
-                        contentDescription = null
-                    )
-                    Text(stringResource(L10nR.string.donate))
+            SharedElementTransitionScope {
+                FilledTonalButton(
+                    onClick = onDonateClick,
+                    modifier = Modifier
+                        .sharedElement(
+                            sharedContentState =
+                                rememberSharedContentState(
+                                    DonateSharedTransitionKey(
+                                        type = DonateSharedTransitionKey.ElementType.Button,
+                                    )
+                                ),
+                            animatedVisibilityScope =
+                                requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                        ),
+                    elevation = ButtonDefaults.filledTonalButtonElevation(defaultElevation = 4.dp)
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Icon(
+                            painter = painterResource(InfoR.drawable.ic_heart_smile),
+                            contentDescription = null
+                        )
+                        Text(stringResource(L10nR.string.donate))
+                    }
                 }
             }
 
