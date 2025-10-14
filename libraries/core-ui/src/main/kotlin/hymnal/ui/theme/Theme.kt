@@ -11,10 +11,12 @@ import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import hymnal.ui.extensions.LocalWindowWidthSizeClass
 import hymnal.ui.haptics.DefaultHapticFeedback
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.color.DarkColorScheme
@@ -27,6 +29,7 @@ import hymnal.ui.theme.type.HymnalTypography
 fun HymnalTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
+    windowWidthSizeClass: WindowWidthSizeClass = WindowWidthSizeClass.Compact,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -40,6 +43,7 @@ fun HymnalTheme(
 
     CompositionLocalProvider(
         LocalAppHapticFeedback provides DefaultHapticFeedback(LocalHapticFeedback.current),
+        LocalWindowWidthSizeClass provides windowWidthSizeClass,
     ) {
         MaterialExpressiveTheme(
             colorScheme = colorScheme,

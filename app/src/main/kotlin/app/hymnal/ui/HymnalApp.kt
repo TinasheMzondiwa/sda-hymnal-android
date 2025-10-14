@@ -8,7 +8,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -24,7 +23,6 @@ import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.sharedelements.SharedElementTransitionLayout
 import com.slack.circuitx.android.rememberAndroidScreenAwareNavigator
 import com.slack.circuitx.gesturenavigation.GestureNavigationDecorationFactory
-import hymnal.ui.extensions.LocalWindowWidthSizeClass
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.collections.immutable.ImmutableList
 
@@ -37,27 +35,27 @@ fun HymnalApp(
     isDarkTheme: Boolean,
     dynamicColor: Boolean,
 ) {
-    HymnalTheme(darkTheme = isDarkTheme, dynamicColor = dynamicColor) {
-        CompositionLocalProvider(
-            LocalWindowWidthSizeClass provides windowWidthSizeClass,
-        ) {
-            CircuitCompositionLocals(circuit = circuit) {
-                SharedElementTransitionLayout {
-                    ContentWithOverlays {
-                        val backstack = rememberSaveableBackStack(initialScreens)
-                        val circuitNavigator = rememberCircuitNavigator(backstack)
-                        val navigator = rememberAndroidScreenAwareNavigator(circuitNavigator, LocalContext.current)
+    HymnalTheme(
+        darkTheme = isDarkTheme,
+        dynamicColor = dynamicColor,
+        windowWidthSizeClass = windowWidthSizeClass,
+    ) {
+        CircuitCompositionLocals(circuit = circuit) {
+            SharedElementTransitionLayout {
+                ContentWithOverlays {
+                    val backstack = rememberSaveableBackStack(initialScreens)
+                    val circuitNavigator = rememberCircuitNavigator(backstack)
+                    val navigator =
+                        rememberAndroidScreenAwareNavigator(circuitNavigator, LocalContext.current)
 
-                        NavigableCircuitContent(
-                            navigator = navigator,
-                            backStack = backstack,
-                            circuit = circuit,
-                            decoratorFactory =
-                                remember(navigator) {
-                                    GestureNavigationDecorationFactory(onBackInvoked = navigator::pop)
-                                },
-                        )
-                    }
+                    NavigableCircuitContent(
+                        navigator = navigator,
+                        backStack = backstack,
+                        circuit = circuit,
+                        decoratorFactory = remember(navigator) {
+                            GestureNavigationDecorationFactory(onBackInvoked = navigator::pop)
+                        },
+                    )
                 }
             }
         }
@@ -68,15 +66,21 @@ fun HymnalApp(
 
 @Composable
 private fun SystemUiEffect(
-    lightStatusBar: Boolean,
-    isSystemInDarkTheme: Boolean = isSystemInDarkTheme()
+    lightStatusBar: Boolean, 
+    isSystemInDarkTheme: Boolean = isSystemInDarkTheme(),
 ) {
     val localView = LocalView.current
     if (!localView.isInEditMode) {
         DisposableEffect(lightStatusBar) {
             val window = (localView.context as Activity).window
-            WindowCompat.getInsetsController(window, localView).isAppearanceLightStatusBars = lightStatusBar
-            onDispose { WindowCompat.getInsetsController(window, localView).isAppearanceLightStatusBars = !isSystemInDarkTheme }
+            WindowCompat.getInsetsController(window, localView).isAppearanceLightStatusBars =
+                lightStatusBar
+            onDispose {
+                WindowCompat.getInsetsController(
+                    window,
+                    localView
+                ).isAppearanceLightStatusBars = !isSystemInDarkTheme
+            }
         }
     }
 }
