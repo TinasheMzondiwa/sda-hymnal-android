@@ -50,7 +50,7 @@ fun HymnCard(
                     animatedVisibilityScope =
                         requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
                 )
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(vertical = 8.dp),
         ) {
             CardContent(
                 hymn = hymn,

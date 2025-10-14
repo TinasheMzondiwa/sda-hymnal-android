@@ -30,6 +30,7 @@ import hymnal.info.components.InfoItemsCard
 import hymnal.info.components.InfoTopAppBar
 import hymnal.libraries.navigation.InfoScreen
 import hymnal.ui.extensions.plus
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.size.HymnalDimens
 import hymnal.ui.widget.scaffold.HazeScaffold
 import kotlinx.collections.immutable.persistentListOf
@@ -43,7 +44,7 @@ fun InfoScreenUi (state: State, modifier: Modifier = Modifier) {
         TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val layoutDirection = LocalLayoutDirection.current
     val context = LocalContext.current
-
+    val hapticFeedback = LocalAppHapticFeedback.current
     val horizontalPadding = HymnalDimens.horizontalPadding()
 
     HazeScaffold(
@@ -53,6 +54,7 @@ fun InfoScreenUi (state: State, modifier: Modifier = Modifier) {
             InfoTopAppBar(
                 scrollBehavior = scrollBehavior,
                 onDonateClick = {
+                    hapticFeedback.performSuccess()
                     state.eventSink(Event.OnDonateClick)
                 },
             )
@@ -70,7 +72,10 @@ fun InfoScreenUi (state: State, modifier: Modifier = Modifier) {
         ) {
             item("version-info") { AboutCard(version = state.appVersion) }
 
-            itemCards { state.eventSink(Event.OnLinkClick(it, context)) }
+            itemCards {
+                hapticFeedback.performClick()
+                state.eventSink(Event.OnLinkClick(it, context))
+            }
 
             item("app-info") {
                 Text(

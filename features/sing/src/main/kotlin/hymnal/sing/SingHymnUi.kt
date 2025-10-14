@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,8 +56,9 @@ import hymnal.sing.components.SingTopAppBar
 import hymnal.sing.components.hymnInfo
 import hymnal.sing.components.hymnLyrics
 import hymnal.ui.circuit.BottomSheetOverlay
-import hymnal.ui.extensions.copy
+import hymnal.ui.extensions.plus
 import hymnal.ui.theme.HymnalTheme
+import hymnal.ui.theme.size.HymnalDimens
 import hymnal.ui.widget.scaffold.HazeScaffold
 
 @OptIn(
@@ -74,6 +73,7 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val bottomAppBarScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
+    val horizontalPadding = HymnalDimens.horizontalPadding()
 
     SharedElementTransitionScope {
         val showBottomBar by remember { derivedStateOf { !isTransitionActive } }
@@ -134,11 +134,11 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
                 state = listState,
-                contentPadding = contentPadding.copy(
+                contentPadding = contentPadding.plus(
                     layoutDirection = layoutDirection,
-                    start = contentPadding.calculateStartPadding(layoutDirection) + 16.dp,
-                    top = contentPadding.calculateTopPadding() + 16.dp,
-                    end = contentPadding.calculateEndPadding(layoutDirection) + 16.dp,
+                    start = horizontalPadding,
+                    top = 16.dp,
+                    end = horizontalPadding,
                     bottom = 0.dp
                 ),
                 verticalArrangement = Arrangement.spacedBy(20.dp),

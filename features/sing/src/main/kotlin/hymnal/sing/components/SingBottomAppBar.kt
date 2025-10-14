@@ -67,6 +67,7 @@ import hymnal.ui.extensions.plus
 import hymnal.ui.haptics.AppHapticFeedback
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
+import hymnal.ui.theme.size.HymnalDimens
 import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -86,9 +87,10 @@ fun SingBottomAppBar(
     )
     val hapticFeedback = LocalAppHapticFeedback.current
     val layoutDirection = LocalLayoutDirection.current
+    val horizontalPadding = HymnalDimens.horizontalPadding()
     val contentPadding = WindowInsets.safeDrawing.only(
         WindowInsetsSides.Horizontal
-    ).asPaddingValues().plus(layoutDirection, start = 16.dp, end = 16.dp)
+    ).asPaddingValues().plus(layoutDirection, start = horizontalPadding, end = horizontalPadding)
 
     FlexibleBottomAppBar(
         modifier = modifier,

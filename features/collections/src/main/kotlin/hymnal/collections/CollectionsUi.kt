@@ -57,10 +57,11 @@ import hymnal.collections.components.emptyCollections
 import hymnal.libraries.navigation.CollectionsScreen
 import hymnal.services.model.HymnsCollection
 import hymnal.ui.circuit.BottomSheetOverlay
-import hymnal.ui.extensions.copy
+import hymnal.ui.extensions.plus
 import hymnal.ui.haptics.AppHapticFeedback
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
+import hymnal.ui.theme.size.HymnalDimens
 import hymnal.ui.widget.scaffold.HazeScaffold
 import kotlinx.collections.immutable.persistentListOf
 import hymnal.libraries.l10n.R as L10nR
@@ -72,6 +73,7 @@ fun CollectionsUi(state: State, modifier: Modifier = Modifier) {
     val layoutDirection = LocalLayoutDirection.current
     val hapticFeedback = LocalAppHapticFeedback.current
     val listState: LazyListState = rememberLazyListState()
+    val horizontalPadding = HymnalDimens.horizontalPadding()
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val fabVisible by remember { derivedStateOf { !listState.isScrollInProgress } }
@@ -109,9 +111,11 @@ fun CollectionsUi(state: State, modifier: Modifier = Modifier) {
     ) { contentPadding ->
         LazyColumn(
             state = listState,
-            contentPadding = contentPadding.copy(
+            contentPadding = contentPadding.plus(
                 layoutDirection = layoutDirection,
-                top = contentPadding.calculateTopPadding() + 12.dp,
+                top = 12.dp,
+                start = horizontalPadding,
+                end = horizontalPadding,
             ),
         ) {
 

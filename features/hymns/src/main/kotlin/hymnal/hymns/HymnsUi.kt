@@ -52,9 +52,10 @@ import hymnal.hymns.components.previewHymn
 import hymnal.libraries.navigation.HymnsScreen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.model.HymnCategory
-import hymnal.ui.extensions.copy
+import hymnal.ui.extensions.plus
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
+import hymnal.ui.theme.size.HymnalDimens
 import hymnal.ui.widget.scaffold.HazeScaffold
 import kotlinx.collections.immutable.persistentListOf
 import hymnal.libraries.l10n.R as L10nR
@@ -66,6 +67,7 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
     val layoutDirection = LocalLayoutDirection.current
     val hapticFeedback = LocalAppHapticFeedback.current
     val listState: LazyListState = rememberLazyListState()
+    val horizontalPadding = HymnalDimens.horizontalPadding()
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val fabVisible by remember { derivedStateOf { !listState.isScrollInProgress } }
@@ -100,9 +102,11 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
     ) { contentPadding ->
         LazyColumn(
             state = listState,
-            contentPadding = contentPadding.copy(
+            contentPadding = contentPadding.plus(
                 layoutDirection = layoutDirection,
-                top = contentPadding.calculateTopPadding() + 12.dp,
+                top = 12.dp,
+                start = horizontalPadding,
+                end = horizontalPadding,
             ),
         ) {
             items(state.hymns, key = { it.index }) { hymn ->
@@ -110,7 +114,10 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                     hymn = hymn,
                     sortType = state.sortType.next(),
                     modifier = Modifier.animateItem(),
-                    onClick = { state.eventSink(Event.OnHymnClicked(hymn.index)) },
+                    onClick = {
+                        hapticFeedback.performClick()
+                        state.eventSink(Event.OnHymnClicked(hymn.index))
+                    },
                 )
             }
 

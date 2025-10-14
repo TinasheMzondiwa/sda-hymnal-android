@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,10 +34,11 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import dev.zacsweers.metro.AppScope
 import hymnal.collections.components.CollectionColor
 import hymnal.libraries.navigation.CollectionHymnsScreen
-import hymnal.ui.extensions.copy
+import hymnal.ui.extensions.plus
 import hymnal.ui.haptics.AppHapticFeedback
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
+import hymnal.ui.theme.size.HymnalDimens
 import hymnal.ui.widget.scaffold.HazeScaffold
 import kotlinx.collections.immutable.persistentListOf
 
@@ -51,6 +50,7 @@ fun CollectionHymnsScreenUi(state: State, modifier: Modifier = Modifier) {
     val hapticFeedback = LocalAppHapticFeedback.current
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val horizontalPadding = HymnalDimens.horizontalPadding()
 
     HazeScaffold(
         modifier = modifier
@@ -61,11 +61,11 @@ fun CollectionHymnsScreenUi(state: State, modifier: Modifier = Modifier) {
         contentWindowInsets = WindowInsets.safeDrawing,
     ) { contentPadding ->
         LazyColumn(
-            contentPadding = contentPadding.copy(
+            contentPadding = contentPadding.plus(
                 layoutDirection = layoutDirection,
-                top = contentPadding.calculateTopPadding() + 12.dp,
-                start = contentPadding.calculateStartPadding(layoutDirection) + 16.dp,
-                end = contentPadding.calculateEndPadding(layoutDirection) + 16.dp,
+                top = 12.dp,
+                start = horizontalPadding,
+                end = horizontalPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
