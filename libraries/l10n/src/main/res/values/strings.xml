@@ -39,7 +39,6 @@
     <string name="pref_theme_dark">Dark</string>
     <string name="pref_theme_follow_system">Follow system</string>
     <string name="pref_theme_light">Light</string>
-    <string name="prefix_author">by: %1s</string>
     <string name="prefix_major_key">Major Key:</string>
     <string name="sabbath">Sabbath</string>
     <string name="sabbath_enable_location">Enable Location</string>
