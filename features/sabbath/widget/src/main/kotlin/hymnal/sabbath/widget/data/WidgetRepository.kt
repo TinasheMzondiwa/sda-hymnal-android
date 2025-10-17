@@ -3,6 +3,7 @@
 
 package hymnal.sabbath.widget.data
 
+import android.content.Context
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import hymnal.libraries.l10n.R as L10nR
 
 interface WidgetRepository {
     fun state(): Flow<WidgetState>
@@ -22,9 +24,13 @@ interface WidgetRepository {
 @ContributesBinding(AppScope::class)
 @Inject
 class WidgetRepositoryImpl(
+    private val appContext: Context,
     private val sabbathTimesDao: SabbathTimesDao,
     private val dispatcherProvider: DispatcherProvider,
 ) : WidgetRepository {
+
+    private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, MMM d")
+    private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
 
     override fun state(): Flow<WidgetState> {
         return sabbathTimesDao.getFlow()
@@ -46,27 +52,29 @@ class WidgetRepositoryImpl(
         val isSabbath = isWithinSabbath(
             now = dateNow,
             start = start,
-            end = end
+            end = end,
         )
         val (label, date) = if (isSabbath) {
-            "Sabbath ends" to end
+            appContext.getString(L10nR.string.sabbath_end) to end
         } else {
-            "Sabbath starts" to start
+            appContext.getString(L10nR.string.sabbath_start) to start
         }
 
         val dayLabel = if (!isSabbath && date.dayOfWeek != dateNow.dayOfWeek) {
-            date.format(DateTimeFormatter.ofPattern("EEEE, MMM d"))
+            date.format(dateFormatter)
+        } else if (isSabbath) {
+            appContext.getString(L10nR.string.sabbath_notification_title)
         } else {
             null
         }
 
         return WidgetSabbathInfo(
             location = location,
-            label = label,
-            dayLabel = dayLabel,
+            label = if (isSabbath) dayLabel.orEmpty() else label,
+            dayLabel = if (isSabbath) label else dayLabel,
             time = date
                 .toLocalDateTime()
-                .format(DateTimeFormatter.ofPattern("h:mm a"))
+                .format(timeFormatter)
                 .uppercase(),
         )
     }
