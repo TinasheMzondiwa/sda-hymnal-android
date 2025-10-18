@@ -9,7 +9,7 @@ import app.hymnal.R
 import com.slack.circuit.runtime.screen.Screen
 import hymnal.libraries.navigation.CollectionsScreen
 import hymnal.libraries.navigation.HymnsScreen
-import hymnal.libraries.navigation.InfoScreen
+import hymnal.libraries.navigation.MoreScreen
 import hymnal.libraries.navigation.SabbathScreen
 import hymnal.libraries.l10n.R as L10nR
 import hymnal.ui.R as UiR
@@ -33,9 +33,9 @@ enum class HomeRoute(
         L10nR.string.sabbath,
     ),
 
-    Info(
-        RouteIcon.Info,
-        L10nR.string.info,
+    More(
+        RouteIcon.More,
+        L10nR.string.more,
     )
 }
 
@@ -59,9 +59,9 @@ data class RouteIcon(
             filledIcon = UiR.drawable.ic_sunset_fill,
         )
 
-        val Info = RouteIcon(
-            icon = R.drawable.ic_info,
-            filledIcon = R.drawable.ic_info_fill,
+        val More = RouteIcon(
+            icon = R.drawable.ic_menu,
+            filledIcon = R.drawable.ic_menu_fill,
         )
     }
 }
@@ -71,6 +71,6 @@ fun HomeRoute.screen(): Screen {
         HomeRoute.Hymns -> HymnsScreen
         HomeRoute.Collections -> CollectionsScreen
         HomeRoute.Sabbath -> SabbathScreen
-        HomeRoute.Info -> InfoScreen
+        HomeRoute.More -> MoreScreen
     }
 }

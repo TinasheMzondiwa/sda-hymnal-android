@@ -1,13 +1,11 @@
 // Copyright (C) 2025 Tinashe Mzondiwa
 // SPDX-License-Identifier: Apache-2.0
 
-package hymnal.info
+package hymnal.more
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,10 +23,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import dev.zacsweers.metro.AppScope
-import hymnal.info.components.AboutCard
-import hymnal.info.components.InfoItemsCard
-import hymnal.info.components.InfoTopAppBar
-import hymnal.libraries.navigation.InfoScreen
+import hymnal.more.components.AboutCard
+import hymnal.more.components.InfoItemsCard
+import hymnal.more.components.MoreTopAppBar
+import hymnal.libraries.navigation.MoreScreen
 import hymnal.ui.extensions.plus
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.size.HymnalDimens
@@ -37,9 +35,9 @@ import kotlinx.collections.immutable.persistentListOf
 import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalMaterial3Api::class)
-@CircuitInject(InfoScreen::class, AppScope::class)
+@CircuitInject(MoreScreen::class, AppScope::class)
 @Composable
-fun InfoScreenUi (state: State, modifier: Modifier = Modifier) {
+fun MoreScreenUi(state: State, modifier: Modifier = Modifier) {
     val scrollBehavior =
         TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val layoutDirection = LocalLayoutDirection.current
@@ -51,7 +49,7 @@ fun InfoScreenUi (state: State, modifier: Modifier = Modifier) {
         modifier = modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            InfoTopAppBar(
+            MoreTopAppBar(
                 scrollBehavior = scrollBehavior,
                 onDonateClick = {
                     hapticFeedback.performSuccess()
@@ -60,7 +58,6 @@ fun InfoScreenUi (state: State, modifier: Modifier = Modifier) {
             )
         },
         blurTopBar = true,
-        contentWindowInsets = WindowInsets.safeDrawing,
     ) { contentPadding ->
         LazyColumn(
             contentPadding = contentPadding.plus(

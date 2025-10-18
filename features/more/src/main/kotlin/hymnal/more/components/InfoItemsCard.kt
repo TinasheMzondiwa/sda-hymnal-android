@@ -1,7 +1,7 @@
 // Copyright (C) 2025 Tinashe Mzondiwa
 // SPDX-License-Identifier: Apache-2.0
 
-package hymnal.info.components
+package hymnal.more.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import hymnal.info.InfoLink
+import hymnal.more.InfoLink
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -33,9 +33,7 @@ fun InfoItemsCard(
     ) {
         Text(text = section, style = MaterialTheme.typography.labelLarge)
 
-        OutlinedCard(
-            modifier = Modifier,
-        ) {
+        OutlinedCard(modifier = Modifier) {
             Column {
                 items.forEach { link ->
                     InfoLinkItem(

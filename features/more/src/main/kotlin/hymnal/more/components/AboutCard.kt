@@ -1,7 +1,7 @@
 // Copyright (C) 2025 Tinashe Mzondiwa
 // SPDX-License-Identifier: Apache-2.0
 
-package hymnal.info.components
+package hymnal.more.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import hymnal.ui.theme.HymnalTheme
-import hymnal.info.R as InfoR
+import hymnal.more.R as MoreR
 import hymnal.libraries.l10n.R as L10nR
 
 @Composable
@@ -45,7 +45,7 @@ fun AboutCard(
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Image(
-            painter = painterResource(InfoR.drawable.hymnal),
+            painter = painterResource(MoreR.drawable.hymnal),
             contentDescription = null,
             modifier = Modifier
                 .size(64.dp)
@@ -75,7 +75,7 @@ fun AboutCard(
         )
 
         Text(
-            text = "Sing, learn, and grow in faith through timeless hymns.",
+            text = stringResource(L10nR.string.app_tagline),
             style = MaterialTheme.typography.bodyLarge.copy(fontStyle = FontStyle.Italic),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center

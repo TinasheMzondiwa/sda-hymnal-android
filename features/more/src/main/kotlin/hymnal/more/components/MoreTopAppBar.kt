@@ -1,7 +1,7 @@
 // Copyright (C) 2025 Tinashe Mzondiwa
 // SPDX-License-Identifier: Apache-2.0
 
-package hymnal.info.components
+package hymnal.more.components
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Arrangement
@@ -24,18 +24,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import hymnal.libraries.navigation.key.DonateSharedTransitionKey
-import hymnal.info.R as InfoR
+import hymnal.more.R as InfoR
 import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun InfoTopAppBar(
+fun MoreTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     onDonateClick: () -> Unit = {}
 ) {
     TopAppBar(
-        title = { Text(text = stringResource(L10nR.string.info)) },
+        title = { Text(text = stringResource(L10nR.string.more)) },
         modifier = modifier,
         actions = {
             SharedElementTransitionScope {

@@ -1,10 +1,10 @@
 // Copyright (C) 2025 Tinashe Mzondiwa
 // SPDX-License-Identifier: Apache-2.0
 
-package hymnal.info
+package hymnal.more
 
 import androidx.annotation.DrawableRes
-import hymnal.info.R as InfoR
+import hymnal.more.R as MoreR
 import androidx.annotation.StringRes
 import hymnal.libraries.l10n.R as L10nR
 
@@ -13,23 +13,23 @@ enum class InfoLink(
     @param:StringRes val title: Int,
 ) {
     Feedback(
-        icon = InfoR.drawable.ic_help,
+        icon = MoreR.drawable.ic_help,
         title = L10nR.string.info_help_feedback,
     ),
     ShareApp(
-        icon = InfoR.drawable.ic_share,
+        icon = MoreR.drawable.ic_share,
         title = L10nR.string.info_share_app,
     ),
     Rate(
-        icon = InfoR.drawable.ic_star_rate,
+        icon = MoreR.drawable.ic_star_rate,
         title = L10nR.string.info_rate_app,
     ),
     Review(
-        icon = InfoR.drawable.ic_rate_review,
+        icon = MoreR.drawable.ic_rate_review,
         title = L10nR.string.info_write_review,
     ),
     PrivacyPolicy(
-        icon = InfoR.drawable.ic_policy,
+        icon = MoreR.drawable.ic_policy,
         title = L10nR.string.info_privacy_policy,
     ),
 }

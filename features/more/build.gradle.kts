@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-android { namespace = "hymnal.info" }
+android { namespace = "hymnal.more" }
 
 foundry {
     features {

@@ -1,0 +1,14 @@
+<!--
+  ~ Copyright (C) 2025 Tinashe Mzondiwa
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <path
+        android:fillColor="#000000"
+        android:pathData="M149,769q-26,0 -44.5,-18.5T86,706q0,-26 18.5,-44.5T149,643h662q26,0 44.5,18.5T874,706q0,26 -18.5,44.5T811,769L149,769ZM149,543q-26,0 -44.5,-18.5T86,480q0,-26 18.5,-44.5T149,417h662q26,0 44.5,18.5T874,480q0,26 -18.5,44.5T811,543L149,543ZM149,317q-26,0 -44.5,-18.5T86,254q0,-26 18.5,-44.5T149,191h662q26,0 44.5,18.5T874,254q0,26 -18.5,44.5T811,317L149,317Z" />
+</vector>

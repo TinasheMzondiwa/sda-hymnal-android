@@ -1,12 +1,11 @@
 // Copyright (C) 2025 Tinashe Mzondiwa
 // SPDX-License-Identifier: Apache-2.0
 
-package hymnal.info
+package hymnal.more
 
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.core.net.toUri
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -18,22 +17,22 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import hymnal.libraries.model.HymnalAppConfig
 import hymnal.libraries.navigation.DonateScreen
-import hymnal.libraries.navigation.InfoScreen
+import hymnal.libraries.navigation.MoreScreen
 import timber.log.Timber
 import hymnal.libraries.l10n.R as L10nR
 
 @AssistedInject
-class InfoPresenter(
+class MorePresenter(
     @Assisted private val navigator: Navigator,
     private val appConfig: HymnalAppConfig,
 ) : Presenter<State> {
 
     private val appVersion: String by lazy { "${appConfig.version}(${appConfig.buildNumber})" }
 
-    @CircuitInject(InfoScreen::class, AppScope::class)
+    @CircuitInject(MoreScreen::class, AppScope::class)
     @AssistedFactory
     interface Factory {
-        fun create(navigator: Navigator): InfoPresenter
+        fun create(navigator: Navigator): MorePresenter
     }
 
     @Composable
@@ -66,8 +65,14 @@ class InfoPresenter(
     private fun sendFeedback(context: Context) {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = "mailto:".toUri() // only email apps should handle this
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(context.getString(L10nR.string.app_email)))
-            putExtra(Intent.EXTRA_SUBJECT, "${context.getString(L10nR.string.app_name)} v${appConfig.version}")
+            putExtra(
+                Intent.EXTRA_EMAIL,
+                arrayOf(context.getString(L10nR.string.app_email))
+            )
+            putExtra(
+                Intent.EXTRA_SUBJECT,
+                "${context.getString(L10nR.string.app_name)} v${appConfig.version}"
+            )
         }
 
         try {
@@ -82,7 +87,11 @@ class InfoPresenter(
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT,
-                context.getString(L10nR.string.app_share_message, context.getString(L10nR.string.app_link)))
+                context.getString(
+                    L10nR.string.app_share_message,
+                    context.getString(L10nR.string.app_link)
+                )
+            )
             type = "text/plain"
         }
         val chooser = Intent.createChooser(shareIntent, "Share via")

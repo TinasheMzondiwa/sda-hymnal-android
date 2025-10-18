@@ -9,6 +9,7 @@
     <string name="app_name">SDA Hymnal</string>
     <string name="app_name_info">SDA Hymnal App</string>
     <string name="app_share_message">Get the SDA Hymnal App!\n\n%1$s</string>
+    <string name="app_tagline">Sing, learn, and grow in faith through timeless hymns.</string>
     <string name="back">Back</string>
     <string name="clear_search">Clear search</string>
     <string name="collections">Collections</string>
@@ -25,7 +26,6 @@
     <string name="fullscreen">Fullscreen</string>
     <string name="hymn_number">Hymn %1d</string>
     <string name="hymns">Hymns</string>
-    <string name="info">Info</string>
     <string name="info_help_feedback">Help &amp; Feedback</string>
     <string name="info_share_app">Share the App</string>
     <string name="info_rate_app">Rate the App</string>
@@ -34,6 +34,7 @@
     <string name="label_color">Color</string>
     <string name="label_description">Description (optional)</string>
     <string name="label_title">Title</string>
+    <string name="more">More</string>
     <string name="nav_back">Navigate back</string>
     <string name="new_collection">New collection</string>
     <string name="pref_theme_dark">Dark</string>

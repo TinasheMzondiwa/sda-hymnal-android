@@ -61,7 +61,7 @@ dependencies {
     implementation(projects.features.collections)
     implementation(projects.features.donate)
     implementation(projects.features.hymns)
-    implementation(projects.features.info)
+    implementation(projects.features.more)
     implementation(projects.features.sabbath)
     implementation(projects.features.sabbath.widget)
     implementation(projects.features.sing)

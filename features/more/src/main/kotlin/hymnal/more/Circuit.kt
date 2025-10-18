@@ -1,7 +1,7 @@
 // Copyright (C) 2025 Tinashe Mzondiwa
 // SPDX-License-Identifier: Apache-2.0
 
-package hymnal.info
+package hymnal.more
 
 import android.content.Context
 import com.slack.circuit.runtime.CircuitUiEvent

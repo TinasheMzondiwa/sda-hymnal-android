@@ -18,7 +18,7 @@ include(
     ":features:collections",
     ":features:donate",
     ":features:hymns",
-    ":features:info",
+    ":features:more",
     ":features:sabbath",
     ":features:sabbath:widget",
     ":features:sing",
