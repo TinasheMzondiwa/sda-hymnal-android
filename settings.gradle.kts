@@ -15,6 +15,7 @@ dependencyResolutionManagement {
 rootProject.name = "sda-hymnal-android"
 include(
     ":app",
+    ":features:account",
     ":features:collections",
     ":features:donate",
     ":features:hymns",

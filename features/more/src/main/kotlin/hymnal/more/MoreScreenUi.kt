@@ -22,7 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.foundation.CircuitContent
 import dev.zacsweers.metro.AppScope
+import hymnal.libraries.navigation.AccountCardScreen
 import hymnal.more.components.AboutCard
 import hymnal.more.components.InfoItemsCard
 import hymnal.more.components.MoreTopAppBar
@@ -68,6 +70,10 @@ fun MoreScreenUi(state: State, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             item("version-info") { AboutCard(version = state.appVersion) }
+
+            item(key = "account-card") {
+                CircuitContent(screen = AccountCardScreen)
+            }
 
             itemCards {
                 hapticFeedback.performClick()

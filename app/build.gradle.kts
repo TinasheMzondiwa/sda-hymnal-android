@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.google.android.material)
     implementation(libs.material3.adaptive.navigation.suite)
     implementation(libs.timber)
+    implementation(projects.features.account)
     implementation(projects.features.collections)
     implementation(projects.features.donate)
     implementation(projects.features.hymns)
