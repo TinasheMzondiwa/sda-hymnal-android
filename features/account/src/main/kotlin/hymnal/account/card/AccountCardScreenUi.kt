@@ -59,6 +59,7 @@ fun AccountCardScreenUi(state: AccountCardState, modifier: Modifier = Modifier) 
                         state.eventSink(AccountCardEvent.OnAccountCardClick)
                     },
                 )
+
                 is AccountCardState.NotLoggedIn -> NotLoggedInContent(
                     Modifier.clickable {
                         state.eventSink(AccountCardEvent.OnAccountCardClick)
@@ -114,7 +115,7 @@ private fun NotLoggedInContent(modifier: Modifier = Modifier) {
             )
         },
         supportingContent = {
-            Text(text = stringResource(L10nR.string.account_not_logged_in_message),)
+            Text(text = stringResource(L10nR.string.account_not_logged_in_message))
         },
         trailingContent = {
             Icon(
@@ -158,7 +159,6 @@ private fun LoggedInContent(state: AccountCardState.LoggedIn, modifier: Modifier
                     .size(AvatarSize)
                     .clip(CircleShape)
             )
-
         },
         supportingContent = {
             Text(text = state.email)
