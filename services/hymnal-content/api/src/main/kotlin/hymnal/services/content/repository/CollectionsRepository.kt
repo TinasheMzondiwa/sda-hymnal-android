@@ -73,4 +73,8 @@ interface CollectionsRepository {
      * @return A [Result] indicating success or failure.
      */
     suspend fun deleteCollection(collectionId: String): Result<Unit>
+
+    fun refresh()
+
+    fun unsubscribe()
 }

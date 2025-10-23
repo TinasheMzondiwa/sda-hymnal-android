@@ -72,6 +72,8 @@ class FirebaseSyncImpl(
                 .flowOn(dispatcherProvider.io)
                 .catch { e -> Timber.e(e, "Collection sync failed") }
                 .collect { event ->
+                    Timber.i("Received event: ${event.javaClass.simpleName}")
+
                     val entity = event.snapshot.toCollectionEntity()
                     if (entity == null) return@collect
 
