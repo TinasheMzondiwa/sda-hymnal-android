@@ -70,12 +70,7 @@ class CollectionsRepositoryImpl(
     ): Result<Unit> {
         return withContext(dispatcherProvider.io) {
             try {
-                collectionsDao.addHymnToCollection(
-                    CollectionHymnCrossRef(
-                        collectionId = collectionId,
-                        hymnId = hymnId,
-                    )
-                )
+                firebaseSync.addHymnToCollection(CollectionHymnCrossRef(collectionId, hymnId))
                 Result.success(Unit)
             } catch (ex: Exception) {
                 Timber.e(ex)
@@ -90,7 +85,7 @@ class CollectionsRepositoryImpl(
     ): Result<Unit> {
         return withContext(dispatcherProvider.io) {
             try {
-                collectionsDao.removeHymnFromCollection(collectionId, hymnId)
+                firebaseSync.removeHymnFromCollection(collectionId, hymnId)
                 Result.success(Unit)
             } catch (ex: Exception) {
                 Timber.e(ex)
@@ -130,7 +125,7 @@ class CollectionsRepositoryImpl(
     override suspend fun deleteCollection(collectionId: String): Result<Unit> {
         return withContext(dispatcherProvider.io) {
             try {
-                collectionsDao.deleteCollection(collectionId)
+                firebaseSync.deleteCollection(collectionId)
                 Result.success(Unit)
             } catch (ex: Exception) {
                 Timber.e(ex)

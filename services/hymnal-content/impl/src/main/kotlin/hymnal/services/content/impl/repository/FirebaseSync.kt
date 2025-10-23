@@ -13,12 +13,16 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import hymnal.libraries.coroutines.DispatcherProvider
 import hymnal.services.content.impl.ext.toCollectionEntity
+import hymnal.services.content.impl.ext.toCollectionHymnCrossRef
 import hymnal.storage.db.dao.CollectionDao
 import hymnal.storage.db.entity.CollectionEntity
+import hymnal.storage.db.entity.CollectionHymnCrossRef
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -31,18 +35,13 @@ import java.util.UUID
 interface FirebaseSync {
 
     fun attachCollectionListener()
-
     fun detachCollectionListener()
 
-    suspend fun createCollection(
-        title: String,
-        description: String?,
-        color: String
-    )
+    suspend fun createCollection(title: String, description: String?, color: String)
+    suspend fun deleteCollection(collectionId: String)
 
-    suspend fun deleteCollection(
-        collectionId: String
-    )
+    suspend fun addHymnToCollection(ref: CollectionHymnCrossRef)
+    suspend fun removeHymnFromCollection(collectionId: String, hymnId: String)
 }
 
 @SingleIn(AppScope::class)
@@ -55,6 +54,7 @@ class FirebaseSyncImpl(
     private val dispatcherProvider: DispatcherProvider,
 ) : FirebaseSync {
 
+    private val syncScope = CoroutineScope(dispatcherProvider.io + SupervisorJob())
     private var syncJob: Job? = null
 
     private val collectionsRef: CollectionReference?
@@ -63,38 +63,76 @@ class FirebaseSyncImpl(
                 .document(userId)
                 .collection("collections")
         }
+    private val hymnCollectionsRef: CollectionReference?
+        get() = auth.signedInUser()?.uid?.let { userId ->
+            firestore.collection("users")
+                .document(userId)
+                .collection("hymnCollections")
+        }
 
     override fun attachCollectionListener() {
-        if (syncJob != null) return
+        if (syncJob?.isActive == true) return
 
         Timber.i("Attaching collection listener")
         syncJob?.cancel()
         val ref = collectionsRef ?: return
-        syncJob = CoroutineScope(dispatcherProvider.io).launch {
-            ref.subscribe()
-                .flowOn(dispatcherProvider.io)
-                .catch { e -> Timber.e(e, "Collection sync failed") }
-                .collect { event ->
-                    Timber.i("Received event: ${event.javaClass.simpleName}")
+        val hymnRef = hymnCollectionsRef ?: return
 
-                    val entity = event.snapshot.toCollectionEntity()
-                    if (entity == null) return@collect
+        syncJob = syncScope.launch {
+            val collectionsJob = launch {
+                ref.subscribe()
+                    .flowOn(dispatcherProvider.io)
+                    .catch { e -> Timber.e(e, "Collection sync failed") }
+                    .collect { handleCollectionEvent(it) }
+            }
 
-                    when (event) {
-                        is SnapShotEvent.Added,
-                        is SnapShotEvent.Modified -> {
-                            // For both ADDED and MODIFIED, we use INSERT OR REPLACE.
-                            // This handles new items and updates.
-                            collectionsDao.insert(entity)
-                        }
+            val hymnCollectionsJob = launch {
+                hymnRef.subscribe()
+                    .flowOn(dispatcherProvider.io)
+                    .catch { e -> Timber.e(e, "Hymn Collections sync failed") }
+                    .collect { handleHymnsEvent(it) }
+            }
 
-                        is SnapShotEvent.Removed -> {
-                            // When Firestore signals REMOVED, it means the document was physically deleted
-                            // on the server OR the security rules made it invisible.
-                            collectionsDao.deleteCollection(entity.collectionId)
-                        }
-                    }
-                }
+            joinAll(collectionsJob, hymnCollectionsJob)
+        }
+    }
+
+    private suspend fun handleCollectionEvent(event: SnapShotEvent) {
+        Timber.i("Received Collections event: ${event.javaClass.simpleName}")
+        val entity = event.snapshot.toCollectionEntity()
+        if (entity == null) return
+
+        when (event) {
+            is SnapShotEvent.Added,
+            is SnapShotEvent.Modified -> {
+                // For both ADDED and MODIFIED, we use INSERT OR REPLACE.
+                // This handles new items and updates.
+                collectionsDao.insert(entity)
+            }
+
+            is SnapShotEvent.Removed -> {
+                // When Firestore signals REMOVED, it means the document was physically deleted
+                // on the server OR the security rules made it invisible.
+                collectionsDao.deleteCollection(entity.collectionId)
+            }
+        }
+    }
+
+    private suspend fun handleHymnsEvent(event: SnapShotEvent) {
+        Timber.i("Received HymnCollections event: ${event.javaClass.simpleName}")
+        val snapshot = event.snapshot
+        val crossRef = snapshot.toCollectionHymnCrossRef() ?: return
+
+        when (event) {
+            is SnapShotEvent.Added,
+            is SnapShotEvent.Modified -> collectionsDao.addHymnToCollection(crossRef)
+
+            is SnapShotEvent.Removed -> {
+                collectionsDao.removeHymnFromCollection(
+                    crossRef.collectionId,
+                    crossRef.hymnId,
+                )
+            }
         }
     }
 
@@ -145,6 +183,33 @@ class FirebaseSyncImpl(
         withContext(dispatcherProvider.io) {
             collectionsDao.deleteCollection(collectionId)
             collectionsRef?.document(collectionId)?.delete()?.await()
+            hymnCollectionsRef?.whereEqualTo("collectionId", collectionId)
+                ?.get()?.await()?.forEach { doc ->
+                    doc.reference.delete()
+                }
         }
+
+    override suspend fun addHymnToCollection(ref: CollectionHymnCrossRef): Unit =
+        withContext(dispatcherProvider.io) {
+            hymnCollectionsRef?.let {
+                val joinData = mapOf(
+                    "collectionId" to ref.collectionId,
+                    "hymnId" to ref.hymnId,
+                )
+                it.document("${ref.collectionId}_${ref.hymnId}")
+                    .set(joinData)
+                    .await()
+            } ?: run {
+                collectionsDao.addHymnToCollection(ref)
+            }
+        }
+
+    override suspend fun removeHymnFromCollection(
+        collectionId: String,
+        hymnId: String
+    ): Unit = withContext(dispatcherProvider.io) {
+        collectionsDao.removeHymnFromCollection(collectionId, hymnId)
+        hymnCollectionsRef?.document("${collectionId}_${hymnId}")?.delete()?.await()
+    }
 
 }
