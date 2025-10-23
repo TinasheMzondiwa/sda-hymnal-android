@@ -65,6 +65,9 @@ class FirebaseSyncImpl(
         }
 
     override fun attachCollectionListener() {
+        if (syncJob != null) return
+
+        Timber.i("Attaching collection listener")
         syncJob?.cancel()
         val ref = collectionsRef ?: return
         syncJob = CoroutineScope(dispatcherProvider.io).launch {

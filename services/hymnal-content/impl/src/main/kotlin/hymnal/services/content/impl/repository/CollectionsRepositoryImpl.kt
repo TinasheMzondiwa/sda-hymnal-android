@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -36,6 +37,7 @@ class CollectionsRepositoryImpl(
         return collectionsDao.getAllCollectionsWithHymns()
             .map { it.map { collectionWithHymns -> collectionWithHymns.toHymnsCollection() } }
             .flowOn(dispatcherProvider.io)
+            .onStart { refresh() }
             .catch {
                 Timber.e(it)
                 emit(emptyList())
