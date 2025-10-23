@@ -18,6 +18,11 @@ jobs:
           mkdir -p release
           echo "${{ secrets.API_KEYS_PROPERTIES }}" > release/api-keys.properties
 
+      - name: Create google services file
+        run: |
+          mkdir -p app/src/debug
+          echo "${{ secrets.DEBUG_GOOGLE_SERVICES }}" > app/src/debug/google-services.json
+
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
