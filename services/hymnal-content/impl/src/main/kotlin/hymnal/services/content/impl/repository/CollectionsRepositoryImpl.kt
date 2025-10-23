@@ -11,22 +11,21 @@ import hymnal.services.content.repository.CollectionsRepository
 import hymnal.services.model.Hymn
 import hymnal.services.model.HymnsCollection
 import hymnal.storage.db.dao.CollectionDao
-import hymnal.storage.db.entity.CollectionEntity
-import hymnal.storage.db.entity.CollectionWithHymns
 import hymnal.storage.db.entity.CollectionHymnCrossRef
+import hymnal.storage.db.entity.CollectionWithHymns
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.UUID
 
 @ContributesBinding(AppScope::class)
 @Inject
 class CollectionsRepositoryImpl(
     private val collectionsDao: CollectionDao,
     private val dispatcherProvider: DispatcherProvider,
+    private val firebaseSync: FirebaseSync,
 ) : CollectionsRepository {
 
     override fun listAll(): Flow<List<HymnsCollection>> {
@@ -42,18 +41,14 @@ class CollectionsRepositoryImpl(
     override suspend fun create(
         title: String,
         description: String?,
-        color: String
+        color: String,
     ): Result<Unit> {
         return withContext(dispatcherProvider.io) {
             try {
-                collectionsDao.insert(
-                    CollectionEntity(
-                        collectionId = UUID.randomUUID().toString(),
-                        title = title,
-                        description = description,
-                        created = System.currentTimeMillis(),
-                        color = color,
-                    )
+                firebaseSync.createCollection(
+                    title = title,
+                    description = description,
+                    color = color,
                 )
                 Result.success(Unit)
             } catch (ex: Exception) {
@@ -72,7 +67,7 @@ class CollectionsRepositoryImpl(
                 collectionsDao.addHymnToCollection(
                     CollectionHymnCrossRef(
                         collectionId = collectionId,
-                        hymnId = hymnId
+                        hymnId = hymnId,
                     )
                 )
                 Result.success(Unit)

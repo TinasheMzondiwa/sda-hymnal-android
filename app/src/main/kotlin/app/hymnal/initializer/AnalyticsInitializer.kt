@@ -6,17 +6,15 @@ package app.hymnal.initializer
 import android.content.Context
 import androidx.startup.Initializer
 import app.hymnal.BuildConfig
-import timber.log.Timber
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.analytics
 
-class TimberInitializer : Initializer<Unit> {
+class AnalyticsInitializer : Initializer<Unit> {
+
     override fun create(context: Context) {
-        val tree = if (BuildConfig.DEBUG) {
-            Timber.DebugTree()
-        } else {
-            CrashlyticsTree()
+        with(Firebase.analytics) {
+            setUserProperty("version_code", BuildConfig.VERSION_CODE.toString())
         }
-
-        Timber.plant(tree)
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> = emptyList()

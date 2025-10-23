@@ -14,6 +14,9 @@ cash-app-turbine = "1.2.1"
 circuit = "0.30.0"
 coil = "3.3.0"
 foundry = "0.31.3"
+google-firebase-crashlytics = "3.0.6"
+google-firebase-bom = "34.4.0"
+google-services = "4.4.4"
 gradle-android = "8.13.0"
 gradle-cache-fix = "3.0.2"
 gradle-retry = "1.6.4"
@@ -84,6 +87,14 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" 
 coil-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 google-coreLibraryDesugaring = "com.android.tools:desugar_jdk_libs_minimal:2.1.5"
 google-android-material = { module = "com.google.android.material:material", version.ref = "material" }
+google-firebase-auth = { module = "com.google.firebase:firebase-auth" }
+google-firebase-appcheck-debug = { module = "com.google.firebase:firebase-appcheck-debug" }
+google-firebase-appcheck-playintegrity = { module = "com.google.firebase:firebase-appcheck-playintegrity" }
+google-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "google-firebase-bom" }
+google-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+google-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+google-firebase-config = { module = "com.google.firebase:firebase-config" }
+google-firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 gradle-android = { module = "com.android.tools.build:gradle", version.ref = "gradle-android" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
@@ -164,6 +175,8 @@ android-application = { id = "com.android.application", version.ref = "gradle-an
 android-library = { id = "com.android.library", version.ref = "gradle-android" }
 foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
 foundry-root = { id = "com.slack.foundry.root", version.ref = "foundry" }
+google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "google-firebase-crashlytics" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 gradle-cache-fix = { id = "org.gradle.android.cache-fix", version.ref = "gradle-cache-fix" }
 gradle-retry = { id = "org.gradle.test-retry", version.ref = "gradle-retry" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

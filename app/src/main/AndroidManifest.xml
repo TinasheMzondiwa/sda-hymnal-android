@@ -50,6 +50,9 @@
             <meta-data
                 android:name="app.hymnal.initializer.TimberInitializer"
                 android:value="androidx.startup" />
+            <meta-data
+                android:name="app.hymnal.initializer.AnalyticsInitializer"
+                android:value="androidx.startup" />
             <!-- Remove to use Application workManagerConfiguration -->
             <meta-data
                 android:name="androidx.work.WorkManagerInitializer"

@@ -38,5 +38,6 @@ dependencies {
     implementation(libs.ktor.client.core)
     implementation(libs.supabase.storage)
     implementation(libs.timber)
+    implementation(projects.services.firebase)
     implementation(projects.services.storage)
 }

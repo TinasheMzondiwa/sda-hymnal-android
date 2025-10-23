@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.foundry.base)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.google.services)
 }
 
 foundry {
@@ -73,6 +75,7 @@ dependencies {
     implementation(projects.libraries.model)
     implementation(projects.libraries.navigation.api)
     implementation(projects.libraries.navigation.number)
+    implementation(projects.services.firebase)
     implementation(projects.services.hymnalContent.impl)
     implementation(projects.services.prefs.impl)
     implementation(projects.services.sabbath.impl)

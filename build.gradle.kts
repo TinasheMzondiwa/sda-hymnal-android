@@ -14,4 +14,6 @@ plugins {
     alias(libs.plugins.gradle.retry) apply false
     alias(libs.plugins.sortDependencies) apply false
     alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.google.firebase.crashlytics) apply false
 }
