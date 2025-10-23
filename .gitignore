@@ -50,3 +50,4 @@ captures/
 
 # Release files
 release/
+**/google-services.json
