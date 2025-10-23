@@ -18,6 +18,7 @@ class HymnalApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        appGraph.firebaseAppCheck()
         appGraph.sabbathWidgetHelper.refreshPreview()
     }
 }

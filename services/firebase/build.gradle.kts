@@ -14,5 +14,9 @@ dependencies {
     api(libs.google.firebase.config)
     api(libs.google.firebase.crashlytics)
     api(libs.google.firebase.firestore)
+
+    implementation(libs.google.firebase.appcheck.debug)
+    implementation(libs.google.firebase.appcheck.playintegrity)
     implementation(libs.timber)
+    implementation(projects.libraries.model)
 }

@@ -23,6 +23,7 @@ import hymnal.services.sabbath.api.SabbathWidgetHelper
 import libraries.hymnal.di.MetroWorkerFactory
 import kotlin.reflect.KClass
 import app.hymnal.R
+import services.hymnal.firebase.FirebaseAppCheck
 
 @DependencyGraph(AppScope::class)
 interface AppGraph {
@@ -36,6 +37,7 @@ interface AppGraph {
 
     val workerFactory: MetroWorkerFactory
     val sabbathWidgetHelper: SabbathWidgetHelper
+    val firebaseAppCheck: FirebaseAppCheck
 
     @Provides
     fun provideApplicationContext(application: Application): Context = application
