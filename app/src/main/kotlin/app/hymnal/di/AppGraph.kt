@@ -22,6 +22,7 @@ import hymnal.services.content.HymnalContentSyncProvider
 import hymnal.services.sabbath.api.SabbathWidgetHelper
 import libraries.hymnal.di.MetroWorkerFactory
 import kotlin.reflect.KClass
+import app.hymnal.R
 
 @DependencyGraph(AppScope::class)
 interface AppGraph {
@@ -60,10 +61,11 @@ interface AppGraph {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideAppConfig(): HymnalAppConfig = HymnalAppConfig(
+    fun provideAppConfig(context: Context): HymnalAppConfig = HymnalAppConfig(
         version = BuildConfig.VERSION_NAME,
         buildNumber = BuildConfig.VERSION_CODE,
         isDebug = BuildConfig.DEBUG,
+        webClientId = context.getString(R.string.default_web_client_id),
     )
 
     val contentSyncProvider: HymnalContentSyncProvider

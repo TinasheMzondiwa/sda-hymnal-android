@@ -9,6 +9,7 @@ import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.core.net.toUri
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.foundation.onNavEvent
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
@@ -47,6 +48,8 @@ class MorePresenter(
                     is Event.OnLinkClick -> {
                         handleLinkClick(event)
                     }
+
+                    is Event.OnNavEvent -> navigator.onNavEvent(event.navEvent)
                 }
             }
         )

@@ -12,4 +12,5 @@ data class HymnalAppConfig(
     val version: String,
     val buildNumber: Int,
     val isDebug: Boolean,
+    val webClientId: String,
 )

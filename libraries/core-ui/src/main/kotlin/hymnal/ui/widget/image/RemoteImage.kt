@@ -39,7 +39,7 @@ import hymnal.ui.widget.content.ContentSlot
  */
 @Immutable
 data class RemoteImage(
-    val data: String?,
+    val data: Any?,
     val contentDescription: String? = null,
     val contentScale: ContentScale = ContentScale.Crop,
     val scale: Scale = Scale.FIT,

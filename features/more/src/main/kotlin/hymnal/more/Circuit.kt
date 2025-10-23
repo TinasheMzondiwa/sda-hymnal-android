@@ -4,6 +4,7 @@
 package hymnal.more
 
 import android.content.Context
+import com.slack.circuit.foundation.NavEvent
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 
@@ -15,4 +16,5 @@ data class State(
 sealed interface Event : CircuitUiEvent {
     data object OnDonateClick : Event
     data class OnLinkClick(val link: InfoLink, val context: Context) : Event
+    data class OnNavEvent(val navEvent: NavEvent) : Event
 }

@@ -3,6 +3,7 @@
 
 package hymnal.account.card
 
+import android.net.Uri
 import com.slack.circuit.runtime.CircuitUiState
 
 sealed interface AccountCardState : CircuitUiState {
@@ -10,7 +11,7 @@ sealed interface AccountCardState : CircuitUiState {
     data class LoggedIn(
         val name: String,
         val email: String,
-        val image: String?,
+        val image: Uri?,
         val eventSink: (AccountCardEvent) -> Unit,
     ) : AccountCardState
 

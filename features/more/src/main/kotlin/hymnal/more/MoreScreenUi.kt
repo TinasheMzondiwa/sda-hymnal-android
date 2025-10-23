@@ -15,6 +15,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -72,7 +73,12 @@ fun MoreScreenUi(state: State, modifier: Modifier = Modifier) {
             item("version-info") { AboutCard(version = state.appVersion) }
 
             item(key = "account-card") {
-                CircuitContent(screen = AccountCardScreen)
+                CircuitContent(
+                    screen = AccountCardScreen,
+                    onNavEvent = {
+                        state.eventSink(Event.OnNavEvent(it))
+                    }
+                )
             }
 
             itemCards {
