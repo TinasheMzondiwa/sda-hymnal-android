@@ -88,7 +88,7 @@ class AccountPresenter(
             isLoading -> State.Loading
             user != null -> State.LoggedIn(
                 name = user.displayName,
-                email = user.email,
+                email = user.email?.takeUnless { it.isEmpty() },
                 image = user.photoUrl,
                 overlay = overlayState,
                 eventSink = { event ->

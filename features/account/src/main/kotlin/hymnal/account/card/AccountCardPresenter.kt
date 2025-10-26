@@ -51,7 +51,7 @@ class AccountCardPresenter(
                     value = if (user != null) {
                         AccountCardState.LoggedIn(
                             name = user.displayName ?: "Anonymous",
-                            email = user.email,
+                            email = user.email?.takeUnless { it.isEmpty() },
                             image = user.photoUrl,
                             eventSink = eventSink,
                         )
