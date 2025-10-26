@@ -49,7 +49,7 @@ jobs:
       - name: Create keystore props file
         env:
           KEYSTORE_PROPS: ${{ secrets.KEYSTORE_PROPS }}
-        run: echo "$KEYSTORE_PROPS" | base64 -D > release/keystore.properties
+        run: echo "$KEYSTORE_PROPS" > release/api-keys.properties
 
       - name: Create keystore file
         env:

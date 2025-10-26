@@ -1,6 +1,5 @@
 import java.io.FileInputStream
 import java.util.Properties
-import kotlin.apply
 
 // Copyright (C) 2025 Tinashe Mzondiwa
 // SPDX-License-Identifier: Apache-2.0
