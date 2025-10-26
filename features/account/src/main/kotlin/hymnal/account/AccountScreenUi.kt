@@ -363,22 +363,27 @@ private fun SharedElementTransitionScope.LoggedInUi(
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = state.email ?: "",
-            modifier = Modifier
-                .sharedBounds(
-                    sharedContentState =
-                        rememberSharedContentState(
-                            AccountSharedTransitionKey(
-                                type = AccountSharedTransitionKey.ElementType.Email,
-                            )
-                        ),
-                    animatedVisibilityScope =
-                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                ),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-        )
+
+        state.email?.let {
+            Text(
+                text = it,
+                modifier = Modifier
+                    .sharedBounds(
+                        sharedContentState =
+                            rememberSharedContentState(
+                                AccountSharedTransitionKey(
+                                    type = AccountSharedTransitionKey.ElementType.Email,
+                                )
+                            ),
+                        animatedVisibilityScope =
+                            requireAnimatedScope(
+                                SharedElementTransitionScope.AnimatedScope.Navigation,
+                            ),
+                    ),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 

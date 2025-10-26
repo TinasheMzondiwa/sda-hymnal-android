@@ -10,7 +10,7 @@ sealed interface AccountCardState : CircuitUiState {
     data object Loading : AccountCardState
     data class LoggedIn(
         val name: String,
-        val email: String,
+        val email: String?,
         val image: Uri?,
         val eventSink: (AccountCardEvent) -> Unit,
     ) : AccountCardState
