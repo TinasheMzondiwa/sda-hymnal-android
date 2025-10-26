@@ -42,7 +42,9 @@ jobs:
       - name: Create google play key file
         env:
           GOOGLE_PLAY: ${{ secrets.GOOGLE_PLAY }}
-        run: echo "$GOOGLE_PLAY" | base64 -D > distribution/play-key.json
+        run: |
+          mkdir -p distribution
+          echo "$GOOGLE_PLAY" | base64 -D > distribution/play-key.json
 
       - name: Create keystore props file
         env:
@@ -51,7 +53,7 @@ jobs:
 
       - name: Create keystore file
         env:
-          KEYSTORE_PROPS: ${{ secrets.KEYSTORE }}
+          KEYSTORE: ${{ secrets.KEYSTORE }}
         run: echo "$KEYSTORE" | base64 -D > release/sdah_key.jks
 
       - name: Build Release
@@ -60,7 +62,7 @@ jobs:
       - name: Publish to Alpha track
         uses: r0adkll/upload-google-play@v1.1.2
         with:
-          serviceAccountJson: distribution/play_key.json
+          serviceAccountJson: distribution/play-key.json
           packageName: com.tinashe.sdah
           track: internal
           status: completed
