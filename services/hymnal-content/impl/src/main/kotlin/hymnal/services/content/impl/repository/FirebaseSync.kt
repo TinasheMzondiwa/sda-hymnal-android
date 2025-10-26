@@ -26,6 +26,7 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import services.hymnal.firebase.FirebaseContentSync
 import services.hymnal.firebase.SnapShotEvent
 import services.hymnal.firebase.signedInUser
 import services.hymnal.firebase.subscribe
@@ -34,6 +35,7 @@ import java.util.UUID
 
 interface FirebaseSync {
 
+    fun attachAfterSignIn()
     fun attachCollectionListener()
     fun detachCollectionListener()
 
@@ -42,6 +44,8 @@ interface FirebaseSync {
 
     suspend fun addHymnToCollection(ref: CollectionHymnCrossRef)
     suspend fun removeHymnFromCollection(collectionId: String, hymnId: String)
+
+    suspend fun removeUserContent()
 }
 
 @SingleIn(AppScope::class)
@@ -69,6 +73,49 @@ class FirebaseSyncImpl(
                 .document(userId)
                 .collection("hymnCollections")
         }
+
+    override fun attachAfterSignIn() {
+        syncScope.launch {
+            // persist everything in the DB to firebase here
+            val collectionsRef = collectionsRef ?: return@launch
+            val hymnCollectionsRef = hymnCollectionsRef ?: return@launch
+
+            val collections = collectionsDao.getAll()
+            collections.forEach { collection ->
+                val collectionId = collection.collectionId
+                val newCollectionRef = collectionsRef.document(collectionId)
+
+                val collectionData = mapOf(
+                    "collectionId" to collectionId,
+                    "title" to collection.title,
+                    "description" to collection.description,
+                    "created" to collection.created,
+                    "color" to collection.color,
+                    "lastModified" to FieldValue.serverTimestamp(),
+                    "deleted" to false
+                )
+
+                // Add this collection to firebase
+                newCollectionRef.set(collectionData).await()
+
+                // Now add all the hymns saved in this collection
+                collectionsDao.getAllHymnsForCollection(collectionId)?.let { (_, hymns) ->
+                    hymns.forEach { hymn ->
+                        val joinData = mapOf(
+                            "collectionId" to collectionId,
+                            "hymnId" to hymn.hymnId,
+                        )
+                        hymnCollectionsRef.document("${collectionId}_${hymn.hymnId}")
+                            .set(joinData)
+                            .await()
+                    }
+                }
+
+            }
+
+            attachCollectionListener()
+        }
+    }
 
     override fun attachCollectionListener() {
         if (syncJob?.isActive == true) return
@@ -212,4 +259,28 @@ class FirebaseSyncImpl(
         hymnCollectionsRef?.document("${collectionId}_${hymnId}")?.delete()?.await()
     }
 
+    override suspend fun removeUserContent(): Unit = withContext(dispatcherProvider.io) {
+        val hymnCollections = hymnCollectionsRef?.get()?.await()
+        val collections = collectionsRef?.get()?.await()
+
+        hymnCollections?.forEach { doc -> doc.reference.delete().await() }
+        collections?.forEach { doc -> doc.reference.delete().await() }
+    }
+}
+
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
+@Inject
+class FirebaseContentSyncImpl(private val sync: FirebaseSync) : FirebaseContentSync {
+    override fun signedIn() {
+        sync.attachAfterSignIn()
+    }
+
+    override fun signedOut() {
+        sync.detachCollectionListener()
+    }
+
+    override suspend fun deleteAccount() {
+        sync.removeUserContent()
+    }
 }

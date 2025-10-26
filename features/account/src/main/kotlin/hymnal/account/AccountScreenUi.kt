@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.Logout
+import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -253,14 +255,36 @@ private fun LoggedInUi(
         Text(
             text = state.name ?: "",
             style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = state.email ?: "",
             style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        ElevatedButton(onClick = { state.eventSink(Event.LoggedIn.OnLogoutClick) }) {
+            Icon(imageVector = Icons.AutoMirrored.Rounded.Logout, contentDescription = null)
+            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+            Text(text = stringResource(L10nR.string.account_sign_out))
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        ElevatedButton(
+            onClick = { state.eventSink(Event.LoggedIn.OnDeleteAccountClick) },
+            colors = ButtonDefaults.elevatedButtonColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+            ),
+        ) {
+            Icon(imageVector = Icons.Rounded.DeleteForever, contentDescription = null)
+            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+            Text(text = stringResource(L10nR.string.account_delete))
+        }
     }
 }
 

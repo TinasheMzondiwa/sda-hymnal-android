@@ -5,6 +5,8 @@
 
 <resources>
     <string name="account">Account</string>
+    <string name="account_delete">Delete account</string>
+    <string name="account_sign_out">Sign out</string>
     <string name="account_not_logged_in_message">Sign in to keep your favorite hymns and notes with you across all your devices.</string>
     <string name="account_not_logged_in_title">Not Signed In</string>
     <string name="add_to_collection">Add to collection</string>

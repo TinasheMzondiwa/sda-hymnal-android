@@ -24,6 +24,9 @@ interface CollectionDao : BaseDao<CollectionEntity> {
     @Query("SELECT * FROM collections ORDER BY title ASC")
     fun getAllCollections(): Flow<List<CollectionEntity>>
 
+    @Query("SELECT * FROM collections ORDER BY title ASC")
+    suspend fun getAll(): List<CollectionEntity>
+
     // --- Relationship Methods ---
 
     /**
@@ -44,6 +47,10 @@ interface CollectionDao : BaseDao<CollectionEntity> {
     @Transaction
     @Query("SELECT * FROM collections WHERE collectionId = :collectionId")
     fun getHymnsForCollection(collectionId: String): Flow<CollectionWithHymns?>
+
+    @Transaction
+    @Query("SELECT * FROM collections WHERE collectionId = :collectionId")
+    suspend fun getAllHymnsForCollection(collectionId: String): CollectionWithHymns?
 
     /**
      * Gets all collections that a specific hymn belongs to.

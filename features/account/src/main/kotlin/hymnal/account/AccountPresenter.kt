@@ -17,7 +17,6 @@ import androidx.credentials.exceptions.GetCredentialException
 import androidx.credentials.exceptions.NoCredentialException
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -41,6 +40,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import services.hymnal.firebase.FirebaseContentSync
 import services.hymnal.firebase.userFlow
 import timber.log.Timber
 
@@ -49,13 +49,18 @@ class AccountPresenter(
     @Assisted private val navigator: Navigator,
     private val appConfig: HymnalAppConfig,
     private val firebaseAuth: FirebaseAuth,
+    private val firebaseSync: FirebaseContentSync,
     private val credentialManager: CredentialManagerWrapper,
     private val dispatcherProvider: DispatcherProvider,
 ) : Presenter<State> {
 
     private val getCredentialRequest: GetCredentialRequest by lazy {
         GetCredentialRequest.Builder()
-            .addCredentialOption(GetSignInWithGoogleOption.Builder(appConfig.webClientId).build())
+            .addCredentialOption(
+                GetSignInWithGoogleOption
+                    .Builder(appConfig.webClientId)
+                    .build()
+            )
             .build()
     }
 
@@ -85,9 +90,14 @@ class AccountPresenter(
                 image = user.photoUrl,
                 eventSink = { event ->
                     when (event) {
-                        Event.LoggedIn.OnDeleteAccountClick -> TODO()
+                        Event.LoggedIn.OnDeleteAccountClick -> coroutineScope.launch {
+                            firebaseSync.deleteAccount()
+                            signOut()
+                            firebaseSync.signedOut()
+                        }
                         Event.LoggedIn.OnLogoutClick -> coroutineScope.launch {
                             signOut()
+                            firebaseSync.signedOut()
                         }
 
                         Event.LoggedIn.OnNavBack -> navigator.pop()
@@ -101,7 +111,9 @@ class AccountPresenter(
                         isLoading = true
                         val result = authWithGoogle(event.context)
                         isLoading = false
-                        if (result.isFailure) {
+                        if (result.isSuccess) {
+                            firebaseSync.signedIn()
+                        } else {
                             Timber.e(result.exceptionOrNull(), "Authentication with Google failed")
                         }
                     }
@@ -129,7 +141,7 @@ class AccountPresenter(
 
     private suspend fun handleCredentialResponse(response: GetCredentialResponse): Boolean {
         return (response.credential as? CustomCredential)?.let { credential ->
-            if (credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+            if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                 try {
                     val googleIdTokenCredential = GoogleIdTokenCredential
                         .createFrom(credential.data)
