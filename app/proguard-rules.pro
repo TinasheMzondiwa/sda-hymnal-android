@@ -19,3 +19,31 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#------------- Kotlin Coroutines -------------
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.flow.internal.ChannelFlowStep
+-keepclassmembers class kotlinx.coroutines.flow.internal.ChannelFlowStep {
+    <init>(...);
+}
+-keepclassmembers class kotlinx.coroutines.flow.internal.ChannelFlow {
+    <init>(...);
+}
+-keepclassmembers class kotlinx.coroutines.selects.SelectBuilderImpl {
+    <init>(...);
+}
+
+#------------- Model Classes ---------------
+-keep class hymnal.model.** { *; }
+
+#To remove debug logs:
+-assumenosideeffects class android.util.Log {
+public static *** d(...);
+public static *** v(...);
+public static *** e(...);
+public static *** i(...);
+}
+
+#To keep line numbers for crash reports
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile, LineNumberTable

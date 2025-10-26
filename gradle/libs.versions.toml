@@ -1,4 +1,5 @@
 [versions]
+app = "3.0.0"
 androidx-activity = "1.11.0"
 androidx-annotations = "1.9.1"
 androidx-compose-bom = "2025.10.01"

@@ -1,3 +1,7 @@
+import java.io.FileInputStream
+import java.util.Properties
+import kotlin.apply
+
 // Copyright (C) 2025 Tinashe Mzondiwa
 // SPDX-License-Identifier: Apache-2.0
 
@@ -18,13 +22,35 @@ foundry {
     }
 }
 
+val releaseFile = file("../release/keystore.properties")
+val useReleaseKeystore = releaseFile.exists()
+
 android {
     namespace = "app.hymnal"
 
+    val buildProps = Properties().apply {
+        load(FileInputStream(file("../app/build_number.properties")))
+    }
+
     defaultConfig {
-        applicationId = "app.hymnal"
-        versionCode = 1
-        versionName = "1.0"
+        applicationId = "com.tinashe.sdah"
+        versionCode = buildProps.getProperty("BUILD_NUMBER").toInt() + 200520529
+        versionName = libs.versions.app.get()
+    }
+
+    signingConfigs {
+        if (useReleaseKeystore) {
+            val keyProps = Properties().apply {
+                load(FileInputStream(releaseFile))
+            }
+
+            create("release") {
+                storeFile = file(keyProps.getProperty("release.keystore"))
+                storePassword = keyProps.getProperty("release.keystore.password")
+                keyAlias = keyProps.getProperty("key.alias")
+                keyPassword = keyProps.getProperty("key.password")
+            }
+        }
     }
 
     buildFeatures {
@@ -41,6 +67,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+
+        val debug by getting {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
         }
     }
 
