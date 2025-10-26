@@ -60,7 +60,7 @@ jobs:
         run: ./gradlew app:bundleRelease --stacktrace
 
       - name: Publish to Alpha track
-        uses: r0adkll/upload-google-play@v1.1.2
+        uses: r0adkll/upload-google-play@v1.1.3
         with:
           serviceAccountJson: distribution/play-key.json
           packageName: com.tinashe.sdah
