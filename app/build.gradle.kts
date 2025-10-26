@@ -59,7 +59,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            if (useReleaseKeystore) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
 
         val debug by getting {
