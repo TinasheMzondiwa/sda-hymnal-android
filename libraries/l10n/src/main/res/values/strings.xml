@@ -6,6 +6,8 @@
 <resources>
     <string name="account">Account</string>
     <string name="account_delete">Delete account</string>
+    <string name="account_delete_confirm_message">Are you sure you want to delete your account and all your saved content? This cannot be undone.</string>
+    <string name="account_delete_confirm_title">Delete account</string>
     <string name="account_sign_out">Sign out</string>
     <string name="account_not_logged_in_message">Sign in to keep your favorite hymns and notes with you across all your devices.</string>
     <string name="account_not_logged_in_title">Not Signed In</string>
@@ -16,6 +18,7 @@
     <string name="app_share_message">Get the SDA Hymnal App!\n\n%1$s</string>
     <string name="app_tagline">Sing, learn, and grow in faith through timeless hymns.</string>
     <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
     <string name="clear_search">Clear search</string>
     <string name="collections">Collections</string>
     <string name="community">Community</string>

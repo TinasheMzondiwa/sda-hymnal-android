@@ -27,6 +27,7 @@ import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuitx.overlays.DialogResult
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
@@ -74,6 +75,7 @@ class AccountPresenter(
     override fun present(): State {
         val coroutineScope = rememberStableCoroutineScope()
         var isLoading by rememberRetained { mutableStateOf(true) }
+        var overlayState by rememberRetained { mutableStateOf<Overlay?>(null) }
         val currentUser by produceRetainedState<FirebaseUser?>(null) {
             firebaseAuth.userFlow()
                 .onStart { isLoading = false }
@@ -88,12 +90,22 @@ class AccountPresenter(
                 name = user.displayName,
                 email = user.email,
                 image = user.photoUrl,
+                overlay = overlayState,
                 eventSink = { event ->
                     when (event) {
-                        Event.LoggedIn.OnDeleteAccountClick -> coroutineScope.launch {
-                            firebaseSync.deleteAccount()
-                            signOut()
-                            firebaseSync.signedOut()
+                        Event.LoggedIn.OnDeleteAccountClick -> {
+                            overlayState = Overlay.ConfirmDeleteAccount { result ->
+                                overlayState = null
+                                when (result) {
+                                    DialogResult.Confirm -> coroutineScope.launch {
+                                        firebaseSync.deleteAccount()
+                                        signOut()
+                                        firebaseSync.signedOut()
+                                    }
+                                    DialogResult.Cancel,
+                                    DialogResult.Dismiss -> Unit
+                                }
+                            }
                         }
                         Event.LoggedIn.OnLogoutClick -> coroutineScope.launch {
                             signOut()

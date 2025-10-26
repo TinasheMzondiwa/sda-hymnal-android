@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.DeleteForever
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -46,8 +48,12 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.overlay.OverlayEffect
+import com.slack.circuitx.overlays.BasicAlertDialogOverlay
+import com.slack.circuitx.overlays.DialogResult
 import dev.zacsweers.metro.AppScope
 import hymnal.libraries.navigation.AccountScreen
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.theme.size.HymnalDimens
 import hymnal.ui.theme.type.Poppins
@@ -62,6 +68,8 @@ import hymnal.libraries.l10n.R as L10nR
 @CircuitInject(AccountScreen::class, AppScope::class)
 @Composable
 fun AccountScreenUi(state: State, modifier: Modifier = Modifier) {
+    val hapticFeedback = LocalAppHapticFeedback.current
+
     HazeScaffold(
         modifier = modifier,
         topBar = {
@@ -69,6 +77,7 @@ fun AccountScreenUi(state: State, modifier: Modifier = Modifier) {
                 title = { Text(stringResource(L10nR.string.account)) },
                 navigationIcon = {
                     IconButton({
+                        hapticFeedback.performClick()
                         when (state) {
                             State.Loading -> Unit
                             is State.LoggedIn -> state.eventSink(Event.LoggedIn.OnNavBack)
@@ -137,6 +146,7 @@ private fun LoggedOutUi(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val hapticFeedback = LocalAppHapticFeedback.current
     val horizontalPadding = HymnalDimens.horizontalPadding()
 
     Column(
@@ -161,7 +171,10 @@ private fun LoggedOutUi(
         )
         Spacer(modifier = Modifier.height(24.dp))
         ElevatedButton(
-            onClick = { eventSink(Event.NotLoggedIn.OnLoginClick(context)) },
+            onClick = {
+                hapticFeedback.performClick()
+                eventSink(Event.NotLoggedIn.OnLoginClick(context))
+                      },
             colors = ButtonDefaults.elevatedButtonColors(
                 containerColor = MaterialTheme.colorScheme.onSurface,
                 contentColor = MaterialTheme.colorScheme.surface
@@ -215,6 +228,7 @@ private fun LoggedInUi(
     state: State.LoggedIn,
     modifier: Modifier = Modifier
 ) {
+    val hapticFeedback = LocalAppHapticFeedback.current
     val horizontalPadding = HymnalDimens.horizontalPadding()
     Column(
         modifier = modifier
@@ -234,7 +248,7 @@ private fun LoggedInUi(
                             .size(AvatarSize)
                             .placeholder(
                                 visible = true,
-                                shape = CircleShape
+                                shape = CircleShape,
                             )
                     )
                 },
@@ -266,7 +280,10 @@ private fun LoggedInUi(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        ElevatedButton(onClick = { state.eventSink(Event.LoggedIn.OnLogoutClick) }) {
+        ElevatedButton(onClick = {
+            hapticFeedback.performClick()
+            state.eventSink(Event.LoggedIn.OnLogoutClick)
+        }) {
             Icon(imageVector = Icons.AutoMirrored.Rounded.Logout, contentDescription = null)
             Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
             Text(text = stringResource(L10nR.string.account_sign_out))
@@ -275,7 +292,10 @@ private fun LoggedInUi(
         Spacer(modifier = Modifier.height(12.dp))
 
         ElevatedButton(
-            onClick = { state.eventSink(Event.LoggedIn.OnDeleteAccountClick) },
+            onClick = {
+                hapticFeedback.performClick()
+                state.eventSink(Event.LoggedIn.OnDeleteAccountClick)
+            },
             colors = ButtonDefaults.elevatedButtonColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer,
                 contentColor = MaterialTheme.colorScheme.onErrorContainer,
@@ -285,6 +305,61 @@ private fun LoggedInUi(
             Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
             Text(text = stringResource(L10nR.string.account_delete))
         }
+    }
+
+    Overlay(state.overlay)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun Overlay(state: Overlay?) {
+    val overlay = state ?: return
+    val hapticFeedback = LocalAppHapticFeedback.current
+
+    OverlayEffect(overlay) {
+        when (overlay) {
+            is Overlay.ConfirmDeleteAccount -> {
+                val result = show(
+                    BasicAlertDialogOverlay(
+                        model = Unit,
+                        onDismissRequest = { DialogResult.Dismiss },
+                        content = { _, navigator ->
+
+                            AlertDialog(
+                                onDismissRequest = { navigator.finish(DialogResult.Dismiss) },
+                                icon = null,
+                                title = {
+                                    Text(
+                                        text = stringResource(L10nR.string.account_delete_confirm_title),
+                                        style = MaterialTheme.typography.headlineSmall,
+                                    )
+                                },
+                                text = { Text(text = stringResource(L10nR.string.account_delete_confirm_message)) },
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        hapticFeedback.performError()
+                                        navigator.finish(DialogResult.Confirm)
+                                    }) {
+                                        Text(text = stringResource(L10nR.string.delete))
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(onClick = {
+                                        hapticFeedback.performClick()
+                                        navigator.finish(DialogResult.Cancel)
+                                    }) {
+                                        Text(stringResource(L10nR.string.cancel))
+                                    }
+                                },
+                            )
+                        })
+                )
+
+                overlay.resultSink(result)
+
+            }
+        }
+
     }
 }
 
@@ -316,8 +391,9 @@ private fun PreviewLoggedIn() {
                 name = "Tinashe Mzondiwa",
                 email = "test@email.com",
                 image = null,
+                overlay = null,
                 eventSink = {},
-                )
+            )
         )
     }
 }
