@@ -14,13 +14,6 @@ plugins {
     alias(libs.plugins.google.services)
 }
 
-foundry {
-    features {
-        compose()
-        metro()
-    }
-}
-
 val releaseFile = file("../release/keystore.properties")
 val useReleaseKeystore = releaseFile.exists()
 
@@ -66,6 +59,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (useReleaseKeystore) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
 
         val debug by getting {
@@ -78,6 +74,13 @@ android {
         val javaVersion = libs.versions.jvmTarget.get().let(JavaVersion::toVersion)
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
+    }
+}
+
+foundry {
+    features {
+        compose()
+        metro()
     }
 }
 
