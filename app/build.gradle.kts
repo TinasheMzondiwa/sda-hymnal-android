@@ -67,6 +67,7 @@ android {
         val debug by getting {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
+            resValue("string", "app_name", "SDAH dev")
         }
     }
 
