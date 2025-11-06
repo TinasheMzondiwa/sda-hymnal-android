@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material3.DividerDefaults
@@ -26,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,8 +35,13 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +54,7 @@ import hymnal.ui.extensions.modifier.thenIf
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 internal fun LazyListScope.hymnLyrics(
@@ -123,20 +131,28 @@ private fun Verse(
     ) {
         SectionText(section = "$index", textStyle = textStyle)
 
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            lines.forEach {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = textStyle.textSize.sp,
-                        lineHeight = 28.sp,
-                        fontFamily = textStyle.font.toFamily()
-                    )
+        val fontSize = textStyle.textSize.sp
+
+        SelectionContainer {
+            Text(
+                text = remember(lines, fontSize) {
+                    buildAnnotatedString {
+                        lines.forEachIndexed { index, line ->
+                            withStyle(ParagraphStyle(lineHeight = fontSize)) {
+                                append(line)
+                                if (index != lines.lastIndex) {
+                                    append("\n")
+                                }
+                            }
+                        }
+                    }
+                },
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontSize = fontSize,
+                    fontFamily = textStyle.font.toFamily()
                 )
-            }
+            )
         }
     }
 }
@@ -173,15 +189,16 @@ private fun Chorus(
             )
 
             Text(
-                text = "Chorus",
+                text = stringResource(L10nR.string.chorus),
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontFamily = textStyle.font.toFamily(),
-                fontSize = (textStyle.textSize - 4f).sp
+                fontSize = (textStyle.textSize - 2f).sp,
+                fontWeight = FontWeight.SemiBold,
             )
         }
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
@@ -196,16 +213,30 @@ private fun Chorus(
                     )
                 }
                 .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            lines.forEach { line ->
+            val fontSize = textStyle.textSize.sp
+
+            val text = remember(lines, fontSize) {
+                buildAnnotatedString {
+                    lines.forEachIndexed { index, string ->
+                        withStyle(ParagraphStyle(lineHeight = fontSize)) {
+                            append(string)
+                            if (index != lines.lastIndex) {
+                                append("\n")
+                            }
+                        }
+                    }
+                }
+            }
+
+            SelectionContainer {
                 Text(
-                    text = line,
+                    text = text,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = textStyle.textSize.sp,
-                        lineHeight = 28.sp,
-                        fontFamily = textStyle.font.toFamily()
+                        fontSize = fontSize,
+                        fontFamily = textStyle.font.toFamily(),
+                        lineBreak = LineBreak.Paragraph
                     ),
                 )
             }
