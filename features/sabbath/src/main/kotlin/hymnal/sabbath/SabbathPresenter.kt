@@ -20,6 +20,8 @@ import hymnal.libraries.navigation.SabbathScreen
 import hymnal.sabbath.state.CurrentLocationStateProducer
 import hymnal.sabbath.state.LocationResult
 import hymnal.sabbath.state.SabbathInfoStateProducer
+import hymnal.services.prefs.HymnalPrefs
+import hymnal.services.prefs.model.ThemeStyle
 import hymnal.services.sabbath.api.SabbathInfo
 import hymnal.services.sabbath.api.SabbathRepository
 import kotlinx.coroutines.flow.catch
@@ -30,13 +32,17 @@ import timber.log.Timber
 class SabbathPresenter(
     private val currentLocationStateProducer: CurrentLocationStateProducer,
     private val sabbathInfoStateProducer: SabbathInfoStateProducer,
-    private val sabbathRepository: SabbathRepository
+    private val sabbathRepository: SabbathRepository,
+    private val prefs: HymnalPrefs,
 ) : Presenter<State> {
 
     @Composable
     override fun present(): State {
         val coroutineScope = rememberStableCoroutineScope()
         var locationResult by rememberRetained { mutableStateOf<LocationResult?>(null) }
+        val themeStyle by produceRetainedState(ThemeStyle()) {
+            prefs.themeStyle().collect { value = it }
+        }
 
         val sabbathInfoState by rememberSabbathInfo(locationResult)
         val sabbathInfo = sabbathInfoState
@@ -46,8 +52,9 @@ class SabbathPresenter(
         }
 
         return when (locationResult) {
-            null -> State.Loading
+            null -> State.Loading(theme = themeStyle.theme)
             is LocationResult.NotGranted -> State.NoLocation(
+                theme = themeStyle.theme,
                 eventSink = { event ->
                     when (event) {
                         Event.NoLocation.OnLocationDenied -> Unit
@@ -60,9 +67,10 @@ class SabbathPresenter(
                 })
 
             is LocationResult.Granted if sabbathInfo != null -> State.SabbathInfo(
+                theme = themeStyle.theme,
                 items = sabbathInfoStateProducer(sabbathInfo)
             )
-            else -> State.Loading
+            else -> State.Loading(theme = themeStyle.theme)
         }
     }
 

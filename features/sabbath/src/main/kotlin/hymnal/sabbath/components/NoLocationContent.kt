@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import hymnal.sabbath.Event
 import hymnal.sabbath.State
+import hymnal.services.prefs.model.AppTheme
 import hymnal.ui.theme.HymnalTheme
 import hymnal.libraries.l10n.R as L10nR
 
@@ -136,7 +137,10 @@ private fun Preview() {
     HymnalTheme {
         Surface {
             NoLocationContent(
-                state = State.NoLocation(eventSink = {})
+                state = State.NoLocation(
+                    theme = AppTheme.FOLLOW_SYSTEM,
+                    eventSink = {},
+                )
             )
         }
     }

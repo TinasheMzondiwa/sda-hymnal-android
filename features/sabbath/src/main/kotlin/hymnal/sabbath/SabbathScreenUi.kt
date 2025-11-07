@@ -27,7 +27,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -41,6 +43,7 @@ import hymnal.sabbath.components.NoLocationContent
 import hymnal.sabbath.components.SabbathTopAppBar
 import hymnal.sabbath.components.drawRadialGlow
 import hymnal.sabbath.components.rememberSabbathColors
+import hymnal.services.prefs.model.AppTheme
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.scaffold.HazeScaffold
 
@@ -50,7 +53,15 @@ import hymnal.ui.widget.scaffold.HazeScaffold
 fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-    val colors = rememberSabbathColors(isDark = isSystemInDarkTheme())
+
+    val isSystemInDarkTheme = isSystemInDarkTheme()
+    val appTheme = state.theme
+    val isDarkTheme by remember(appTheme) {
+        derivedStateOf {
+            appTheme == AppTheme.DARK || (appTheme == AppTheme.FOLLOW_SYSTEM && isSystemInDarkTheme)
+        }
+    }
+    val colors = rememberSabbathColors(isDark = isDarkTheme)
 
     val containerColor by animateColorAsState(
         targetValue = if (state is State.SabbathInfo) colors.bg else MaterialTheme.colorScheme.background,
@@ -82,7 +93,7 @@ fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
             label = "content",
         ) { targetState ->
             when (targetState) {
-                State.Loading -> {
+                is State.Loading -> {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -139,6 +150,6 @@ fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
 @Composable
 private fun Preview() {
     HymnalTheme {
-        SabbathScreenUi(State.Loading)
+        SabbathScreenUi(State.Loading(AppTheme.FOLLOW_SYSTEM))
     }
 }

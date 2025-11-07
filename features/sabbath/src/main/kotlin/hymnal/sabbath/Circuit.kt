@@ -5,15 +5,20 @@ package hymnal.sabbath
 
 import com.slack.circuit.runtime.CircuitUiState
 import hymnal.sabbath.components.SabbathInfoItem
+import hymnal.services.prefs.model.AppTheme
 import kotlinx.collections.immutable.ImmutableList
 
 sealed interface State : CircuitUiState {
-    object Loading : State
+    val theme: AppTheme
+
+    data class Loading(override val theme: AppTheme) : State
     data class NoLocation(
+        override val theme: AppTheme,
         val eventSink: (Event.NoLocation) -> Unit
     ) : State
 
     data class SabbathInfo(
+        override val theme: AppTheme,
         val items: ImmutableList<SabbathInfoItem>,
     ) : State
 }
