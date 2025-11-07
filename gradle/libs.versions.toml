@@ -9,6 +9,7 @@ androidx-datastore-prefs = "1.1.7"
 androidx-glance = "1.2.0-beta01"
 androidx-lifecyle = "2.9.4"
 androidx-room = "2.8.3"
+androidx-splashscreen = "1.2.0"
 androidx-startup = "1.2.0"
 androidx-work = "2.11.0"
 cash-app-turbine = "1.2.1"
@@ -63,6 +64,7 @@ androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util" }
 androidx-compose-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "androidx-compose-material3" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidx-splashscreen" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
 androidx-datastore-prefs = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore-prefs" }

@@ -89,6 +89,7 @@ ksp { arg("circuit.codegen.mode", "metro") }
 
 dependencies {
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.startup.runtime)
     implementation(libs.androidx.work)
     implementation(libs.google.android.material)

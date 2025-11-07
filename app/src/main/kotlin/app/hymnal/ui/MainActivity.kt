@@ -15,6 +15,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.hymnal.ui.home.HomeRoute
 import app.hymnal.ui.home.HomeScreen
@@ -43,14 +44,15 @@ class MainActivity(
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
-            val themeStyle by prefs.themeStyle()
-                .collectAsStateWithLifecycle(ThemeStyle())
-            val appTheme = themeStyle.theme
-            val dynamicColors = themeStyle.dynamicColors
+            val themeStyle: ThemeStyle? by prefs.themeStyle()
+                .collectAsStateWithLifecycle(null)
+            val appTheme = themeStyle?.theme
+            val dynamicColors = themeStyle?.dynamicColors
 
             val isSystemInDarkTheme = isSystemInDarkTheme()
             val isDarkTheme by remember(appTheme) {
@@ -66,8 +68,10 @@ class MainActivity(
                 initialScreens = stackedScreens,
                 windowWidthSizeClass = calculateWindowSizeClass(this).widthSizeClass,
                 isDarkTheme = isDarkTheme,
-                dynamicColor = dynamicColors,
+                dynamicColor = dynamicColors ?: false,
             )
+
+            splashScreen.setKeepOnScreenCondition { themeStyle == null }
         }
     }
 
