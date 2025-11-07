@@ -10,7 +10,7 @@
 
     <style name="Theme.Hymnal" parent="Platform.Theme.Hymnal" />
 
-    <style name="Theme.Hymnal.Splash" parent="Theme.SplashScreen.IconBackground">
+    <style name="Theme.Hymnal.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/hymnal_theme_color_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/anim_splash_launcher</item>
         <item name="windowSplashScreenIconBackgroundColor">@color/hymnal_theme_color_background</item>
