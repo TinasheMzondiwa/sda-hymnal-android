@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.androidx.startup.runtime)
     implementation(libs.androidx.work)
     implementation(libs.google.android.material)
+    implementation(libs.kotlinx.immutable)
     implementation(libs.material3.adaptive.navigation.suite)
     implementation(libs.timber)
     implementation(projects.features.account)
