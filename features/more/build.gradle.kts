@@ -19,6 +19,7 @@ ksp { arg("circuit.codegen.mode", "metro") }
 
 dependencies {
     implementation(libs.androidx.core)
+    implementation(libs.kotlinx.immutable)
     implementation(libs.timber)
     implementation(projects.libraries.coreUi)
     implementation(projects.libraries.l10n)
