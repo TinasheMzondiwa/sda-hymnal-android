@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -47,6 +48,7 @@ import hymnal.ui.extensions.modifier.thenIf
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 internal fun LazyListScope.hymnLyrics(
@@ -173,11 +175,12 @@ private fun Chorus(
             )
 
             Text(
-                text = "Chorus",
+                text = stringResource(L10nR.string.chorus),
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontFamily = textStyle.font.toFamily(),
-                fontSize = (textStyle.textSize - 4f).sp
+                fontSize = (textStyle.textSize - 2f).sp,
+                fontWeight = FontWeight.SemiBold,
             )
         }
 
