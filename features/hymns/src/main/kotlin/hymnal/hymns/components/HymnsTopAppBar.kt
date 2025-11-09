@@ -62,7 +62,7 @@ fun HymnsTopAppBar(
             PrimaryScrollableTabRow(
                 selectedTabIndex = state.categories.indexOf(state.selectedCategory),
                 containerColor = Color.Transparent,
-                edgePadding = 16.dp,
+                edgePadding = 0.dp,
                 tabs = {
                     state.categories.forEachIndexed { index, category ->
                         Tab(
