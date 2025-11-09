@@ -35,19 +35,19 @@ class WidgetRepositoryImpl(
     override fun state(): Flow<WidgetState> {
         return sabbathTimesDao.getFlow()
             .map { entity ->
-                if (entity != null) {
-                    WidgetState.Data(sabbathInfo = entity.toInfo())
-                } else {
-                    WidgetState.Error
-                }
+                entity?.toWidgetState() ?: WidgetState.Error
             }
             .flowOn(dispatcherProvider.io)
     }
 
-    private fun SabbathTimesEntity.toInfo(): WidgetSabbathInfo {
+    private fun SabbathTimesEntity.toWidgetState(): WidgetState {
         val start = friday.asDateTime()
         val end = saturday.asDateTime()
         val dateNow = ZonedDateTime.now()
+
+        if (start.isBefore(dateNow) && end.isBefore(dateNow)) {
+            return WidgetState.Error
+        }
 
         val isSabbath = isWithinSabbath(
             now = dateNow,
@@ -68,7 +68,7 @@ class WidgetRepositoryImpl(
             null
         }
 
-        return WidgetSabbathInfo(
+        val sabbathInfo = WidgetSabbathInfo(
             location = location,
             label = if (isSabbath) dayLabel.orEmpty() else label,
             dayLabel = if (isSabbath) label else dayLabel,
@@ -77,6 +77,8 @@ class WidgetRepositoryImpl(
                 .format(timeFormatter)
                 .uppercase(),
         )
+
+        return WidgetState.Data(sabbathInfo = sabbathInfo)
     }
 
     private fun isWithinSabbath(
