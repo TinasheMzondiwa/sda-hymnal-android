@@ -9,5 +9,6 @@ plugins {
 
 dependencies {
     api(projects.libraries.foundation.coroutines)
+    api(projects.libraries.model)
     implementation(libs.androidx.annotations)
 }

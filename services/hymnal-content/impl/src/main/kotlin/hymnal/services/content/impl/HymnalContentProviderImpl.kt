@@ -4,11 +4,16 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.coroutines.DispatcherProvider
+import hymnal.libraries.model.SabbathResource
 import hymnal.services.content.HymnalContentProvider
+import hymnal.services.content.impl.model.ApiSabbathResource
+import hymnal.services.content.impl.model.toDomain
 import hymnal.services.model.Hymn
 import hymnal.services.model.HymnCategory
 import hymnal.storage.db.dao.HymnsDao
 import hymnal.storage.db.entity.HymnWithLyrics
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -16,12 +21,15 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.time.LocalDate
+import java.time.temporal.WeekFields
 
 @ContributesBinding(AppScope::class)
 @Inject
 class HymnalContentProviderImpl(
     private val hymnsDao: HymnsDao,
     private val dispatcherProvider: DispatcherProvider,
+    private val supabase: SupabaseClient,
 ) : HymnalContentProvider {
 
     override fun hymns(): Flow<List<Hymn>> {
@@ -82,5 +90,21 @@ class HymnalContentProviderImpl(
             hymnsDao.getHymnWithLyricsByNumber(number)
                 ?.toDomainHymn()
         }
+    }
+
+    override fun sabbathResources(): Flow<List<SabbathResource>> {
+        return flow {
+            val week = LocalDate.now().get(WeekFields.ISO.weekOfWeekBasedYear())
+
+            val model = supabase
+                .from("sabbath_resource")
+                .select(
+                    request = { filter { ApiSabbathResource::week eq week } }
+                )
+                .decodeSingle<ApiSabbathResource>()
+
+            emit(model.toDomain())
+        }.flowOn(dispatcherProvider.io)
+            .catch { Timber.e(it) }
     }
 }

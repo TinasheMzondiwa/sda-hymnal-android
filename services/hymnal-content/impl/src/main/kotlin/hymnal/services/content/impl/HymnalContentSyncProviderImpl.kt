@@ -15,7 +15,8 @@ import hymnal.storage.db.dao.HymnsDao
 import hymnal.storage.db.entity.DbLyricType
 import hymnal.storage.db.entity.HymnEntity
 import hymnal.storage.db.entity.LyricPartEntity
-import io.github.jan.supabase.storage.Storage
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -24,7 +25,7 @@ import timber.log.Timber
 class HymnalContentSyncProviderImpl(
     private val hymnsDao: HymnsDao,
     private val dispatcherProvider: DispatcherProvider,
-    private val storage: Storage,
+    private val supabase: SupabaseClient,
 ) : HymnalContentSyncProvider, Scopable by ioScopable(dispatcherProvider) {
 
     override fun invoke() {
@@ -32,7 +33,7 @@ class HymnalContentSyncProviderImpl(
             val hymns = hymnsDao.getAllHymns()
 
             if (hymns.isEmpty()) {
-                val downloadedHymns = storage.downloadHymns()
+                val downloadedHymns = supabase.storage.downloadHymns()
                 if (downloadedHymns != null) {
                     saveHymnsToDatabase(downloadedHymns)
                 } else {
