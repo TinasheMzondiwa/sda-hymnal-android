@@ -28,9 +28,9 @@ dependencies {
     implementation(projects.libraries.di)
     implementation(projects.libraries.l10n)
     implementation(projects.libraries.model)
+    implementation(projects.services.hymnalContent.api)
     implementation(projects.services.prefs.api)
     implementation(projects.services.storage)
-    implementation(projects.services.hymnalContent.api)
 
     testImplementation(libs.test.coroutines)
     testImplementation(libs.test.junit)
