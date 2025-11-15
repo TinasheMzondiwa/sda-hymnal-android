@@ -16,9 +16,11 @@ import hymnal.sabbath.Event
 import hymnal.sabbath.components.SabbathInfoItem
 import hymnal.sabbath.components.info.LocationInfoItem
 import hymnal.sabbath.components.info.ReminderInfoItem
+import hymnal.sabbath.components.info.ResourceItem
 import hymnal.sabbath.components.info.SabbathInfoCard
 import hymnal.services.prefs.HymnalPrefs
 import hymnal.services.sabbath.api.SabbathInfo
+import hymnal.services.sabbath.api.SabbathRepository
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.catch
@@ -40,6 +42,7 @@ interface SabbathInfoStateProducer {
 class SabbathInfoStateProducerImpl(
     private val countdownStateProducer: CountdownStateProducer,
     private val prefs: HymnalPrefs,
+    private val sabbathRepository: SabbathRepository,
 ) : SabbathInfoStateProducer {
 
     private val formatter = DateTimeFormatter.ofPattern("EE, h:mm a")
@@ -51,6 +54,13 @@ class SabbathInfoStateProducerImpl(
         val sabbathProgress by rememberSabbathProgress(sabbathInfo, countDownTime)
         val sabbathRemindersEnabled by produceRetainedState(false) {
             prefs.sabbathRemindersEnabled().collect { value = it }
+        }
+        val resources by produceRetainedState(emptyList()) {
+            sabbathRepository.getResources()
+                .catch { Timber.e(it) }
+                .collect {
+                    value = it
+                }
         }
 
         val eventSink: (Event.SabbathInfo) -> Unit = rememberRetained {
@@ -82,6 +92,7 @@ class SabbathInfoStateProducerImpl(
                     eventSink = eventSink,
                 )
             )
+            addAll(resources.map { ResourceItem(it) })
         }.toImmutableList()
     }
 
