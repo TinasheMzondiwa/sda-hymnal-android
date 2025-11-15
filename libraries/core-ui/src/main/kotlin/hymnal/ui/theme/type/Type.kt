@@ -63,6 +63,19 @@ val AdventSansFontFamily = FontFamily(
     Font(R.font.advent_sans, FontWeight.Normal),
 )
 
+val GaraMond = FontFamily(
+    Font(R.font.garamond_regular, FontWeight.Normal),
+    Font(R.font.garamond_bold, FontWeight.Bold),
+    Font(R.font.garamond_italic, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.garamond_bold_italic, FontWeight.Bold, FontStyle.Italic),
+    Font(R.font.garamond_semibold, FontWeight.SemiBold),
+    Font(R.font.garamond_semibold_italic, FontWeight.SemiBold, FontStyle.Italic),
+    Font(R.font.garamond_light, FontWeight.Light),
+    Font(R.font.garamond_light_italic, FontWeight.Light, FontStyle.Italic),
+    Font(R.font.garamond_medium, FontWeight.Medium),
+    Font(R.font.garamond_medium_italic, FontWeight.Medium, FontStyle.Italic),
+)
+
 private val defaultTextStyle = TextStyle(
     fontFamily = Poppins,
     lineHeightStyle = LineHeightStyle(
