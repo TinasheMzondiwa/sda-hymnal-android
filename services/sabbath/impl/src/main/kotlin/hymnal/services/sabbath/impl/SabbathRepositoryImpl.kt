@@ -13,6 +13,8 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.coroutines.DispatcherProvider
+import hymnal.libraries.model.SabbathResource
+import hymnal.services.content.HymnalContentProvider
 import hymnal.services.prefs.HymnalPrefs
 import hymnal.services.sabbath.api.SabbathInfo
 import hymnal.services.sabbath.api.SabbathRepository
@@ -49,6 +51,7 @@ class SabbathRepositoryImpl(
     private val helper: SabbathTimesHelper,
     private val workManager: WorkManager,
     private val dispatcherProvider: DispatcherProvider,
+    private val contentProvider: HymnalContentProvider,
 ) : SabbathRepository {
 
     private val geocoder: Geocoder by lazy { Geocoder(appContext, Locale.getDefault()) }
@@ -65,6 +68,10 @@ class SabbathRepositoryImpl(
                 Timber.e(it)
                 emit(Result.failure(it))
             }
+
+    override fun getResources(): Flow<List<SabbathResource>> {
+        return contentProvider.sabbathResources()
+    }
 
     private fun sabbathInfoResult(
         latitude: Double,

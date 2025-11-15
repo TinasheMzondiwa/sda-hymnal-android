@@ -126,6 +126,7 @@ play-services-location = { module = "com.google.android.gms:play-services-locati
 slack-lint-checks = { module = "com.slack.lint:slack-lint-checks", version.ref = "slack-lint" }
 slack-lint-annotations = { module = "com.slack.lint:slack-lint-annotations", version.ref = "slack-lint" }
 supabase-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "supabase" }
+supabase-postgrest = { module = "io.github.jan-tennert.supabase:postgrest-kt", version.ref = "supabase" }
 supabase-storage = { module = "io.github.jan-tennert.supabase:storage-kt", version.ref = "supabase" }
 test-circuit = { module = "com.slack.circuit:circuit-test", version.ref = "circuit" }
 test-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-coroutines" }

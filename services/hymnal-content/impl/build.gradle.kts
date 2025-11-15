@@ -36,6 +36,7 @@ dependencies {
     implementation(platform(libs.supabase.bom))
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.core)
+    implementation(libs.supabase.postgrest)
     implementation(libs.supabase.storage)
     implementation(libs.timber)
     implementation(projects.services.firebase)

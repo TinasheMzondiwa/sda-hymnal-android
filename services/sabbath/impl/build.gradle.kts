@@ -30,6 +30,7 @@ dependencies {
     implementation(projects.libraries.model)
     implementation(projects.services.prefs.api)
     implementation(projects.services.storage)
+    implementation(projects.services.hymnalContent.api)
 
     testImplementation(libs.test.coroutines)
     testImplementation(libs.test.junit)
