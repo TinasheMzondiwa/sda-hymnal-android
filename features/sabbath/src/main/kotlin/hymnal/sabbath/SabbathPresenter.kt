@@ -11,9 +11,11 @@ import androidx.compose.runtime.setValue
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
+import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import hymnal.libraries.navigation.SabbathScreen
@@ -30,6 +32,7 @@ import timber.log.Timber
 
 @AssistedInject
 class SabbathPresenter(
+    @Assisted private val navigator: Navigator,
     private val currentLocationStateProducer: CurrentLocationStateProducer,
     private val sabbathInfoStateProducer: SabbathInfoStateProducer,
     private val sabbathRepository: SabbathRepository,
@@ -68,7 +71,7 @@ class SabbathPresenter(
 
             is LocationResult.Granted if sabbathInfo != null -> State.SabbathInfo(
                 theme = themeStyle.theme,
-                items = sabbathInfoStateProducer(sabbathInfo)
+                items = sabbathInfoStateProducer(navigator, sabbathInfo)
             )
             else -> State.Loading(theme = themeStyle.theme)
         }
@@ -89,6 +92,6 @@ class SabbathPresenter(
     @CircuitInject(SabbathScreen::class, AppScope::class)
     @AssistedFactory
     interface Factory {
-        fun create(): SabbathPresenter
+        fun create(navigator: Navigator): SabbathPresenter
     }
 }

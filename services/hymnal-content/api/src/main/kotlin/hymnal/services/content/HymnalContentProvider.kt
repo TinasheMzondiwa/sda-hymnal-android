@@ -11,5 +11,6 @@ interface HymnalContentProvider {
     fun search(query: String): Flow<List<Hymn>>
     fun hymn(index: String): Flow<Hymn?>
     suspend fun hymn(number: Int): Hymn?
+    fun sabbathHymns(): Flow<List<Hymn>>
     fun sabbathResources(): Flow<List<SabbathResource>>
 }

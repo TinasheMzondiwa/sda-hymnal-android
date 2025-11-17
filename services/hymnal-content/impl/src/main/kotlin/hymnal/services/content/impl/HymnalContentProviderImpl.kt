@@ -92,6 +92,21 @@ class HymnalContentProviderImpl(
         }
     }
 
+    override fun sabbathHymns(): Flow<List<Hymn>> {
+        val numbers = buildList {
+            add(40)
+            addAll(380..395)
+            addAll(listOf(668, 677))
+        }
+        return hymnsDao.getHymnsWithLyricsInRange(numbers)
+            .map { it.map(HymnWithLyrics::toDomainHymn) }
+            .flowOn(dispatcherProvider.io)
+            .catch {
+                Timber.e(it)
+                emit(emptyList())
+            }
+    }
+
     override fun sabbathResources(): Flow<List<SabbathResource>> {
         return flow {
             val week = LocalDate.now().get(WeekFields.ISO.weekOfWeekBasedYear())

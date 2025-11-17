@@ -57,6 +57,8 @@
     <string name="sabbath_notification_title">Happy Sabbath!</string>
     <string name="sabbath_notification_message">The Sabbath has begun in your location.</string>
     <string name="sabbath_permission_location_prompt">Please grant location permission to display accurate Sabbath times for your area.</string>
+    <string name="sabbath_playlist">Sabbath Hymns</string>
+    <string name="sabbath_playlist_sub_title">Songs for worship, rest, and reflection</string>
     <string name="sabbath_end">Sabbath ends</string>
     <string name="sabbath_start">Sabbath starts</string>
     <string name="sabbath_widget_description">Widget for Sabbath start and end times</string>

@@ -31,5 +31,6 @@ sealed interface Event {
 
     sealed interface SabbathInfo : Event {
         data class OnReminderToggled(val enabled: Boolean) : SabbathInfo
+        data object OnSabbathHymnsClicked : SabbathInfo
     }
 }

@@ -72,6 +72,10 @@ interface HymnsDao : BaseDao<HymnEntity> {
     @Query("SELECT * FROM hymns")
     fun getAllHymnsWithLyrics(): Flow<List<HymnWithLyrics>>
 
+    @Transaction
+    @Query("SELECT * FROM hymns WHERE number IN (:numbers) ORDER BY number ASC")
+    fun getHymnsWithLyricsInRange(numbers: List<Int>): Flow<List<HymnWithLyrics>>
+
     /**
      * Searches hymns based on lyrics content.
      * The query should be a valid FTS query string (e.g., "search term", "search* term", etc.).
