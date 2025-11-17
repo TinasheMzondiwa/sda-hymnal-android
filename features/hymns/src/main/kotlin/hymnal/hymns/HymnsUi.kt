@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -97,7 +96,6 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                 }
             }
         },
-        contentWindowInsets = WindowInsets.safeDrawing,
         blurTopBar = true,
     ) { contentPadding ->
         LazyColumn(
