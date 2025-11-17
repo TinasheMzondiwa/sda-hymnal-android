@@ -13,6 +13,7 @@ import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
+import hymnal.libraries.navigation.SabbathHymnsScreen
 import hymnal.sabbath.Event
 import hymnal.sabbath.components.SabbathInfoItem
 import hymnal.sabbath.components.info.LocationInfoItem
@@ -20,7 +21,6 @@ import hymnal.sabbath.components.info.ReminderInfoItem
 import hymnal.sabbath.components.info.ResourceItem
 import hymnal.sabbath.components.info.SabbathCollectionItem
 import hymnal.sabbath.components.info.SabbathInfoCard
-import hymnal.sabbath.hymns.SabbathHymnsScreen
 import hymnal.services.prefs.HymnalPrefs
 import hymnal.services.sabbath.api.SabbathInfo
 import hymnal.services.sabbath.api.SabbathRepository
