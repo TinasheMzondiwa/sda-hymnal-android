@@ -8,6 +8,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
+import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -17,7 +18,9 @@ import hymnal.sabbath.components.SabbathInfoItem
 import hymnal.sabbath.components.info.LocationInfoItem
 import hymnal.sabbath.components.info.ReminderInfoItem
 import hymnal.sabbath.components.info.ResourceItem
+import hymnal.sabbath.components.info.SabbathCollectionItem
 import hymnal.sabbath.components.info.SabbathInfoCard
+import hymnal.sabbath.hymns.SabbathHymnsScreen
 import hymnal.services.prefs.HymnalPrefs
 import hymnal.services.sabbath.api.SabbathInfo
 import hymnal.services.sabbath.api.SabbathRepository
@@ -34,7 +37,7 @@ import java.time.format.DateTimeFormatter
 interface SabbathInfoStateProducer {
 
     @Composable
-    operator fun invoke(sabbathInfo: SabbathInfo): ImmutableList<SabbathInfoItem>
+    operator fun invoke(navigator: Navigator, sabbathInfo: SabbathInfo): ImmutableList<SabbathInfoItem>
 }
 
 @ContributesBinding(AppScope::class)
@@ -48,7 +51,7 @@ class SabbathInfoStateProducerImpl(
     private val formatter = DateTimeFormatter.ofPattern("EE, h:mm a")
 
     @Composable
-    override fun invoke(sabbathInfo: SabbathInfo): ImmutableList<SabbathInfoItem> {
+    override fun invoke(navigator: Navigator, sabbathInfo: SabbathInfo): ImmutableList<SabbathInfoItem> {
         val coroutineScope = rememberStableCoroutineScope()
         val countDownTime by rememberCountDownTime(sabbathInfo)
         val sabbathProgress by rememberSabbathProgress(sabbathInfo, countDownTime)
@@ -58,9 +61,7 @@ class SabbathInfoStateProducerImpl(
         val resources by produceRetainedState(emptyList()) {
             sabbathRepository.getResources()
                 .catch { Timber.e(it) }
-                .collect {
-                    value = it
-                }
+                .collect { value = it }
         }
 
         val eventSink: (Event.SabbathInfo) -> Unit = rememberRetained {
@@ -71,6 +72,8 @@ class SabbathInfoStateProducerImpl(
                             prefs.setSabbathRemindersEnabled(event.enabled)
                         }
                     }
+
+                    is Event.SabbathInfo.OnSabbathHymnsClicked -> navigator.goTo(SabbathHymnsScreen)
                 }
             }
         }
@@ -92,6 +95,9 @@ class SabbathInfoStateProducerImpl(
                     eventSink = eventSink,
                 )
             )
+
+            add(SabbathCollectionItem(eventSink))
+
             addAll(resources.map { ResourceItem(it) })
         }.toImmutableList()
     }
