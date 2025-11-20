@@ -3,6 +3,8 @@
 
 package hymnal.sabbath
 
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,6 +16,7 @@ import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuitx.android.IntentScreen
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
@@ -55,7 +58,6 @@ class SabbathPresenter(
         }
 
         return when (locationResult) {
-            null -> State.Loading(theme = themeStyle.theme)
             is LocationResult.NotGranted -> State.NoLocation(
                 theme = themeStyle.theme,
                 eventSink = { event ->
@@ -72,6 +74,17 @@ class SabbathPresenter(
             is LocationResult.Granted if sabbathInfo != null -> State.SabbathInfo(
                 theme = themeStyle.theme,
                 items = sabbathInfoStateProducer(navigator, sabbathInfo)
+            )
+            is LocationResult.NotAvailable -> State.LocationUnAvailable(
+                theme = themeStyle.theme,
+                eventSink = { event ->
+                    when (event) {
+                        Event.LocationUnAvailable.OnRetry -> {
+                            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                            navigator.goTo(IntentScreen(intent))
+                        }
+                    }
+                }
             )
             else -> State.Loading(theme = themeStyle.theme)
         }

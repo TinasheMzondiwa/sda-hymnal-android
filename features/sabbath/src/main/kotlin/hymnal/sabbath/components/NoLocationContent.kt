@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.LocationOff
 import androidx.compose.material.icons.rounded.LocationSearching
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -59,12 +61,63 @@ internal fun NoLocationContent(state: State.NoLocation, modifier: Modifier = Mod
         }
     }
 
+    NoLocationContent(
+        title = stringResource(L10nR.string.sabbath_enable_location),
+        description = stringResource(L10nR.string.sabbath_permission_location_prompt),
+        onClick = {
+            if (hasLocationPermissions(context)) {
+                state.eventSink(Event.NoLocation.OnLocationGranted)
+            } else {
+                permissionLauncher.launch(locationPermissions)
+            }
+        },
+        modifier = modifier
+    ) {
+        Icon(imageVector = Icons.Rounded.LocationSearching, contentDescription = null)
+        Spacer(Modifier.size(12.dp))
+        Text(text = stringResource(L10nR.string.sabbath_grant_permission))
+    }
+}
+
+private fun hasLocationPermissions(context: Context): Boolean {
+    return ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+}
+
+@Composable
+internal fun NoLocationContent(state: State.LocationUnAvailable, modifier: Modifier = Modifier) {
+    NoLocationContent(
+        title = stringResource(L10nR.string.sabbath_location_unavailable),
+        description = stringResource(L10nR.string.sabbath_location_unavailable_prompt),
+        onClick = { state.eventSink(Event.LocationUnAvailable.OnRetry) },
+        modifier = modifier
+    ) {
+        Icon(imageVector = Icons.Rounded.Settings, contentDescription = null)
+        Spacer(Modifier.size(12.dp))
+        Text(text = stringResource(L10nR.string.sabbath_location_settings))
+    }
+}
+
+@Composable
+private fun NoLocationContent(
+    title: String,
+    description: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    buttonContent: @Composable RowScope.() -> Unit = {},
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
 
         Box(
@@ -87,14 +140,14 @@ internal fun NoLocationContent(state: State.NoLocation, modifier: Modifier = Mod
         Spacer(Modifier.size(16.dp))
 
         Text(
-            text = stringResource(L10nR.string.sabbath_enable_location),
+            text = title,
             style = MaterialTheme.typography.headlineLarge
         )
 
         Spacer(Modifier.size(16.dp))
 
         Text(
-            text = stringResource(L10nR.string.sabbath_permission_location_prompt),
+            text = description,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )
@@ -102,32 +155,12 @@ internal fun NoLocationContent(state: State.NoLocation, modifier: Modifier = Mod
         Spacer(Modifier.size(24.dp))
 
         Button(
-            onClick = {
-                if (hasLocationPermissions(context)) {
-                    state.eventSink(Event.NoLocation.OnLocationGranted)
-                } else {
-                    permissionLauncher.launch(locationPermissions)
-                }
-            },
+            onClick = onClick,
             modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            Icon(imageVector = Icons.Rounded.LocationSearching, contentDescription = null)
-            Spacer(Modifier.size(12.dp))
-            Text(text = stringResource(L10nR.string.sabbath_grant_permission))
-        }
+            contentPadding = PaddingValues(16.dp),
+            content = buttonContent,
+        )
     }
-}
-
-private fun hasLocationPermissions(context: Context): Boolean {
-    return ContextCompat.checkSelfPermission(
-        context,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
 }
 
 
@@ -138,6 +171,21 @@ private fun Preview() {
         Surface {
             NoLocationContent(
                 state = State.NoLocation(
+                    theme = AppTheme.FOLLOW_SYSTEM,
+                    eventSink = {},
+                )
+            )
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun PreviewNotAvailable() {
+    HymnalTheme {
+        Surface {
+            NoLocationContent(
+                state = State.LocationUnAvailable(
                     theme = AppTheme.FOLLOW_SYSTEM,
                     eventSink = {},
                 )

@@ -24,7 +24,8 @@ interface CurrentLocationStateProducer {
 
 sealed interface LocationResult {
     data class Granted(val location: Location) : LocationResult
-    object NotGranted : LocationResult
+    data object NotGranted : LocationResult
+    data object NotAvailable : LocationResult
 }
 
 @ContributesBinding(AppScope::class)
@@ -37,10 +38,14 @@ class CurrentLocationStateProducerImpl(private val context: Context) : CurrentLo
 
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_COARSE_LOCATION])
     override suspend fun invoke(): LocationResult {
-        return if (hasLocationPermissions(context)) {
-            LocationResult.Granted(fusedLocationClient.lastLocation.await())
+        if (!hasLocationPermissions(context)) {
+            return LocationResult.NotGranted
+        }
+        val location = fusedLocationClient.lastLocation.await()
+        return if (location != null) {
+            LocationResult.Granted(location)
         } else {
-            LocationResult.NotGranted
+            LocationResult.NotAvailable
         }
     }
 

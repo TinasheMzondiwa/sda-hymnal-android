@@ -16,6 +16,10 @@ sealed interface State : CircuitUiState {
         override val theme: AppTheme,
         val eventSink: (Event.NoLocation) -> Unit
     ) : State
+    data class LocationUnAvailable(
+        override val theme: AppTheme,
+        val eventSink: (Event.LocationUnAvailable) -> Unit
+    ) : State
 
     data class SabbathInfo(
         override val theme: AppTheme,
@@ -27,6 +31,10 @@ sealed interface Event {
     sealed interface NoLocation : Event {
         data object OnLocationGranted : NoLocation
         data object OnLocationDenied : NoLocation
+    }
+
+    sealed interface LocationUnAvailable : Event {
+        data object OnRetry : LocationUnAvailable
     }
 
     sealed interface SabbathInfo : Event {

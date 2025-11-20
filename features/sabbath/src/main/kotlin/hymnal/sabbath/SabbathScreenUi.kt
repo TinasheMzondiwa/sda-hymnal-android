@@ -113,6 +113,14 @@ fun SabbathScreenUi(state: State, modifier: Modifier = Modifier) {
                     )
                 }
 
+                is State.LocationUnAvailable -> {
+                    NoLocationContent(
+                        state = targetState,
+                        modifier = Modifier
+                            .padding(contentPadding),
+                    )
+                }
+
                 is State.SabbathInfo -> {
                     Box(
                         modifier = Modifier
