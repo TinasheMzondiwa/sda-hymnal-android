@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Generate build number
         run: echo "BUILD_NUMBER=${{github.run_number}}" > app/build_number.properties
