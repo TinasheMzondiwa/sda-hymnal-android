@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -106,7 +105,6 @@ fun CollectionsUi(state: State, modifier: Modifier = Modifier) {
             }
 
         },
-        contentWindowInsets = WindowInsets.safeDrawing,
         blurTopBar = true,
     ) { contentPadding ->
         LazyColumn(
@@ -176,14 +174,14 @@ private fun LazyListScope.collectionsContent(state: State, hapticFeedback: AppHa
 @Composable
 private fun Overlay(state: CollectionOverlayState?) {
     OverlayEffect(state) {
-        when (val overlayState = state) {
+        when (state) {
             is CollectionOverlayState.BottomSheet -> {
                 state.onResult(
                     show(
-                        overlay = BottomSheetOverlay(skipPartiallyExpanded = overlayState.skipPartiallyExpanded) {
+                        overlay = BottomSheetOverlay(skipPartiallyExpanded = state.skipPartiallyExpanded) {
                             SharedElementTransitionLayout {
                                 CircuitContent(
-                                    screen = overlayState.screen,
+                                    screen = state.screen,
                                     onNavEvent = {
                                         state.onResult(BottomSheetOverlay.Result.Dismissed)
                                     }
