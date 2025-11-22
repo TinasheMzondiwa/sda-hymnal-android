@@ -15,19 +15,22 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitContent
+import com.slack.circuit.foundation.NavEvent
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.binding
 import hymnal.ui.theme.HymnalTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 import libraries.hymnal.di.ActivityKey
 
 @ContributesIntoMap(AppScope::class, binding<Activity>())
@@ -36,6 +39,8 @@ import libraries.hymnal.di.ActivityKey
 class ImmersiveContentActivity(
     private val circuit: Circuit
 ) : ComponentActivity() {
+
+    private val controlsVisible = MutableStateFlow(true)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,25 +69,40 @@ class ImmersiveContentActivity(
                 contentView.setOnClickListener {
                     // Hide both the status bar and the navigation bar.
                     windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+                    controlsVisible.tryEmit(false)
                 }
             } else {
                 contentView.setOnClickListener {
                     // Show both the status bar and the navigation bar.
                     windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+                    controlsVisible.tryEmit(true)
                 }
             }
             ViewCompat.onApplyWindowInsets(view, windowInsets)
         }
 
         setContent {
+            val controlsVisible by controlsVisible.collectAsStateWithLifecycle(initialValue = true)
+
             HymnalTheme(darkTheme = true, dynamicColor = false) {
                 CircuitContent(
-                    screen = ImmersiveContentScreen(hymnId),
+                    screen = ImmersiveContentScreen(
+                        hymnId = hymnId,
+                        showControls = controlsVisible
+                    ),
                     circuit = circuit,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .clickable {
                             onClickStuff()
+                        },
+                    onNavEvent = { navEvent ->
+                        when (navEvent) {
+                            is NavEvent.Pop -> onBackPressedDispatcher.onBackPressed()
+                            else -> Unit
                         }
+                    },
+                    key = hymnId,
                 )
             }
         }
