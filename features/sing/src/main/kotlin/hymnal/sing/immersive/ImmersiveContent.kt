@@ -4,6 +4,8 @@
 package hymnal.sing.immersive
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -53,12 +55,17 @@ import hymnal.sing.immersive.ImmersiveContentScreen.State as UiState
 @CircuitInject(ImmersiveContentScreen::class, AppScope::class)
 @Composable
 fun ImmersiveContent(state: UiState, modifier: Modifier = Modifier) {
-    Scaffold (
+    Scaffold(
         modifier = modifier,
         topBar = {
-            AnimatedVisibility(visible = state.showControls) {
-                TopAppBar(
-                    title = {}, navigationIcon = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    AnimatedVisibility(
+                        visible = state.showControls,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
                         IconButton(
                             onClick = { state.eventSink(UiEvent.OnNavBack) },
                         ) {
@@ -68,13 +75,13 @@ fun ImmersiveContent(state: UiState, modifier: Modifier = Modifier) {
                                 tint = Color.White
                             )
                         }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent,
-                        scrolledContainerColor = Color.Transparent,
-                    )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent,
                 )
-            }
+            )
         },
         containerColor = Color.Black,
         contentColor = Color.White,
@@ -90,51 +97,14 @@ fun ImmersiveContent(state: UiState, modifier: Modifier = Modifier) {
                 contentPadding = contentPadding,
                 pageSpacing = 32.dp,
             ) {
-                val page = state.pages[it]
-
-                val text = remember(page) {
-                    buildAnnotatedString {
-                        page.lines.forEachIndexed { index, line ->
-                            if (index > 0) {
-                                append("\n")
-                            }
-
-                            if (index == 0) {
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append(line)
-                                }
-                            } else {
-                                append(line)
-                            }
-                        }
-                    }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = text,
-                        modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 48.sp,
-                        autoSize = TextAutoSize.StepBased(
-                            minFontSize = 18.sp,
-                            maxFontSize = 40.sp,
-                            stepSize = 2.sp
-                        )
-                    )
-                }
+                PageContent(state.pages[it])
             }
 
             AnimatedVisibility(
                 visible = state.showControls,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
+                modifier = Modifier.align(Alignment.BottomCenter),
+                enter = fadeIn(),
+                exit = fadeOut()
             ) {
                 Row(
                     Modifier
@@ -157,6 +127,47 @@ fun ImmersiveContent(state: UiState, modifier: Modifier = Modifier) {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun PageContent(page: ContentPage, modifier: Modifier = Modifier) {
+    val text = remember(page) {
+        buildAnnotatedString {
+            page.lines.forEachIndexed { index, line ->
+                if (index > 0) {
+                    append("\n")
+                }
+
+                if (index == 0) {
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(line)
+                    }
+                } else {
+                    append(line)
+                }
+            }
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            lineHeight = 48.sp,
+            autoSize = TextAutoSize.StepBased(
+                minFontSize = 18.sp,
+                maxFontSize = 40.sp,
+                stepSize = 2.sp
+            )
+        )
     }
 }
 
