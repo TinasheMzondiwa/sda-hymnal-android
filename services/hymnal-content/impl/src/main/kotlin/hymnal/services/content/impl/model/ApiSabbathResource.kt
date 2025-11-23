@@ -24,6 +24,9 @@ data class ApiSabbathResource(
     @SerialName("scripture.summary")
     val scriptureSummary: String,
 
+    @SerialName("scripture.section")
+    val scriptureSection: String,
+
     @SerialName("egw.id")
     val egwId: Int,
 
@@ -38,7 +41,8 @@ internal fun ApiSabbathResource.toDomain(): List<SabbathResource> = listOf(
     SabbathResource.Scripture(
         id = scriptureId,
         reference = scriptureReference,
-        text = scriptureSummary
+        text = scriptureSummary,
+        section = scriptureSection
     ),
     SabbathResource.Quote(
         id = egwId,

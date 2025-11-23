@@ -3,13 +3,16 @@
 
 package hymnal.sabbath.state
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.core.net.toUri
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
+import com.slack.circuitx.android.IntentScreen
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
@@ -39,6 +42,8 @@ interface SabbathInfoStateProducer {
     @Composable
     operator fun invoke(navigator: Navigator, sabbathInfo: SabbathInfo): ImmutableList<SabbathInfoItem>
 }
+
+private const val EGW_WRITINGS_SEARCH_URL = "https://m.egwwritings.org/search"
 
 @ContributesBinding(AppScope::class)
 @Inject
@@ -98,7 +103,11 @@ class SabbathInfoStateProducerImpl(
 
             add(SabbathCollectionItem(eventSink))
 
-            addAll(resources.map { ResourceItem(it) })
+            addAll(resources.map { resource ->
+                ResourceItem(
+                    resource = resource,
+                    onCitationClick = { navigator.navigateToEgwQuote(it) })
+            })
         }.toImmutableList()
     }
 
@@ -134,4 +143,14 @@ class SabbathInfoStateProducerImpl(
                 value = progress
             }
         }
+
+    private fun Navigator.navigateToEgwQuote(quote: String) {
+        val uri =
+            EGW_WRITINGS_SEARCH_URL.toUri().buildUpon().appendQueryParameter("query", quote).build()
+        val intent = Intent().apply {
+            action = Intent.ACTION_VIEW
+            data = uri
+        }
+        goTo(IntentScreen(intent = intent))
+    }
 }

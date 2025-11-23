@@ -10,6 +10,7 @@ sealed interface SabbathResource {
         val id: Int,
         val reference: String,
         val text: String,
+        val section: String?
     ) : SabbathResource
 
     data class Quote(
