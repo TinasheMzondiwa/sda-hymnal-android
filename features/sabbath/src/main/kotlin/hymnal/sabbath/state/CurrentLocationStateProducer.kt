@@ -10,12 +10,15 @@ import android.location.Location
 import androidx.annotation.RequiresPermission
 import androidx.compose.runtime.Stable
 import androidx.core.content.ContextCompat
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.Task
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 
 @Stable
 interface CurrentLocationStateProducer {
@@ -41,7 +44,7 @@ class CurrentLocationStateProducerImpl(private val context: Context) : CurrentLo
         if (!hasLocationPermissions(context)) {
             return LocationResult.NotGranted
         }
-        val location = fusedLocationClient.lastLocation.await()
+        val location = getLastLocationIfApiAvailable().await()
         return if (location != null) {
             LocationResult.Granted(location)
         } else {
@@ -54,5 +57,13 @@ class CurrentLocationStateProducerImpl(private val context: Context) : CurrentLo
             context,
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun getLastLocationIfApiAvailable(): Task<Location?> {
+        val client = fusedLocationClient
+        return GoogleApiAvailability.getInstance()
+            .checkApiAvailability(client)
+            .onSuccessTask { _ -> client.lastLocation }
+            .addOnFailureListener { e -> Timber.e( "Location unavailable.", e)}
     }
 }
