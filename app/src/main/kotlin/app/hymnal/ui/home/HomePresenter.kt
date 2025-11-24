@@ -24,12 +24,22 @@ import kotlinx.collections.immutable.toImmutableList
 class HomePresenter(
     @Assisted private val navigator: Navigator,
     @Assisted private val screen: HomeScreen,
+    private val playServicesChecker: PlayServicesChecker,
 ) : Presenter<State> {
 
     @Composable
     override fun present(): State {
         var currentRoute by rememberRetained { mutableStateOf(screen.route) }
-        val routes = rememberRetained { HomeRoute.entries.toImmutableList() }
+        val routes = rememberRetained {
+            buildList {
+                add(HomeRoute.Hymns)
+                add(HomeRoute.Collections)
+                if (playServicesChecker()) {
+                    add(HomeRoute.Sabbath)
+                }
+                add(HomeRoute.More)
+            }.toImmutableList()
+        }
 
         return State(
             currentRoute = currentRoute,
