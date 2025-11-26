@@ -91,6 +91,7 @@ internal val previewHymn = Hymn(
     title = "Amazing Grace",
     majorKey = null,
     author = "John Newton",
+    authorLink = null,
     lyrics = listOf(
         HymnLyrics.Verse(
             index = 1,

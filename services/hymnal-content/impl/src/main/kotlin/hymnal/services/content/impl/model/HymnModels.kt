@@ -2,8 +2,8 @@
 package hymnal.services.content.impl.model
 
 import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Serializable
 internal enum class LyricType {
@@ -21,8 +21,9 @@ internal data class RemoteHymn(
     val number: Int,
     val title: String,
     val majorKey: String?,
-    val author: String?,
-    val lyrics: List<LyricSection>
+    val lyrics: List<LyricSection>,
+    val author: String? = null,
+    @SerialName("author_link") val authorLink: String? = null,
 )
 
 @OptIn(InternalSerializationApi::class)

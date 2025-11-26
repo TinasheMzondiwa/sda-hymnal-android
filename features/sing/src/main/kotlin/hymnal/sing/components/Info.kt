@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,12 +39,14 @@ import hymnal.libraries.l10n.R as L10nR
 internal fun LazyListScope.hymnInfo(
     hymn: HymnContent,
     textStyle: TextStyleSpec,
+    onAuthorLinkClicked: (String) -> Unit,
 ) {
     item(key = "hymn_info_${hymn.index}") {
         HymnInfo(
             hymn = hymn,
             textStyle = textStyle,
             modifier = Modifier.animateItem(),
+            onAuthorLinkClicked = onAuthorLinkClicked
         )
     }
 }
@@ -52,6 +57,7 @@ private fun HymnInfo(
     hymn: HymnContent,
     textStyle: TextStyleSpec,
     modifier: Modifier = Modifier,
+    onAuthorLinkClicked: (String) -> Unit = {}
 ) {
     SharedElementTransitionScope {
         Column(
@@ -101,16 +107,33 @@ private fun HymnInfo(
                 textAlign = TextAlign.Center
             )
 
-             hymn.author?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodySmallEmphasized.copy(
-                        fontFamily = textStyle.font.toFamily(),
-                        fontSize = (textStyle.textSize * 0.8).sp,
-                        fontStyle = FontStyle.Italic,
-                    ),
-                    textAlign = TextAlign.Center
-                )
+            hymn.author?.let { author ->
+
+                if (hymn.authorUrl != null) {
+                    OutlinedButton(
+                        onClick = { onAuthorLinkClicked(hymn.authorUrl) },
+                    ) {
+                        Text(
+                            text = author,
+                            style = MaterialTheme.typography.bodySmallEmphasized.copy(
+                                fontFamily = textStyle.font.toFamily(),
+                                fontSize = (textStyle.textSize * 0.7).sp,
+                                fontWeight = FontWeight.Medium,
+                            ),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                } else {
+                    Text(
+                        text = author,
+                        style = MaterialTheme.typography.bodySmallEmphasized.copy(
+                            fontFamily = textStyle.font.toFamily(),
+                            fontSize = (textStyle.textSize * 0.8).sp,
+                            fontStyle = FontStyle.Italic,
+                        ),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
 
             hymn.majorKey?.let {
@@ -148,19 +171,44 @@ private fun Preview() {
     PreviewSharedElementTransitionLayout {
         HymnalTheme {
             Surface {
-                HymnInfo(
-                    hymn = HymnContent(
-                        index = "108",
-                        number = 108,
-                        title = "Amazing Grace",
-                        majorKey = "C",
-                        author = "John Newton",
-                        lyrics = persistentListOf(),
-                    ),
-                    textStyle = TextStyleSpec(),
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
+                LazyColumn() {
+                    item {
+                        HymnInfo(
+                            hymn = HymnContent(
+                                index = "108",
+                                number = 108,
+                                title = "Amazing Grace",
+                                majorKey = "C",
+                                author = "John Newton",
+                                authorUrl = null,
+                                lyrics = persistentListOf(),
+                            ),
+                            textStyle = TextStyleSpec(),
+                            modifier = Modifier
+                                .padding(16.dp)
+
+                        )
+                    }
+
+                    item { HorizontalDivider() }
+
+                    item {
+                        HymnInfo(
+                            hymn = HymnContent(
+                                index = "108",
+                                number = 108,
+                                title = "Amazing Grace",
+                                majorKey = "C",
+                                author = "John Newton",
+                                authorUrl = "https://en.wikipedia.org/wiki/Les_Baxter",
+                                lyrics = persistentListOf(),
+                            ),
+                            textStyle = TextStyleSpec(),
+                            modifier = Modifier
+                                .padding(16.dp)
+                        )
+                    }
+                }
             }
         }
     }

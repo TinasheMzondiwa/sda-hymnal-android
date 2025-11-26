@@ -14,5 +14,6 @@ data class Hymn(
     val title: String,
     val majorKey: String?,
     val author: String?,
+    val authorLink: String?,
     val lyrics: List<HymnLyrics>,
 )

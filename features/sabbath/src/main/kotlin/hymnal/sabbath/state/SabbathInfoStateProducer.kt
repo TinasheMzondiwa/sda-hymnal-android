@@ -3,7 +3,6 @@
 
 package hymnal.sabbath.state
 
-import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -12,10 +11,10 @@ import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
-import com.slack.circuitx.android.IntentScreen
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
+import hymnal.libraries.navigation.BrowserIntentScreen
 import hymnal.libraries.navigation.SabbathHymnsScreen
 import hymnal.sabbath.Event
 import hymnal.sabbath.components.SabbathInfoItem
@@ -146,11 +145,11 @@ class SabbathInfoStateProducerImpl(
 
     private fun Navigator.navigateToEgwQuote(quote: String) {
         val uri =
-            EGW_WRITINGS_SEARCH_URL.toUri().buildUpon().appendQueryParameter("query", quote).build()
-        val intent = Intent().apply {
-            action = Intent.ACTION_VIEW
-            data = uri
-        }
-        goTo(IntentScreen(intent = intent))
+            EGW_WRITINGS_SEARCH_URL.toUri()
+                .buildUpon()
+                .appendQueryParameter("query", quote)
+                .build()
+
+        goTo(BrowserIntentScreen(uri))
     }
 }

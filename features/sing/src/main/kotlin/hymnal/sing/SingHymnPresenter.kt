@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
@@ -16,6 +17,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
+import hymnal.libraries.navigation.BrowserIntentScreen
 import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.services.content.HymnalContentProvider
 import hymnal.services.prefs.HymnalPrefs
@@ -64,7 +66,13 @@ class SingHymnPresenter(
                 bottomBarState = bottomBarState,
                 textStyle = textStyle,
                 overlayState = overlayState ?: topBarState.overlayState,
-                eventSink = { event -> }
+                eventSink = { event ->
+                    when (event) {
+                        is Event.OnAuthorLinkClick -> {
+                            navigator.goTo(BrowserIntentScreen(event.url.toUri()))
+                        }
+                    }
+                }
             )
             else -> State.Loading(screen.index)
         }

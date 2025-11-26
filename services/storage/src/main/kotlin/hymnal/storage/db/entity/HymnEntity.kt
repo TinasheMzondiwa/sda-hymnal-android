@@ -13,4 +13,5 @@ data class HymnEntity(
     val number: Int,
     val majorKey: String?,
     val author: String?,
+    val authorLink: String?,
 )
