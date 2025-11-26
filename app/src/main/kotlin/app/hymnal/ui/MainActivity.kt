@@ -19,7 +19,10 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.hymnal.ui.home.HomeRoute
 import app.hymnal.ui.home.HomeScreen
+import app.hymnal.ui.navigator.AndroidSupportingNavigator
+import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
+import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.screen.Screen
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
@@ -40,6 +43,7 @@ import timber.log.Timber
 class MainActivity(
     private val circuit: Circuit,
     private val prefs: HymnalPrefs,
+    private val navigatorFactory: AndroidSupportingNavigator.Factory,
 ) : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -62,10 +66,16 @@ class MainActivity(
             }
 
             val stackedScreens = parseDeepLink(intent) ?: persistentListOf(HomeScreen())
+            val backstack = rememberSaveableBackStack(stackedScreens)
+            val circuitNavigator = rememberCircuitNavigator(backstack)
+            val supportingNavigator = remember(circuitNavigator) {
+                navigatorFactory.create(circuitNavigator, this)
+            }
 
             HymnalApp(
                 circuit = circuit,
-                initialScreens = stackedScreens,
+                circuitNavigator = supportingNavigator,
+                backstack = backstack,
                 windowWidthSizeClass = calculateWindowSizeClass(this).widthSizeClass,
                 isDarkTheme = isDarkTheme,
                 dynamicColor = dynamicColors ?: false,
