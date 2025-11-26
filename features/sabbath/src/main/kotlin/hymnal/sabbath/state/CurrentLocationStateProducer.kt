@@ -4,6 +4,7 @@
 package hymnal.sabbath.state
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -59,6 +60,7 @@ class CurrentLocationStateProducerImpl(private val context: Context) : CurrentLo
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    @SuppressLint("MissingPermission")
     private fun getLastLocationIfApiAvailable(): Task<Location?> {
         val client = fusedLocationClient
         return GoogleApiAvailability.getInstance()
