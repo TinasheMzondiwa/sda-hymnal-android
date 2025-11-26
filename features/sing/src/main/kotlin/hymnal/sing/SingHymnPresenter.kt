@@ -64,7 +64,13 @@ class SingHymnPresenter(
                 bottomBarState = bottomBarState,
                 textStyle = textStyle,
                 overlayState = overlayState ?: topBarState.overlayState,
-                eventSink = { event -> }
+                eventSink = { event ->
+                    when (event) {
+                        is Event.OnAuthorLinkClick -> {
+
+                        }
+                    }
+                }
             )
             else -> State.Loading(screen.index)
         }

@@ -68,7 +68,7 @@ data class BottomBarState(
 }
 
 sealed interface Event : CircuitUiEvent {
-
+    data class OnAuthorLinkClick(val url: String) : Event
 }
 
 sealed interface BottomBarOverlayState : CircuitUiState {

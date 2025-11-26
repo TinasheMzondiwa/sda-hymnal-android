@@ -148,6 +148,7 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
                         hymnInfo(
                             hymn = state.hymn,
                             textStyle = state.textStyle,
+                            onAuthorLinkClicked = { state.eventSink(Event.OnAuthorLinkClick(it)) },
                         )
                         hymnLyrics(
                             hymnIndex = state.hymn.index,
@@ -187,12 +188,12 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
 @Composable
 private fun Overlay(state: SingOverlayState?) {
     OverlayEffect(state) {
-        when (val overlayState = state) {
+        when (state) {
             is SingOverlayState.BottomSheet -> {
                 state.onResult(
                     show(
-                        overlay = BottomSheetOverlay(skipPartiallyExpanded = overlayState.skipPartiallyExpanded) {
-                            val backstack = rememberSaveableBackStack(overlayState.screen)
+                        overlay = BottomSheetOverlay(skipPartiallyExpanded = state.skipPartiallyExpanded) {
+                            val backstack = rememberSaveableBackStack(state.screen)
                             val navigator = rememberCircuitNavigator(backstack)
 
                             SharedElementTransitionLayout {
