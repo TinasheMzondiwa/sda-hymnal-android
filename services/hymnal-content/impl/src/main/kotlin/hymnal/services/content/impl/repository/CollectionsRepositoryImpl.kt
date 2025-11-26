@@ -153,6 +153,7 @@ class CollectionsRepositoryImpl(
                     number = hymn.number,
                     majorKey = hymn.majorKey,
                     author = hymn.author,
+                    authorLink = hymn.authorLink,
                     lyrics = emptyList(), // Purposely avoid loading lyrics in collections
                 )
             },

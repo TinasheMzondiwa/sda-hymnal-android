@@ -26,7 +26,7 @@ import hymnal.storage.db.entity.SabbathTimesEntity
         CollectionHymnCrossRef::class,
         SabbathTimesEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 internal abstract class HymnalDatabase : RoomDatabase() {

@@ -26,6 +26,7 @@ internal suspend fun Storage.downloadHymns(): List<Hymn>? {
                 title = remoteHymn.title,
                 majorKey = remoteHymn.majorKey,
                 author = remoteHymn.author,
+                authorLink = remoteHymn.authorLink,
                 lyrics = remoteHymn.lyrics.mapNotNull { section ->
                     when (section.type) {
                         LyricType.VERSE -> HymnLyrics.Verse(

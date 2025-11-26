@@ -24,6 +24,7 @@ data class HymnWithLyrics(
             number = hymn.number,
             majorKey = hymn.majorKey,
             author = hymn.author,
+            authorLink = hymn.authorLink,
             lyrics = lyricParts.map { part ->
                 when (part.type) {
                     DbLyricType.VERSE -> HymnLyrics.Verse(
