@@ -18,4 +18,5 @@
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen"
+    android:previewImage="@drawable/widget_img_preview"
     tools:targetApi="31" />

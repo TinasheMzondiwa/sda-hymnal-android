@@ -21,7 +21,9 @@ import hymnal.sabbath.widget.SabbathAppWidgetReceiver
 import hymnal.sabbath.widget.data.SabbathUpdateWidgetWork
 import hymnal.sabbath.widget.sdk.isAtLeastApi
 import hymnal.services.sabbath.api.SabbathWidgetHelper
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @ContributesBinding(AppScope::class, binding = binding<SabbathWidgetHelper>())
 @Inject
@@ -34,8 +36,10 @@ class SabbathWidgetHelperImpl(
         GlanceAppWidgetManager(context)
     }
 
+    private val exceptionLogger = CoroutineExceptionHandler { _, e -> Timber.e(e) }
+
     override fun refresh() {
-        scope.launch {
+        scope.launch(exceptionLogger) {
             if (isAdded()) {
                 SabbathAppWidget().updateAll(context)
                 SabbathUpdateWidgetWork.schedule(context)
@@ -47,7 +51,7 @@ class SabbathWidgetHelperImpl(
 
     override fun refreshPreview() {
         if (isAtLeastApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)) {
-            scope.launch {
+            scope.launch(exceptionLogger) {
                 glanceManager.setWidgetPreviews(
                     SabbathAppWidgetReceiver::class,
                     intSetOf(WIDGET_CATEGORY_HOME_SCREEN)
