@@ -21,6 +21,9 @@ interface CollectionDao : BaseDao<CollectionEntity> {
     @Query("SELECT * FROM collections WHERE collectionId = :id")
     fun getCollection(id: String): Flow<CollectionEntity?>
 
+    @Query("SELECT * FROM collections WHERE collectionId = :id")
+    fun get(id: String): CollectionEntity?
+
     @Query("SELECT * FROM collections ORDER BY title ASC")
     fun getAllCollections(): Flow<List<CollectionEntity>>
 

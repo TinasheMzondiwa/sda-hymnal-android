@@ -20,6 +20,7 @@ import hymnal.storage.db.entity.CollectionHymnCrossRef
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.joinAll
@@ -146,8 +147,7 @@ class FirebaseSyncImpl(
 
     private suspend fun handleCollectionEvent(event: SnapShotEvent) {
         Timber.i("Received Collections event: ${event.javaClass.simpleName}")
-        val entity = event.snapshot.toCollectionEntity()
-        if (entity == null) return
+        val entity = event.snapshot.toCollectionEntity() ?: return
 
         when (event) {
             is SnapShotEvent.Added,
@@ -172,7 +172,34 @@ class FirebaseSyncImpl(
 
         when (event) {
             is SnapShotEvent.Added,
-            is SnapShotEvent.Modified -> collectionsDao.addHymnToCollection(crossRef)
+            is SnapShotEvent.Modified -> {
+                // Attempt to find the collection locally
+                var collection = collectionsDao.get(crossRef.collectionId)
+
+                // We received the hymns event before the collection event,
+                // This handles the race condition without hitting the network
+                var attempts = 0
+                while (collection == null && attempts < 5) {
+                    Timber.w("Waiting for collection ${crossRef.collectionId} to arrive...")
+                    delay(200) // Wait 200ms
+                    collection = collectionsDao.get(crossRef.collectionId)
+                    attempts++
+                }
+                if (collection != null) {
+                    collectionsDao.addHymnToCollection(crossRef)
+                } else {
+                    Timber.e("Collection not found for hymn ${crossRef.hymnId}")
+                    // Handle race condition where collection is not persisted locally yet
+                    Timber.e("Skipping hymn insert: Parent Collection ${crossRef.collectionId} missing after waiting.")
+
+                    fetchAndInsertCollection(crossRef.collectionId)
+                    try {
+                        collectionsDao.addHymnToCollection(crossRef)
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                    }
+                }
+            }
 
             is SnapShotEvent.Removed -> {
                 collectionsDao.removeHymnFromCollection(
@@ -181,6 +208,11 @@ class FirebaseSyncImpl(
                 )
             }
         }
+    }
+
+    private suspend fun fetchAndInsertCollection(id: String) {
+        val entity = collectionsRef?.document(id)?.get()?.await()?.toCollectionEntity()
+        if (entity != null) collectionsDao.insert(entity)
     }
 
     override fun detachCollectionListener() {
