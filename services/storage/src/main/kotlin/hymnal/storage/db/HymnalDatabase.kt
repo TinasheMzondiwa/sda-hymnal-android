@@ -10,12 +10,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import hymnal.storage.db.dao.CollectionDao
 import hymnal.storage.db.dao.HymnsDao
+import hymnal.storage.db.dao.SabbathResourceDao
 import hymnal.storage.db.dao.SabbathTimesDao
 import hymnal.storage.db.entity.CollectionEntity
 import hymnal.storage.db.entity.CollectionHymnCrossRef
 import hymnal.storage.db.entity.HymnEntity
 import hymnal.storage.db.entity.HymnFtsEntity
 import hymnal.storage.db.entity.LyricPartEntity
+import hymnal.storage.db.entity.SabbathResourceEntity
 import hymnal.storage.db.entity.SabbathTimesEntity
 
 @Database(
@@ -26,11 +28,13 @@ import hymnal.storage.db.entity.SabbathTimesEntity
         CollectionEntity::class,
         CollectionHymnCrossRef::class,
         SabbathTimesEntity::class,
+        SabbathResourceEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3),
     ],
 )
 internal abstract class HymnalDatabase : RoomDatabase() {
@@ -40,6 +44,8 @@ internal abstract class HymnalDatabase : RoomDatabase() {
     abstract fun collectionsDao(): CollectionDao
 
     abstract fun sabbathTimesDao(): SabbathTimesDao
+
+    abstract fun sabbathResourceDao(): SabbathResourceDao
 
     companion object {
         private const val DATABASE_NAME = "hymnal.db"
