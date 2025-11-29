@@ -17,6 +17,7 @@ ksp { arg("circuit.codegen.mode", "metro") }
 
 dependencies {
     implementation(libs.timber)
+    implementation(libs.kotlinx.immutable)
     implementation(projects.libraries.coreUi)
     implementation(projects.libraries.l10n)
     implementation(projects.libraries.navigation.api)

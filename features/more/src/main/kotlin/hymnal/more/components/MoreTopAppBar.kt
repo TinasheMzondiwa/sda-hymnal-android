@@ -38,33 +38,33 @@ fun MoreTopAppBar(
         title = { Text(text = stringResource(L10nR.string.more)) },
         modifier = modifier,
         actions = {
-//            SharedElementTransitionScope {
-//                FilledTonalButton(
-//                    onClick = onDonateClick,
-//                    modifier = Modifier
-//                        .sharedElement(
-//                            sharedContentState =
-//                                rememberSharedContentState(
-//                                    DonateSharedTransitionKey(
-//                                        type = DonateSharedTransitionKey.ElementType.Button,
-//                                    )
-//                                ),
-//                            animatedVisibilityScope =
-//                                requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-//                        ),
-//                    elevation = ButtonDefaults.filledTonalButtonElevation(defaultElevation = 4.dp)
-//                ) {
-//                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-//                        Icon(
-//                            painter = painterResource(InfoR.drawable.ic_heart_smile),
-//                            contentDescription = null
-//                        )
-//                        Text(stringResource(L10nR.string.donate))
-//                    }
-//                }
-//            }
-//
-//            Spacer(Modifier.size(12.dp))
+            SharedElementTransitionScope {
+                FilledTonalButton(
+                    onClick = onDonateClick,
+                    modifier = Modifier
+                        .sharedElement(
+                            sharedContentState =
+                                rememberSharedContentState(
+                                    DonateSharedTransitionKey(
+                                        type = DonateSharedTransitionKey.ElementType.Button,
+                                    )
+                                ),
+                            animatedVisibilityScope =
+                                requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                        ),
+                    elevation = ButtonDefaults.filledTonalButtonElevation(defaultElevation = 4.dp)
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Icon(
+                            painter = painterResource(InfoR.drawable.ic_heart_smile),
+                            contentDescription = null
+                        )
+                        Text(stringResource(L10nR.string.donate))
+                    }
+                }
+            }
+
+            Spacer(Modifier.size(12.dp))
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent,
