@@ -46,8 +46,8 @@ data class ResourceItem(
 ) : SabbathInfoItem {
     override val id: String
         get() = when (resource) {
-            is SabbathResource.Quote -> "egw.${resource.id}"
-            is SabbathResource.Scripture -> "scripture.${resource.id}"
+            is SabbathResource.Quote -> resource.id
+            is SabbathResource.Scripture -> resource.id
         }
 
     @Composable

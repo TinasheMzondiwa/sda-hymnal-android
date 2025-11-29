@@ -6,7 +6,7 @@
 package hymnal.services.content.impl.model
 
 import androidx.annotation.Keep
-import hymnal.libraries.model.SabbathResource
+import hymnal.storage.db.entity.SabbathResourceEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -37,16 +37,21 @@ data class ApiSabbathResource(
     val egwSummary: String,
 )
 
-internal fun ApiSabbathResource.toDomain(): List<SabbathResource> = listOf(
-    SabbathResource.Scripture(
-        id = scriptureId,
+internal fun ApiSabbathResource.toEntity(): List<SabbathResourceEntity> = listOf(
+    SabbathResourceEntity(
+        id = "${week}_scripture",
+        week = week,
+        type = SabbathResourceEntity.Type.SCRIPTURE,
         reference = scriptureReference,
         text = scriptureSummary,
         section = scriptureSection
     ),
-    SabbathResource.Quote(
-        id = egwId,
+    SabbathResourceEntity(
+        id = "${week}_egw",
+        week = week,
+        type = SabbathResourceEntity.Type.QUOTE,
         reference = egwReference,
         text = egwSummary,
+        section = null,
     )
 )

@@ -7,11 +7,13 @@ import hymnal.libraries.coroutines.DispatcherProvider
 import hymnal.libraries.model.SabbathResource
 import hymnal.services.content.HymnalContentProvider
 import hymnal.services.content.impl.model.ApiSabbathResource
-import hymnal.services.content.impl.model.toDomain
+import hymnal.services.content.impl.model.toEntity
 import hymnal.services.model.Hymn
 import hymnal.services.model.HymnCategory
 import hymnal.storage.db.dao.HymnsDao
+import hymnal.storage.db.dao.SabbathResourceDao
 import hymnal.storage.db.entity.HymnWithLyrics
+import hymnal.storage.db.entity.SabbathResourceEntity
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDate
@@ -30,6 +33,7 @@ class HymnalContentProviderImpl(
     private val hymnsDao: HymnsDao,
     private val dispatcherProvider: DispatcherProvider,
     private val supabase: SupabaseClient,
+    private val sabbathResourceDao: SabbathResourceDao,
 ) : HymnalContentProvider {
 
     override fun hymns(): Flow<List<Hymn>> {
@@ -108,9 +112,18 @@ class HymnalContentProviderImpl(
     }
 
     override fun sabbathResources(): Flow<List<SabbathResource>> {
-        return flow {
-            val week = LocalDate.now().get(WeekFields.ISO.weekOfWeekBasedYear())
+        val week = LocalDate.now().get(WeekFields.ISO.weekOfWeekBasedYear())
 
+        return sabbathResourceDao
+            .get(week)
+            .onEach { if (it.isEmpty()) fetchResource(week) }
+            .map { entities -> entities.map { it.toDomain() } }
+            .flowOn(dispatcherProvider.io)
+            .catch { Timber.e(it) }
+    }
+
+    private suspend fun fetchResource(week: Int) = withContext(dispatcherProvider.io) {
+        try {
             val model = supabase
                 .from("sabbath_resource")
                 .select(
@@ -118,8 +131,29 @@ class HymnalContentProviderImpl(
                 )
                 .decodeSingle<ApiSabbathResource>()
 
-            emit(model.toDomain())
-        }.flowOn(dispatcherProvider.io)
-            .catch { Timber.e(it) }
+            sabbathResourceDao.insertAll(model.toEntity())
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
+
+    private fun SabbathResourceEntity.toDomain(): SabbathResource = when (type) {
+        SabbathResourceEntity.Type.SCRIPTURE -> {
+            SabbathResource.Scripture(
+                id = id,
+                reference = reference,
+                text = text,
+                section = section
+            )
+        }
+
+        SabbathResourceEntity.Type.QUOTE -> {
+            SabbathResource.Quote(
+                id = id,
+                reference = reference,
+                text = text,
+            )
+        }
+    }
+
 }
