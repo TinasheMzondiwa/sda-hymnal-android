@@ -11,6 +11,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SabbathResourceDao : BaseDao<SabbathResourceEntity> {
 
-    @Query("SELECT * FROM sabbath_resources WHERE week = :week")
+    @Query("""
+        SELECT * FROM sabbath_resources 
+        WHERE week = :week
+        ORDER BY 
+            CASE type
+                WHEN 'SCRIPTURE' THEN 1  -- Priority 1: SCRIPTURE
+                WHEN 'QUOTE' THEN 2      -- Priority 2: QUOTE 
+                ELSE 3                   -- Default priority for any unexpected type
+            END,
+            id ASC                       -- Secondary sort
+    """)
     fun get(week: Int): Flow<List<SabbathResourceEntity>>
 }

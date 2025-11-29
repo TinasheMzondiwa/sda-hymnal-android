@@ -16,7 +16,5 @@ data class SabbathResourceEntity(
     val section: String?
 ) {
 
-    enum class Type {
-        SCRIPTURE, QUOTE
-    }
+    enum class Type { SCRIPTURE, QUOTE }
 }
