@@ -27,7 +27,9 @@ import hymnal.services.content.HymnalContentProvider
 import hymnal.services.prefs.HymnalPrefs
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AssistedInject
 class HymnsPresenter (
@@ -40,17 +42,24 @@ class HymnsPresenter (
     override fun present(): State {
         val coroutineScope = rememberStableCoroutineScope()
         val hymnal by produceRetainedState(Hymnal.NewHymnal) {
-            prefs.currentHymnal().collect { value = it }
+            prefs.currentHymnal()
+                .catch { Timber.e(it) }
+                .collect { value = it }
         }
         var searchQuery by rememberRetained { mutableStateOf("") }
         val hymns by produceRetainedState(emptyList(), hymnal) {
-            contentProvider.hymns(hymnal.year).collect { value = it }
+            contentProvider.hymns(hymnal.year)
+                .catch { Timber.e(it) }
+                .collect { value = it }
         }
         val categories by produceRetainedState(emptyList(), hymnal) {
-            contentProvider.categories(hymnal.year).collect { value = it }
+            contentProvider.categories(hymnal.year)
+                .catch { Timber.e(it) }
+                .collect { value = it }
         }
         val searchResults by produceRetainedState(emptyList(), searchQuery, hymnal) {
             contentProvider.search(searchQuery, hymnal.year)
+                .catch { Timber.e(it) }
                 .collect { hymn -> value = hymn.map { SearchResult(it) } }
         }
 

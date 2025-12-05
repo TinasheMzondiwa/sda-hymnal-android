@@ -30,8 +30,15 @@ interface HymnalPrefs {
      */
     suspend fun setSabbathRemindersEnabled(enabled: Boolean)
 
+    /**
+     * Emits the current Hymnal.
+     */
     fun currentHymnal(): Flow<Hymnal>
 
+    /**
+     * Updates the current Hymnal.
+     * @param hymnal The new Hymnal to store.
+     */
     suspend fun updateCurrentHymnal(hymnal: Hymnal)
 
 }

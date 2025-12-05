@@ -47,7 +47,9 @@ class SabbathPresenter(
         val coroutineScope = rememberStableCoroutineScope()
         var locationResult by rememberRetained { mutableStateOf<LocationResult?>(null) }
         val themeStyle by produceRetainedState(ThemeStyle()) {
-            prefs.themeStyle().collect { value = it }
+            prefs.themeStyle()
+                .catch { Timber.e(it) }
+                .collect { value = it }
         }
 
         val sabbathInfoState by rememberSabbathInfo(locationResult)
