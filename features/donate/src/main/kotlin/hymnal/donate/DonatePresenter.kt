@@ -15,7 +15,9 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
+import hymnal.donate.ui.TierButtonSpec
 import hymnal.libraries.navigation.DonateScreen
+import kotlinx.collections.immutable.toImmutableList
 
 @AssistedInject
 class DonatePresenter(
@@ -30,16 +32,20 @@ class DonatePresenter(
 
     @Composable
     override fun present(): State {
-        var selectedTier by rememberRetained { mutableStateOf<DonationTier?>(null) }
+        var selectedTier by rememberRetained { mutableStateOf<TierButtonSpec?>(null) }
 
         return State(
-            tiers = tiers,
+            tiers = tiers.map {
+                it.copy(
+                    selected =  it == selectedTier
+                )
+            }.toImmutableList(),
             selectedTier = selectedTier,
             eventSink = { event ->
                 when (event) {
-                    State.Event.OnClose -> navigator.pop()
-                    State.Event.OnEnterCustomAmount -> Unit
-                    is State.Event.SelectTier -> selectedTier = event.tier
+                    Event.OnClose -> navigator.pop()
+                    Event.OnEnterCustomAmount -> Unit
+                    is Event.SelectTier -> selectedTier = event.tier
                 }
             }
         )
