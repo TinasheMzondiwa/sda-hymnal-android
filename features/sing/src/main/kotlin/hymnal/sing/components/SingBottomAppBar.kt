@@ -4,6 +4,7 @@
 package hymnal.sing.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
@@ -100,12 +101,14 @@ fun SingBottomAppBar(
         scrollBehavior = scrollBehavior,
     ) {
 
-        PlaybackButton(
-            state = state,
-            hapticFeedback = hapticFeedback,
-            iconButtonColors = iconButtonColors,
-            modifier = Modifier
-        )
+        AnimatedVisibility(visible = state.isTuneSupported) {
+            PlaybackButton(
+                state = state,
+                hapticFeedback = hapticFeedback,
+                iconButtonColors = iconButtonColors,
+                modifier = Modifier
+            )
+        }
 
         HymnNavigationButton(
             state = state,
@@ -257,9 +260,32 @@ private fun Preview() {
         Surface {
             SingBottomAppBar(
                 state = BottomBarState(
+                    isTuneSupported = true,
                     isPlayEnabled = true,
                     showTuneToolTip = false,
                     number = 123,
+                    previousEnabled = true,
+                    nextEnabled = false,
+                    overlayState = null,
+                    eventSink = {}
+                )
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@PreviewLightDark
+@Composable
+private fun PreviewNoTune() {
+    HymnalTheme {
+        Surface {
+            SingBottomAppBar(
+                state = BottomBarState(
+                    isTuneSupported = false,
+                    isPlayEnabled = false,
+                    showTuneToolTip = false,
+                    number = 100,
                     previousEnabled = true,
                     nextEnabled = false,
                     overlayState = null,

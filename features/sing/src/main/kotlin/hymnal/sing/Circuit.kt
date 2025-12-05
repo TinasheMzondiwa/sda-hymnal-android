@@ -53,6 +53,7 @@ data class TopBarState(
 
 data class BottomBarState(
     val number: Int,
+    val isTuneSupported: Boolean,
     val isPlayEnabled: Boolean,
     val showTuneToolTip: Boolean,
     val previousEnabled: Boolean,
