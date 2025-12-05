@@ -22,7 +22,7 @@ import com.slack.circuit.overlay.Overlay
 import com.slack.circuit.overlay.OverlayNavigator
 import kotlinx.coroutines.launch
 
-class NumberPadBottomSheet : Overlay<NumberPadBottomSheet.Result> {
+class NumberPadBottomSheet(private val hymns: Int) : Overlay<NumberPadBottomSheet.Result> {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -42,7 +42,7 @@ class NumberPadBottomSheet : Overlay<NumberPadBottomSheet.Result> {
             ),
             shape = RoundedCornerShape(topStart = CORNER_RADIUS.dp, topEnd = CORNER_RADIUS.dp),
             content = {
-                CircuitContent(screen = PadContentScreen, onNavEvent = { navEvent ->
+                CircuitContent(screen = PadContentScreen(hymns), onNavEvent = { navEvent ->
                     when (navEvent) {
                         is NavEvent.Pop -> {
                             val popResult = navEvent.result

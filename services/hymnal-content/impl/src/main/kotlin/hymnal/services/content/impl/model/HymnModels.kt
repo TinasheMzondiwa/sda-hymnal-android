@@ -20,7 +20,7 @@ internal data class RemoteHymn(
     val index: String,
     val number: Int,
     val title: String,
-    val majorKey: String?,
+    val majorKey: String? = null,
     val lyrics: List<LyricSection>,
     val author: String? = null,
     @SerialName("author_link") val authorLink: String? = null,

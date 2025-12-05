@@ -53,7 +53,7 @@ import hymnal.libraries.navigation.number.PadContentScreen.Event as UiEvent
 import hymnal.libraries.navigation.number.PadContentScreen.State as UiState
 
 @Parcelize
-data object PadContentScreen : Screen {
+data class PadContentScreen(val hymns: Int) : Screen {
     data class State(
         val input: String,
         val eventSink: (Event) -> Unit,
@@ -72,8 +72,10 @@ data class NumPadPopResult(
 ) : PopResult
 
 @AssistedInject
-class PadContentPresenter(@Assisted private val navigator: Navigator) :
-    Presenter<UiState> {
+class PadContentPresenter(
+    @Assisted private val navigator: Navigator,
+    @Assisted private val screen: PadContentScreen,
+) : Presenter<UiState> {
 
     @Composable
     override fun present(): UiState {
@@ -109,13 +111,13 @@ class PadContentPresenter(@Assisted private val navigator: Navigator) :
             .filter { it.isDigit() }
             .trimStart { it == '0' }
             .take(3)
-            .let { if (it.isNotEmpty() && it.toInt() > 695) "695" else it }
+            .let { if (it.isNotEmpty() && it.toInt() > screen.hymns) "${screen.hymns}" else it }
     }
 
     @AssistedFactory
     @CircuitInject(PadContentScreen::class, AppScope::class)
     interface Factory {
-        fun create(navigator: Navigator): PadContentPresenter
+        fun create(navigator: Navigator, screen: PadContentScreen): PadContentPresenter
     }
 }
 

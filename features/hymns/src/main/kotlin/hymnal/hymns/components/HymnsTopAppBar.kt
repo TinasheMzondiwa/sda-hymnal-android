@@ -3,11 +3,10 @@
 
 package hymnal.hymns.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
@@ -18,7 +17,6 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import hymnal.hymns.Event
 import hymnal.hymns.State
@@ -43,14 +41,6 @@ fun HymnsTopAppBar(
                     },
                 )
             },
-            actions = {
-                IconButton(onClick = { state.eventSink(Event.OnSortClicked) }) {
-                    Icon(
-                        state.sortType.icon,
-                        contentDescription = stringResource(state.sortType.title),
-                    )
-                }
-            },
             scrollBehavior = scrollBehavior,
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = Color.Transparent,
@@ -65,19 +55,21 @@ fun HymnsTopAppBar(
                 edgePadding = 0.dp,
                 tabs = {
                     state.categories.forEachIndexed { index, category ->
-                        Tab(
-                            selected = category == state.selectedCategory,
-                            onClick = { state.eventSink(Event.OnCategorySelected(category)) },
-                            text = {
-                                val title = if (index == 0) {
-                                    category.name
-                                } else {
-                                    "${category.name} (${category.start}–${category.end})"
-                                }
-                                Text(title)
-                            },
-                            unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                        AnimatedVisibility(true) {
+                            Tab(
+                                selected = category == state.selectedCategory,
+                                onClick = { state.eventSink(Event.OnCategorySelected(category)) },
+                                text = {
+                                    val title = if (index == 0) {
+                                        category.name
+                                    } else {
+                                        "${category.name} (${category.start}–${category.end})"
+                                    }
+                                    Text(title)
+                                },
+                                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
             )

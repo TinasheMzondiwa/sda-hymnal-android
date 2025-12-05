@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+android { namespace = "hymnal.hymns" }
+
 foundry {
     features {
         compose()
@@ -24,6 +26,7 @@ dependencies {
     implementation(projects.libraries.navigation.api)
     implementation(projects.libraries.navigation.number)
     implementation(projects.services.hymnalContent.api)
+    implementation(projects.services.prefs.api)
 
     ksp(libs.circuit.codegen)
 }

@@ -46,7 +46,7 @@ class HymnsStateProducerImpl : HymnsStateProducer {
     }
 
     private fun List<Hymn>.sorted(sortType: SortType): List<Hymn> {
-        return when (sortType.next()) {
+        return when (sortType) {
             SortType.NUMBER -> sortedBy { it.number }
             SortType.TITLE -> sortedBy { it.title }
         }

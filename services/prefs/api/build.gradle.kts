@@ -6,5 +6,6 @@ plugins {
 
 dependencies {
     api(projects.libraries.foundation.coroutines)
+    api(projects.libraries.model)
     api(projects.services.prefs.model)
 }

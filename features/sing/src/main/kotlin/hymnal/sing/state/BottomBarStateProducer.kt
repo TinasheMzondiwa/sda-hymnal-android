@@ -15,8 +15,10 @@ import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
+import hymnal.libraries.model.Hymnal
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.content.HymnalContentProvider
+import hymnal.services.prefs.HymnalPrefs
 import hymnal.services.prefs.education.Education
 import hymnal.services.prefs.education.UserOrientation
 import hymnal.sing.BottomBarOverlayState
@@ -37,15 +39,23 @@ interface BottomBarStateProducer {
 class BottomBarStateProducerImpl(
     private val contentProvider: HymnalContentProvider,
     private val userOrientation: UserOrientation,
+    private val prefs: HymnalPrefs,
 ) : BottomBarStateProducer {
     @Composable
     override fun invoke(hymn: HymnContent?, onIndex: (String) -> Unit): BottomBarState {
         val coroutineScope = rememberStableCoroutineScope()
-        var overlayState by rememberRetained { mutableStateOf<BottomBarOverlayState?>(null) }
-        val showTuneTooltip by produceRetainedState(false) {
-            userOrientation.shouldShow(Education.TunePlaybackTooltip)
+        val hymnal by produceRetainedState(Hymnal.NewHymnal) {
+            prefs.currentHymnal()
                 .catch { Timber.e(it) }
                 .collect { value = it }
+        }
+        var overlayState by rememberRetained { mutableStateOf<BottomBarOverlayState?>(null) }
+        val showTuneTooltip by produceRetainedState(false, hymnal) {
+            if (hymnal.hasTunes()) {
+                userOrientation.shouldShow(Education.TunePlaybackTooltip)
+                    .catch { Timber.e(it) }
+                    .collect { value = it }
+            }
         }
 
         LaunchedEffect(showTuneTooltip) {
@@ -56,22 +66,27 @@ class BottomBarStateProducerImpl(
 
         return BottomBarState(
             number = hymn?.number ?: 1,
-            isPlayEnabled = hymn != null,
+            isTuneSupported = hymnal.hasTunes(),
+            isPlayEnabled = hymnal.hasTunes() && hymn != null,
             showTuneToolTip = showTuneTooltip,
             previousEnabled = hymn?.let { it.number > 1 } ?: false,
-            nextEnabled = hymn?.let { it.number < 695 } ?: false,
+            nextEnabled = hymn?.let { it.number < hymnal.hymns } ?: false,
             overlayState = overlayState,
             eventSink = { event ->
                 when (event) {
                     BottomBarState.Event.OnGoToHymn -> {
                         overlayState = BottomBarOverlayState.NumberPadSheet(
+                            hymns = hymnal.hymns,
                             onResult = { result ->
                                 overlayState = null
                                 when (result) {
                                     is NumberPadBottomSheet.Result.Cancel -> Unit
                                     is NumberPadBottomSheet.Result.Confirm -> {
                                         coroutineScope.launch {
-                                            val selected = contentProvider.hymn(result.number) ?: return@launch
+                                            val selected = contentProvider.hymn(
+                                                number = result.number,
+                                                year = hymnal.year
+                                            ) ?: return@launch
                                             onIndex(selected.index)
                                         }
                                     }
@@ -83,7 +98,8 @@ class BottomBarStateProducerImpl(
                         val current = hymn?.number ?: return@BottomBarState
                         coroutineScope.launch {
                             val number = current + 1
-                            val next = contentProvider.hymn(number) ?: return@launch
+                            val next = contentProvider.hymn(number = number, year = hymnal.year)
+                                ?: return@launch
                             onIndex(next.index)
                         }
                     }
@@ -91,12 +107,18 @@ class BottomBarStateProducerImpl(
                         val current = hymn?.number ?: return@BottomBarState
                         coroutineScope.launch {
                             val number = current - 1
-                            val previous = contentProvider.hymn(number) ?: return@launch
+                            val previous = contentProvider.hymn(number = number, year = hymnal.year)
+                                ?: return@launch
                             onIndex(previous.index)
                         }
                     }
                 }
             }
         )
+    }
+
+    private fun Hymnal.hasTunes(): Boolean = when (this) {
+        Hymnal.OldHymnal -> false
+        Hymnal.NewHymnal -> true
     }
 }

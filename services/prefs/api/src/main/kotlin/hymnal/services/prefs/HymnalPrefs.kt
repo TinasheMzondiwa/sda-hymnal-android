@@ -1,5 +1,6 @@
 package hymnal.services.prefs
 
+import hymnal.libraries.model.Hymnal
 import hymnal.services.prefs.model.ThemeStyle
 import kotlinx.coroutines.flow.Flow
 
@@ -28,5 +29,16 @@ interface HymnalPrefs {
      * @param enabled True if Sabbath reminders are enabled, false otherwise.
      */
     suspend fun setSabbathRemindersEnabled(enabled: Boolean)
+
+    /**
+     * Emits the current Hymnal.
+     */
+    fun currentHymnal(): Flow<Hymnal>
+
+    /**
+     * Updates the current Hymnal.
+     * @param hymnal The new Hymnal to store.
+     */
+    suspend fun updateCurrentHymnal(hymnal: Hymnal)
 
 }

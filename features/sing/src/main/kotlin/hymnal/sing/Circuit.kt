@@ -53,6 +53,7 @@ data class TopBarState(
 
 data class BottomBarState(
     val number: Int,
+    val isTuneSupported: Boolean,
     val isPlayEnabled: Boolean,
     val showTuneToolTip: Boolean,
     val previousEnabled: Boolean,
@@ -73,6 +74,7 @@ sealed interface Event : CircuitUiEvent {
 
 sealed interface BottomBarOverlayState : CircuitUiState {
     data class NumberPadSheet(
+        val hymns: Int,
         val onResult: (NumberPadBottomSheet.Result) -> Unit,
     ) : BottomBarOverlayState
 }

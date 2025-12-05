@@ -7,6 +7,7 @@ import dev.zacsweers.metro.binding
 import hymnal.libraries.coroutines.DispatcherProvider
 import hymnal.libraries.coroutines.Scopable
 import hymnal.libraries.coroutines.ioScopable
+import hymnal.libraries.model.Hymnal
 import hymnal.services.content.HymnalContentSyncProvider
 import hymnal.services.content.impl.ext.downloadHymns
 import hymnal.services.model.Hymn
@@ -17,6 +18,7 @@ import hymnal.storage.db.entity.HymnEntity
 import hymnal.storage.db.entity.LyricPartEntity
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.storage.storage
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -28,25 +30,31 @@ class HymnalContentSyncProviderImpl(
     private val supabase: SupabaseClient,
 ) : HymnalContentSyncProvider, Scopable by ioScopable(dispatcherProvider) {
 
-    override fun invoke() {
-        scope.launch {
-            val hymns = hymnsDao.getAllHymns()
+    private val exceptionLogger = CoroutineExceptionHandler { _, e -> Timber.e(e) }
 
-            if (hymns.isEmpty()) {
-                val downloadedHymns = supabase.storage.downloadHymns()
-                if (downloadedHymns != null) {
-                    saveHymnsToDatabase(downloadedHymns)
-                } else {
-                    Timber.e("Failed to download hymns.")
-                    // We'll retry on next launch.
-                }
-            } else {
-                Timber.i("Found ${hymns.size} hymns in the database, no sync needed.")
-            }
+    override fun invoke() {
+        scope.launch(exceptionLogger) {
+            Hymnal.entries.forEach { syncHymnal(it) }
         }
     }
 
-    private suspend fun saveHymnsToDatabase(hymns: List<Hymn>) {
+    private suspend fun syncHymnal(hymnal: Hymnal) {
+        val hymns = hymnsDao.getAllHymns(hymnal.year)
+
+        if (hymns.isEmpty()) {
+            val downloadedHymns = supabase.storage.downloadHymns(hymnal)
+            if (downloadedHymns != null) {
+                saveHymnsToDatabase(downloadedHymns, hymnal.year)
+            } else {
+                Timber.e("Failed to download hymns for ${hymnal.title}.")
+                // We'll retry on next launch.
+            }
+        } else {
+            Timber.i("Found ${hymns.size} hymns for ${hymnal.title} in the database, no sync needed.")
+        }
+    }
+
+    private suspend fun saveHymnsToDatabase(hymns: List<Hymn>, year: String) {
         hymns.forEach { hymn ->
             val entity = HymnEntity(
                 hymnId = hymn.index,
@@ -54,7 +62,8 @@ class HymnalContentSyncProviderImpl(
                 title = hymn.title,
                 majorKey = hymn.majorKey,
                 author = hymn.author,
-                authorLink = hymn.authorLink
+                authorLink = hymn.authorLink,
+                year = year,
             )
 
             val lyricParts = hymn.lyrics.map { lyrics ->
