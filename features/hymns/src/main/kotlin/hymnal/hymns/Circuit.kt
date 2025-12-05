@@ -38,6 +38,7 @@ sealed interface Event : CircuitUiEvent {
 
 sealed interface OverlayState : CircuitUiState {
     data class NumberPadSheet(
+        val hymns: Int,
         val onResult: (NumberPadBottomSheet.Result) -> Unit,
     ) : OverlayState
 }

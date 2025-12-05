@@ -12,6 +12,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.coroutines.DispatcherProvider
+import hymnal.libraries.model.Hymnal
 import hymnal.services.prefs.HymnalPrefs
 import hymnal.services.prefs.model.AppFont
 import hymnal.services.prefs.model.AppTheme
@@ -108,11 +109,26 @@ class HymnalPrefsImpl(
         }
     }
 
-    override suspend fun setSabbathRemindersEnabled(enabled: Boolean) {
+    override suspend fun setSabbathRemindersEnabled(enabled: Boolean): Unit =
+        withContext(dispatcherProvider.io) {
         context.dataStore.edit { preferences ->
             preferences[PreferenceKeys.SABBATH_REMINDER] = enabled
         }
     }
+
+    override fun currentHymnal(): Flow<Hymnal> {
+        return context.dataStore.data.map { preferences ->
+            val year = preferences[PreferenceKeys.CURRENT_HYMNAL] ?: Hymnal.NewHymnal.year
+            Hymnal.fromYear(year) ?: Hymnal.NewHymnal
+        }.flowOn(dispatcherProvider.io)
+    }
+
+    override suspend fun updateCurrentHymnal(hymnal: Hymnal): Unit =
+        withContext(dispatcherProvider.io) {
+            context.dataStore.edit { preferences ->
+                preferences[PreferenceKeys.CURRENT_HYMNAL] = hymnal.year
+            }
+        }
 
     // Define preference keys
     private object PreferenceKeys {
@@ -121,6 +137,7 @@ class HymnalPrefsImpl(
         val FONT_SIZE = floatPreferencesKey("font_size")
         val TYPEFACE_NAME = stringPreferencesKey("typeface_name")
         val SABBATH_REMINDER = booleanPreferencesKey("sabbath_reminders_enabled")
+        val CURRENT_HYMNAL = stringPreferencesKey("current_hymnal")
     }
 
     // Default values

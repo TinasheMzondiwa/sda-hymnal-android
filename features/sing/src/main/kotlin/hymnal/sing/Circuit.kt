@@ -73,6 +73,7 @@ sealed interface Event : CircuitUiEvent {
 
 sealed interface BottomBarOverlayState : CircuitUiState {
     data class NumberPadSheet(
+        val hymns: Int,
         val onResult: (NumberPadBottomSheet.Result) -> Unit,
     ) : BottomBarOverlayState
 }

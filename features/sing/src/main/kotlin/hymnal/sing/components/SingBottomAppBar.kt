@@ -241,7 +241,7 @@ private fun OverlayContent(state: BottomBarOverlayState?) {
     OverlayEffect(state) {
         when (state) {
             is BottomBarOverlayState.NumberPadSheet -> state.onResult(
-                show(NumberPadBottomSheet())
+                show(NumberPadBottomSheet(state.hymns))
             )
 
             null -> Unit

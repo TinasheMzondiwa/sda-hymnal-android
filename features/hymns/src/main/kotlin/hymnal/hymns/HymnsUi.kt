@@ -153,7 +153,7 @@ private fun OverlayContent(state: OverlayState?) {
     OverlayEffect(state) {
         when (state) {
             is OverlayState.NumberPadSheet -> state.onResult(
-                show(NumberPadBottomSheet())
+                show(NumberPadBottomSheet(state.hymns))
             )
             null -> Unit
         }

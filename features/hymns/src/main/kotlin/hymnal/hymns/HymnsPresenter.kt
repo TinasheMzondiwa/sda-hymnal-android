@@ -17,29 +17,35 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import hymnal.hymns.components.SearchResult
+import hymnal.libraries.model.Hymnal
 import hymnal.libraries.navigation.HymnsScreen
 import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.content.HymnalContentProvider
+import hymnal.services.prefs.HymnalPrefs
 import kotlinx.collections.immutable.toImmutableList
 
 @AssistedInject
 class HymnsPresenter (
     @Assisted private val navigator: Navigator,
     private val contentProvider: HymnalContentProvider,
-    private val hymnsStateProducer: HymnsStateProducer
+    private val hymnsStateProducer: HymnsStateProducer,
+    private val prefs: HymnalPrefs,
 ) : Presenter<State> {
     @Composable
     override fun present(): State {
+        val hymnal by produceRetainedState(Hymnal.NewHymnal) {
+            prefs.currentHymnal().collect { value = it }
+        }
         var searchQuery by rememberRetained { mutableStateOf("") }
-        val hymns by produceRetainedState(emptyList()) {
-            contentProvider.hymns().collect { value = it }
+        val hymns by produceRetainedState(emptyList(), hymnal) {
+            contentProvider.hymns(hymnal.year).collect { value = it }
         }
-        val categories by produceRetainedState(emptyList()) {
-            contentProvider.categories().collect { value = it }
+        val categories by produceRetainedState(emptyList(), hymnal) {
+            contentProvider.categories(hymnal.year).collect { value = it }
         }
-        val searchResults by produceRetainedState(emptyList(), searchQuery) {
-            contentProvider.search(searchQuery)
+        val searchResults by produceRetainedState(emptyList(), searchQuery, hymnal) {
+            contentProvider.search(searchQuery, hymnal.year)
                 .collect { hymn -> value = hymn.map { SearchResult(it) } }
         }
 
@@ -77,6 +83,7 @@ class HymnsPresenter (
                     }
                     Event.OnNumberPadClicked -> {
                         overlayState = OverlayState.NumberPadSheet(
+                            hymns = hymnal.hymns,
                             onResult = { result ->
                                 overlayState = null
                                 when (result) {
