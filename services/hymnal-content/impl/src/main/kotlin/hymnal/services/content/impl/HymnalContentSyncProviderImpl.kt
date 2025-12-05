@@ -44,7 +44,7 @@ class HymnalContentSyncProviderImpl(
         if (hymns.isEmpty()) {
             val downloadedHymns = supabase.storage.downloadHymns(hymnal)
             if (downloadedHymns != null) {
-                saveHymnsToDatabase(downloadedHymns, hymnal.year)
+                saveHymnsToDatabase(downloadedHymns)
             } else {
                 Timber.e("Failed to download hymns for ${hymnal.title}.")
                 // We'll retry on next launch.
@@ -54,7 +54,7 @@ class HymnalContentSyncProviderImpl(
         }
     }
 
-    private suspend fun saveHymnsToDatabase(hymns: List<Hymn>, year: String) {
+    private suspend fun saveHymnsToDatabase(hymns: List<Hymn>) {
         hymns.forEach { hymn ->
             val entity = HymnEntity(
                 hymnId = hymn.index,
@@ -63,7 +63,7 @@ class HymnalContentSyncProviderImpl(
                 majorKey = hymn.majorKey,
                 author = hymn.author,
                 authorLink = hymn.authorLink,
-                year = year,
+                year = hymn.year,
             )
 
             val lyricParts = hymn.lyrics.map { lyrics ->

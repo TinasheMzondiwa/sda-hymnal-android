@@ -68,6 +68,9 @@ internal fun HymnItem(
                         )
                 )
             },
+            supportingContent = {
+                Text(text = hymn.year)
+            }
         )
     }
 }
@@ -103,4 +106,5 @@ internal val previewHymn = Hymn(
             ),
         ),
     ),
+    year = "1985"
 )

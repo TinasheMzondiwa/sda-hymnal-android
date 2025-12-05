@@ -25,6 +25,8 @@ import hymnal.sing.BottomBarOverlayState
 import hymnal.sing.BottomBarState
 import hymnal.sing.components.HymnContent
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -44,8 +46,17 @@ class BottomBarStateProducerImpl(
     @Composable
     override fun invoke(hymn: HymnContent?, onIndex: (String) -> Unit): BottomBarState {
         val coroutineScope = rememberStableCoroutineScope()
-        val hymnal by produceRetainedState(Hymnal.NewHymnal) {
+        val hymnal by produceRetainedState(Hymnal.NewHymnal, hymn) {
             prefs.currentHymnal()
+                .map {
+                    // Use the correct hymn hymnal
+                    if (hymn != null && it.year != hymn.year) {
+                        Hymnal.fromYear(hymn.year)
+                    } else {
+                        it
+                    }
+                }
+                .filterNotNull()
                 .catch { Timber.e(it) }
                 .collect { value = it }
         }

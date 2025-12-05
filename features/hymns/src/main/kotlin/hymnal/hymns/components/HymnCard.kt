@@ -165,6 +165,7 @@ internal val previewHymn = Hymn(
     majorKey = null,
     author = "John Newton",
     authorLink = null,
+    year = "1985",
     lyrics = listOf(
         HymnLyrics.Verse(
             index = 1,

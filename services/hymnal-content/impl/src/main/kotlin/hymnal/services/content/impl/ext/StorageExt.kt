@@ -13,9 +13,9 @@ private const val BUCKET_ID = "hymnals"
 private const val FILE_PATH = "sda-hymnal-db.json"
 private const val FILE_PATH_OLD_HYMN = "church-hymnal-db.json"
 
-internal suspend fun Storage.downloadHymns(hymnals: Hymnal): List<Hymn>? {
+internal suspend fun Storage.downloadHymns(hymnal: Hymnal): List<Hymn>? {
     return try {
-        val path = when (hymnals) {
+        val path = when (hymnal) {
             Hymnal.OldHymnal -> FILE_PATH_OLD_HYMN
             Hymnal.NewHymnal -> FILE_PATH
         }
@@ -33,6 +33,7 @@ internal suspend fun Storage.downloadHymns(hymnals: Hymnal): List<Hymn>? {
                 majorKey = remoteHymn.majorKey,
                 author = remoteHymn.author,
                 authorLink = remoteHymn.authorLink,
+                year = hymnal.year,
                 lyrics = remoteHymn.lyrics.mapNotNull { section ->
                     when (section.type) {
                         LyricType.VERSE -> HymnLyrics.Verse(
