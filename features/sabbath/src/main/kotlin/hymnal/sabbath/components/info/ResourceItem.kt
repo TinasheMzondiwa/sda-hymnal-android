@@ -36,6 +36,7 @@ import hymnal.libraries.model.SabbathResource
 import hymnal.sabbath.components.SabbathColors
 import hymnal.sabbath.components.SabbathInfoItem
 import hymnal.sabbath.components.rememberSabbathColors
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.theme.type.GaraMond
 
@@ -82,11 +83,13 @@ private fun ResourceCard(
     modifier: Modifier = Modifier,
     onCitationClick: (String) -> Unit
 ) {
+    val hapticFeedback = LocalAppHapticFeedback.current
     var maxLines by remember { mutableIntStateOf(3) }
 
     Card(
         modifier = modifier.clickable {
             maxLines = if (maxLines == 3) Int.MAX_VALUE else 3
+            hapticFeedback.performGestureEnd()
         },
         colors = CardDefaults.cardColors(containerColor = colors.card),
         shape = RoundedCornerShape(20.dp),
@@ -136,7 +139,10 @@ private fun ResourceCard(
                 verseColor = colors.text,
                 fontFamily = GaraMond,
                 maxLines = maxLines,
-                onCitationClick = onCitationClick
+                onCitationClick = {
+                    hapticFeedback.performClick()
+                    onCitationClick(it)
+                }
             )
         }
 

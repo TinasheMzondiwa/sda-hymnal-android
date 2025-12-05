@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import hymnal.hymns.SortType
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -33,6 +34,8 @@ fun FiltersRow(
     onItemClick: (FilterItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val hapticFeedback = LocalAppHapticFeedback.current
+
     LazyRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -40,7 +43,10 @@ fun FiltersRow(
         items(items) { item ->
             FilterChip(
                 selected = item.selected,
-                onClick = { onItemClick(item) },
+                onClick = {
+                    hapticFeedback.performClick()
+                    onItemClick(item)
+                },
                 label = {
                     val label = when (item) {
                         is FilterItem.Hymnal -> item.title

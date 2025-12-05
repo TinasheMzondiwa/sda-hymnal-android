@@ -20,30 +20,34 @@ import app.hymnal.ui.home.HomeScreen.State
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
 import dev.zacsweers.metro.AppScope
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.widget.scaffold.HazeNavigationSuiteScaffold
 
 @CircuitInject(HomeScreen::class, AppScope::class)
 @Composable
 fun HomeUi(state: State, modifier: Modifier = Modifier) {
+    val hapticFeedback = LocalAppHapticFeedback.current
+
     HazeNavigationSuiteScaffold(
         navigationSuiteItems = {
-            state.routes.forEach { model ->
-                val selected = state.currentRoute == model
+            state.routes.forEach { route ->
+                val selected = state.currentRoute == route
                 item(
                     selected = selected,
                     onClick = {
-                        state.eventSink(Event.OnNav(model))
+                        hapticFeedback.performSegmentSwitch()
+                        state.eventSink(Event.OnNav(route))
                     },
                     icon = {
                         Icon(
-                            painter = painterResource(model.icon.run {
+                            painter = painterResource(route.icon.run {
                                 if (selected) filledIcon else icon
                             }),
-                            contentDescription = stringResource(model.title),
+                            contentDescription = stringResource(route.title),
                         )
                     },
                     label = {
-                        Text(stringResource(model.title))
+                        Text(stringResource(route.title))
                     },
                 )
             }

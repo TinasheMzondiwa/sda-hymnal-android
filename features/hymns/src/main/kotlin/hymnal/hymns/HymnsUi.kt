@@ -112,7 +112,7 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
             ),
         ) {
 
-            item {
+            item("filters") {
                 FiltersRow(
                     items = state.filterItems,
                     onItemClick = { state.eventSink(Event.OnFilterItemClicked(it)) },
@@ -133,7 +133,7 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
             }
 
             if (state.hymns.isEmpty()) {
-                item {
+                item("loading") {
                     Box(
                         Modifier
                             .fillMaxWidth()

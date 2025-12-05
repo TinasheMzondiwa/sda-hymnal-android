@@ -156,7 +156,7 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
                             textStyle = state.textStyle,
                         )
                     }
-                    is State.Loading -> item {
+                    is State.Loading -> item("loading") {
                         Box(
                             Modifier
                                 .fillMaxWidth()

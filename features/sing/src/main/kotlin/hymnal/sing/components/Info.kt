@@ -32,6 +32,7 @@ import com.slack.circuit.sharedelements.SharedElementTransitionScope
 import hymnal.libraries.navigation.key.HymnSharedTransitionKey
 import hymnal.sing.components.model.TextStyleSpec
 import hymnal.sing.components.text.toFamily
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.collections.immutable.persistentListOf
 import hymnal.libraries.l10n.R as L10nR
@@ -59,6 +60,8 @@ private fun HymnInfo(
     modifier: Modifier = Modifier,
     onAuthorLinkClicked: (String) -> Unit = {}
 ) {
+    val hapticFeedback = LocalAppHapticFeedback.current
+
     SharedElementTransitionScope {
         Column(
             modifier = modifier
@@ -111,7 +114,10 @@ private fun HymnInfo(
 
                 if (hymn.authorUrl != null) {
                     OutlinedButton(
-                        onClick = { onAuthorLinkClicked(hymn.authorUrl) },
+                        onClick = {
+                            hapticFeedback.performClick()
+                            onAuthorLinkClicked(hymn.authorUrl)
+                        },
                     ) {
                         Text(
                             text = author,

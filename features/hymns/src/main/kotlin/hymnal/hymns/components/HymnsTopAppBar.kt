@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import hymnal.hymns.Event
 import hymnal.hymns.State
+import hymnal.ui.haptics.LocalAppHapticFeedback
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,6 +29,8 @@ fun HymnsTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
+    val hapticFeedback = LocalAppHapticFeedback.current
+
     Column(modifier = modifier.fillMaxWidth()) {
         TopAppBar(
             title = {
@@ -58,7 +61,10 @@ fun HymnsTopAppBar(
                         AnimatedVisibility(true) {
                             Tab(
                                 selected = category == state.selectedCategory,
-                                onClick = { state.eventSink(Event.OnCategorySelected(category)) },
+                                onClick = {
+                                    hapticFeedback.performSegmentSwitch()
+                                    state.eventSink(Event.OnCategorySelected(category))
+                                },
                                 text = {
                                     val title = if (index == 0) {
                                         category.name
