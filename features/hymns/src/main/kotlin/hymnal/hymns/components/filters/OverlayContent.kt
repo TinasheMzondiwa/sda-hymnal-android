@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import hymnal.hymns.SortType
@@ -53,7 +54,8 @@ internal fun ChooseHymnalOverlayContent(
         Text(
             text = stringResource(L10nR.string.hymnal),
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
+            modifier = Modifier,
+            fontWeight = FontWeight.SemiBold,
         )
 
         LazyColumn(
@@ -138,7 +140,8 @@ internal fun ChooseSortOverlayContent(
         Text(
             text = stringResource(L10nR.string.sort),
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
+            modifier = Modifier,
+            fontWeight = FontWeight.SemiBold,
         )
 
         LazyColumn(

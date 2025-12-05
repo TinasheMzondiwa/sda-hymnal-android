@@ -3,6 +3,7 @@
 
 package hymnal.hymns.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -54,19 +55,21 @@ fun HymnsTopAppBar(
                 edgePadding = 0.dp,
                 tabs = {
                     state.categories.forEachIndexed { index, category ->
-                        Tab(
-                            selected = category == state.selectedCategory,
-                            onClick = { state.eventSink(Event.OnCategorySelected(category)) },
-                            text = {
-                                val title = if (index == 0) {
-                                    category.name
-                                } else {
-                                    "${category.name} (${category.start}–${category.end})"
-                                }
-                                Text(title)
-                            },
-                            unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                        AnimatedVisibility(true) {
+                            Tab(
+                                selected = category == state.selectedCategory,
+                                onClick = { state.eventSink(Event.OnCategorySelected(category)) },
+                                text = {
+                                    val title = if (index == 0) {
+                                        category.name
+                                    } else {
+                                        "${category.name} (${category.start}–${category.end})"
+                                    }
+                                    Text(title)
+                                },
+                                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
             )
