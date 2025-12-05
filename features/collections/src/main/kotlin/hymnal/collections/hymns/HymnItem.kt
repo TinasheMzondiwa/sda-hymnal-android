@@ -70,7 +70,7 @@ internal fun HymnItem(
                 )
             },
             supportingContent = {
-                Text(text = hymn.year, fontStyle = FontStyle.Italic)
+                Text(text = hymn.year)
             }
         )
     }
