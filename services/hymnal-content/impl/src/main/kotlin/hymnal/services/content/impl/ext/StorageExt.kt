@@ -1,5 +1,6 @@
 package hymnal.services.content.impl.ext
 
+import hymnal.libraries.model.Hymnal
 import hymnal.services.content.impl.model.LyricType
 import hymnal.services.content.impl.model.RemoteHymn
 import hymnal.services.model.Hymn
@@ -10,11 +11,16 @@ import timber.log.Timber
 
 private const val BUCKET_ID = "hymnals"
 private const val FILE_PATH = "sda-hymnal-db.json"
+private const val FILE_PATH_OLD_HYMN = "church-hymnal-db.json"
 
-internal suspend fun Storage.downloadHymns(): List<Hymn>? {
+internal suspend fun Storage.downloadHymns(hymnals: Hymnal): List<Hymn>? {
     return try {
+        val path = when (hymnals) {
+            Hymnal.OldHymnal -> FILE_PATH_OLD_HYMN
+            Hymnal.NewHymnal -> FILE_PATH
+        }
         val bytes = from(BUCKET_ID)
-            .downloadAuthenticated(FILE_PATH)
+            .downloadAuthenticated(path)
 
         val jsonString = bytes.decodeToString() // Convert ByteArray to String
         val hymns: List<RemoteHymn> = Json.decodeFromString<List<RemoteHymn>>(jsonString)

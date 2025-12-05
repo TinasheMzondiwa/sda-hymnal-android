@@ -61,20 +61,20 @@ interface HymnsDao : BaseDao<HymnEntity> {
     fun getHymnWithLyricsById(hymnId: String): Flow<HymnWithLyrics?>
 
     @Transaction
-    @Query("SELECT * FROM hymns WHERE number = :number")
-    suspend fun getHymnWithLyricsByNumber(number: Int): HymnWithLyrics?
+    @Query("SELECT * FROM hymns WHERE number = :number AND year = :year")
+    suspend fun getHymnWithLyricsByNumber(number: Int, year: String): HymnWithLyrics?
 
     @Transaction
-    @Query("SELECT * FROM hymns")
-    suspend fun getAllHymns(): List<HymnWithLyrics>
+    @Query("SELECT * FROM hymns WHERE year = :year ORDER BY number ASC")
+    suspend fun getAllHymns(year: String): List<HymnWithLyrics>
 
     @Transaction
-    @Query("SELECT * FROM hymns")
-    fun getAllHymnsWithLyrics(): Flow<List<HymnWithLyrics>>
+    @Query("SELECT * FROM hymns WHERE year = :year ORDER BY number ASC")
+    fun getAllHymnsWithLyrics(year: String): Flow<List<HymnWithLyrics>>
 
     @Transaction
-    @Query("SELECT * FROM hymns WHERE number IN (:numbers) ORDER BY number ASC")
-    fun getHymnsWithLyricsInRange(numbers: List<Int>): Flow<List<HymnWithLyrics>>
+    @Query("SELECT * FROM hymns WHERE number IN (:numbers) AND year = :year ORDER BY number ASC")
+    fun getHymnsWithLyricsInRange(numbers: List<Int>, year: String): Flow<List<HymnWithLyrics>>
 
     /**
      * Searches hymns based on lyrics content.
@@ -85,7 +85,8 @@ interface HymnsDao : BaseDao<HymnEntity> {
         SELECT h.* FROM hymns h
         JOIN hymns_fts fts ON h.hymnId = fts.hymnId
         WHERE fts.lyricsContent MATCH :query
+        AND h.year = :year
     """)
-    fun searchLyrics(query: String): Flow<List<HymnWithLyrics>>
+    fun searchLyrics(query: String, year: String): Flow<List<HymnWithLyrics>>
 }
 

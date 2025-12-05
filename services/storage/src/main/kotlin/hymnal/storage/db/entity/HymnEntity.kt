@@ -3,6 +3,7 @@
 
 package hymnal.storage.db.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -14,4 +15,5 @@ data class HymnEntity(
     val majorKey: String?,
     val author: String?,
     val authorLink: String?,
+    @ColumnInfo(defaultValue = "1985") val year: String,
 )
