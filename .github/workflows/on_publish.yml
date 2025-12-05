@@ -1,0 +1,64 @@
+name: Upload release asset(s)
+on:
+  release:
+    types: ["published"]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      steps:
+        - name: Checkout repo
+          uses: actions/checkout@v6
+
+        - name: Set up JDK
+          uses: actions/setup-java@v5
+          with:
+            distribution: 'zulu'
+            java-version: '21'
+
+        - name: Generate build number
+          run: echo "BUILD_NUMBER=${{github.run_number}}" > app/build_number.properties
+
+        - name: Create API keys properties file
+          run: |
+            mkdir -p release
+            echo "${{ secrets.API_KEYS_PROPERTIES }}" > release/api-keys.properties
+
+        - name: Create google services file
+          env:
+            GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+          run: echo "$GOOGLE_SERVICES" | base64 -D > app/google-services.json
+
+        - name: Create google play key file
+          env:
+            GOOGLE_PLAY: ${{ secrets.GOOGLE_PLAY }}
+          run: |
+            mkdir -p distribution
+            echo "$GOOGLE_PLAY" | base64 -D > distribution/play-key.json
+
+        - name: Create keystore props file
+          env:
+            KEYSTORE_PROPS: ${{ secrets.KEYSTORE_PROPS }}
+          run: echo "$KEYSTORE_PROPS" > release/keystore.properties
+
+        - name: Create keystore file
+          env:
+            KEYSTORE: ${{ secrets.KEYSTORE }}
+          run: echo "$KEYSTORE" | base64 -D > release/sdah_key.jks
+
+        - name: Build Release
+          run: ./gradlew app:bundleRelease --stacktrace
+
+        - name: Upload aab
+          uses: actions/upload-release-asset@v1
+          with:
+            upload_url: ${{ github.event.release.upload_url }}
+            asset_path: app/build/outputs/bundle/release/app-release.aab
+            asset_name: sda-hymnal-android-release.aab
+            asset_content_type: application/zip
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
