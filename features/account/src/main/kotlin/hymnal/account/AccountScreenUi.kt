@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
@@ -193,6 +194,7 @@ private fun SharedElementTransitionScope.LoggedOutUi(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val resources = LocalResources.current
     val hapticFeedback = LocalAppHapticFeedback.current
     val horizontalPadding = HymnalDimens.horizontalPadding()
 
@@ -243,8 +245,7 @@ private fun SharedElementTransitionScope.LoggedOutUi(
             onClick = {
                 hapticFeedback.performClick()
                 eventSink(Event.NotLoggedIn.OnLoginClick(context))
-                      },
-            colors = ButtonDefaults.elevatedButtonColors(
+            }, colors = ButtonDefaults.elevatedButtonColors(
                 containerColor = MaterialTheme.colorScheme.onSurface,
                 contentColor = MaterialTheme.colorScheme.surface
             )
@@ -266,7 +267,7 @@ private fun SharedElementTransitionScope.LoggedOutUi(
                     append("By continuing, you agree to our Terms of Service as described in our ")
                     withLink(
                         link = LinkAnnotation.Url(
-                            url = context.getString(L10nR.string.app_policy),
+                            url = resources.getString(L10nR.string.app_policy),
                             styles = TextLinkStyles(
                                 style = SpanStyle(
                                     color = textColor,
