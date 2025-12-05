@@ -1,3 +1,6 @@
+// Copyright (C) 2025 Tinashe Mzondiwa
+// SPDX-License-Identifier: Apache-2.0
+
 package hymnal.services.content.impl
 
 import dev.zacsweers.metro.AppScope
@@ -53,7 +56,7 @@ class HymnalContentProviderImpl(
             val categories = buildList {
                 when (hymnal) {
                     Hymnal.OldHymnal -> {
-                        add(HymnCategory("1-703", "All", 1, 703))
+                        // add(HymnCategory("1-703", "All", 1, 703))
                         // Figure out how to categorise these
                     }
                     Hymnal.NewHymnal -> {

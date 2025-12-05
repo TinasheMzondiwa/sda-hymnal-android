@@ -34,6 +34,7 @@
     <string name="empty_collections_message">Create your first collection to organize your favorite hymns</string>
     <string name="fullscreen">Fullscreen</string>
     <string name="hymn_number">Hymn %1d</string>
+    <string name="hymnal">Hymnal</string>
     <string name="hymns">Hymns</string>
     <string name="info_help_feedback">Help &amp; Feedback</string>
     <string name="info_share_app">Share the App</string>
@@ -75,8 +76,11 @@
     <string name="settings_typeface">Typeface</string>
     <string name="share">Share</string>
     <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sort">Sort</string>
     <string name="sort_number">Number</string>
     <string name="sort_title">Title</string>
+    <string name="sort_number_desc">Number 1-%1d</string>
+    <string name="sort_title_desc">Title A-Z</string>
     <string name="support">Support</string>
     <string name="submit">Submit</string>
     <string name="text_format">Text format</string>

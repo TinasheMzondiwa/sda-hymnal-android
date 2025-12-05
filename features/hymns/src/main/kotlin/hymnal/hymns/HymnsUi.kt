@@ -47,10 +47,14 @@ import com.slack.circuit.overlay.OverlayEffect
 import dev.zacsweers.metro.AppScope
 import hymnal.hymns.components.HymnCard
 import hymnal.hymns.components.HymnsTopAppBar
+import hymnal.hymns.components.filters.ChooseHymnalOverlayContent
+import hymnal.hymns.components.filters.ChooseSortOverlayContent
+import hymnal.hymns.components.filters.FiltersRow
 import hymnal.hymns.components.previewHymn
 import hymnal.libraries.navigation.HymnsScreen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.model.HymnCategory
+import hymnal.ui.circuit.BottomSheetOverlay
 import hymnal.ui.extensions.plus
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
@@ -107,10 +111,19 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                 end = horizontalPadding,
             ),
         ) {
+
+            item {
+                FiltersRow(
+                    items = state.filterItems,
+                    onItemClick = { state.eventSink(Event.OnFilterItemClicked(it)) },
+                    modifier = Modifier.animateItem()
+                )
+            }
+
             items(state.hymns, key = { it.index }) { hymn ->
                 HymnCard(
                     hymn = hymn,
-                    sortType = state.sortType.next(),
+                    sortType = state.sortType,
                     modifier = Modifier.animateItem(),
                     onClick = {
                         hapticFeedback.performClick()
@@ -155,6 +168,37 @@ private fun OverlayContent(state: OverlayState?) {
             is OverlayState.NumberPadSheet -> state.onResult(
                 show(NumberPadBottomSheet(state.hymns))
             )
+            is OverlayState.ChooseHymnalSheet -> state.onResult(
+                show(
+                    BottomSheetOverlay(
+                        skipPartiallyExpanded = true,
+                        content = {
+                            ChooseHymnalOverlayContent(
+                                selected = state.selected,
+                                onResult = {
+                                    state.onSelection(it)
+
+                                }
+                            )
+                        }
+                    )
+                )
+            )
+
+            is OverlayState.ChooseSortTypeSheet -> state.onResult(
+                show(
+                    BottomSheetOverlay(
+                        skipPartiallyExpanded = true,
+                        content = {
+                            ChooseSortOverlayContent(
+                                selected = state.selected,
+                                hymns = state.hymns,
+                                onResult = { state.onSelection(it) }
+                            )
+                        }
+                    )
+                )
+            )
             null -> Unit
         }
     }
@@ -175,6 +219,7 @@ private fun Preview() {
                 sortType = SortType.NUMBER,
                 selectedCategory = previewCategories.first(),
                 categories = previewCategories,
+                filterItems = persistentListOf(),
                 hymns = persistentListOf(previewHymn, previewHymn.copy(index = "2")),
                 searchResults = persistentListOf(),
                 overlayState = null,
