@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.WeekFields
 
@@ -126,7 +127,9 @@ class HymnalContentProviderImpl(
     }
 
     override fun sabbathResources(): Flow<List<SabbathResource>> {
-        val week = LocalDate.now().get(WeekFields.ISO.weekOfWeekBasedYear())
+        // Defined with Sunday as the first day of the week
+        val weekFields = WeekFields.of(DayOfWeek.SUNDAY, 1)
+        val week = LocalDate.now().get(weekFields.weekOfWeekBasedYear())
 
         return sabbathResourceDao
             .get(week)
