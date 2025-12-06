@@ -32,6 +32,7 @@
     <string name="donate">Donate</string>
     <string name="empty_collections_title">No Collections yet</string>
     <string name="empty_collections_message">Create your first collection to organize your favorite hymns</string>
+    <string name="enable_sabbath_notifications">Enable Sabbath reminders</string>
     <string name="fullscreen">Fullscreen</string>
     <string name="hymn_number">Hymn %1d</string>
     <string name="hymnal">Hymnal</string>

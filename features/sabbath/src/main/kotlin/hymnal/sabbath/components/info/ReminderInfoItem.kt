@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -33,7 +34,9 @@ import hymnal.sabbath.Event
 import hymnal.sabbath.components.SabbathColors
 import hymnal.sabbath.components.SabbathInfoItem
 import hymnal.sabbath.components.rememberSabbathColors
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
+import hymnal.libraries.l10n.R as L10nR
 
 @Immutable
 data class ReminderInfoItem(
@@ -46,6 +49,7 @@ data class ReminderInfoItem(
     @Composable
     override fun Content(colors: SabbathColors, modifier: Modifier) {
         val context = LocalContext.current
+        val hapticFeedback = LocalAppHapticFeedback.current
 
         val permissionLauncher = rememberLauncherForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -59,6 +63,8 @@ data class ReminderInfoItem(
 
         val localCheckedChange = remember {
             { checked: Boolean ->
+                hapticFeedback.performToggleSwitch(checked)
+
                 if (checked) {
                     if (hasPostNotificationsPermission(context)) {
                         eventSink(Event.SabbathInfo.OnReminderToggled(true))
@@ -74,7 +80,7 @@ data class ReminderInfoItem(
         ListItem(
             headlineContent = {
                 Text(
-                    text = "Enable Sabbath reminders",
+                    text = stringResource(L10nR.string.enable_sabbath_notifications),
                     color = colors.text
                 )
             },

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import hymnal.sabbath.Event
 import hymnal.sabbath.components.SabbathColors
 import hymnal.sabbath.components.SabbathInfoItem
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.libraries.l10n.R as L10nR
 import hymnal.ui.R as UiR
 
@@ -33,6 +34,8 @@ data class SabbathCollectionItem(val eventSink: (Event.SabbathInfo) -> Unit) : S
         colors: SabbathColors,
         modifier: Modifier
     ) {
+        val hapticFeedback = LocalAppHapticFeedback.current
+
         ListItem(
             headlineContent = {
                 Text(text = stringResource(L10nR.string.sabbath_playlist))
@@ -40,7 +43,10 @@ data class SabbathCollectionItem(val eventSink: (Event.SabbathInfo) -> Unit) : S
             modifier = modifier
                 .padding(horizontal = 16.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .clickable(onClick = { eventSink(Event.SabbathInfo.OnSabbathHymnsClicked) }),
+                .clickable(onClick = {
+                    hapticFeedback.performClick()
+                    eventSink(Event.SabbathInfo.OnSabbathHymnsClicked)
+                }),
             supportingContent = {
                 Text(text = stringResource(L10nR.string.sabbath_playlist_sub_title))
             },

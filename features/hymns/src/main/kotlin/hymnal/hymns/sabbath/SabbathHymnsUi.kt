@@ -54,7 +54,10 @@ fun SabbathHymnsUi(state: State, modifier: Modifier = Modifier) {
             TopAppBar(
                 title = { Text(text = stringResource(L10nR.string.sabbath_playlist)) },
                 navigationIcon = {
-                    IconButton(onClick = { state.eventSink(Event.OnNavBackClicked) }) {
+                    IconButton(onClick = {
+                        hapticFeedback.performClick()
+                        state.eventSink(Event.OnNavBackClicked)
+                    }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                             contentDescription = null
