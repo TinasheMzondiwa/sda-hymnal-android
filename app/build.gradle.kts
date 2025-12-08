@@ -52,7 +52,7 @@ android {
     }
 
     buildTypes {
-        val release by getting {
+        release {
             isShrinkResources = true
             isMinifyEnabled = true
             proguardFiles(
@@ -64,7 +64,7 @@ android {
             }
         }
 
-        val debug by getting {
+        debug {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             resValue("string", "app_name", "SDAH dev")
@@ -96,6 +96,7 @@ dependencies {
     implementation(libs.google.android.material)
     implementation(libs.kotlinx.immutable)
     implementation(libs.material3.adaptive.navigation.suite)
+    implementation(libs.metrox.android)
     implementation(libs.timber)
     implementation(projects.features.account)
     implementation(projects.features.collections)

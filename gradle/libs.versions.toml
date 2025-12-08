@@ -126,6 +126,7 @@ ktor-client-serialization = { module = "io.ktor:ktor-client-serialization" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json" }
 lints-compose = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "lints-compose" }
 material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3-adaptive-navigation-suite" }
+metrox-android = { module = "dev.zacsweers.metro:metrox-android", version.ref = "metro" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 slack-lint-checks = { module = "com.slack.lint:slack-lint-checks", version.ref = "slack-lint" }
 slack-lint-annotations = { module = "com.slack.lint:slack-lint-annotations", version.ref = "slack-lint" }
