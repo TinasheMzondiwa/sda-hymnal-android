@@ -14,16 +14,20 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import hymnal.donate.Event
 import hymnal.donate.State
 import hymnal.ui.haptics.LocalAppHapticFeedback
+import hymnal.donate.R as DonateR
 import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DonateTopBar(state: State, modifier: Modifier = Modifier) {
     val hapticFeedback = LocalAppHapticFeedback.current
+    val context = LocalContext.current
 
     TopAppBar(
         title = { Text(stringResource(L10nR.string.donate)) },
@@ -37,6 +41,29 @@ fun DonateTopBar(state: State, modifier: Modifier = Modifier) {
                 }
             }) {
                 Icon(Icons.Default.Close, contentDescription = "Close")
+            }
+        },
+        actions = {
+            if (state is State.Donate) {
+                IconButton(onClick = {
+                    hapticFeedback.performClick()
+                    state.eventSink(Event.OnManageSubscriptions)
+                }) {
+                    Icon(
+                        painter = painterResource(DonateR.drawable.ic_admin_panel_settings),
+                        contentDescription = stringResource(L10nR.string.manage_subscriptions)
+                    )
+                }
+
+                IconButton(onClick = {
+                    hapticFeedback.performClick()
+                    state.eventSink(Event.OnHelp(context))
+                }) {
+                    Icon(
+                        painter = painterResource(DonateR.drawable.ic_help),
+                        contentDescription = stringResource(L10nR.string.title_help)
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(

@@ -24,7 +24,6 @@ import com.android.billingclient.api.queryPurchasesAsync
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
-import dev.zacsweers.metro.SingleIn
 import dev.zacsweers.metro.binding
 import hymnal.libraries.coroutines.DispatcherProvider
 import hymnal.libraries.model.HymnalAppConfig
@@ -52,7 +51,8 @@ sealed interface BillingData {
     enum class Status { SUCCESS, ERROR; }
 }
 
-@SingleIn(AppScope::class)
+internal const val SUBS_BASE_URL = "https://play.google.com/store/account/subscriptions"
+
 @ContributesBinding(AppScope::class, binding = binding<BillingManager>())
 @Inject
 class BillingManagerImpl(
@@ -284,7 +284,6 @@ class BillingManagerImpl(
     }
 
     private companion object {
-        private const val SUBS_BASE_URL = "https://play.google.com/store/account/subscriptions"
         private val inAppDonations = listOf(
             "donate_1",
             "donate_5",

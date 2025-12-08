@@ -4,6 +4,7 @@
 package hymnal.donate
 
 import android.app.Activity
+import android.content.Context
 import androidx.annotation.StringRes
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
@@ -23,6 +24,8 @@ sealed interface State : CircuitUiState {
 
 sealed interface Event : CircuitUiEvent {
     data object OnClose : Event
+    data object OnManageSubscriptions: Event
+    data class OnHelp(val context: Context): Event
     data class OnSelectDonateType(val type: DonateType): Event
     data class SelectTier(val tier: TierButtonSpec) : Event
     data class OnPrimaryButtonClick(val activity: Activity) : Event

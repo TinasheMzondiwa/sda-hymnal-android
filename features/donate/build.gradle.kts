@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+android { namespace = "hymnal.donate" }
+
 foundry {
     features {
         compose()
