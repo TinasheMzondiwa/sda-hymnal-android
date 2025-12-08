@@ -3,7 +3,7 @@
 
 package hymnal.donate
 
-import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -43,7 +43,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
@@ -117,7 +116,7 @@ fun DonateScreenUi(state: State, modifier: Modifier = Modifier) {
                 } else {
                     item("loading") {
                         FlowRow(
-                            modifier = modifier
+                            modifier = Modifier
                                 .animateItem()
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -264,7 +263,7 @@ private fun BottomBar(state: State, modifier: Modifier = Modifier) {
         WindowInsetsSides.Horizontal
     ).asPaddingValues().plus(layoutDirection, start = horizontalPadding, end = horizontalPadding)
     val resources = LocalResources.current
-    val activity = LocalContext.current as? Activity
+    val activity = LocalActivity.current
 
     val (enabled, label) = when (state) {
         is State.Donate -> {

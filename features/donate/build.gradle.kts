@@ -19,8 +19,9 @@ ksp { arg("circuit.codegen.mode", "metro") }
 
 dependencies {
     implementation(libs.android.billing)
-    implementation(libs.timber)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.kotlinx.immutable)
+    implementation(libs.timber)
     implementation(projects.libraries.coreUi)
     implementation(projects.libraries.foundation.coroutines)
     implementation(projects.libraries.l10n)
