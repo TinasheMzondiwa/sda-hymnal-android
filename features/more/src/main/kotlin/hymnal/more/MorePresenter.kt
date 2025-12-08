@@ -12,11 +12,13 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.onNavEvent
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuitx.android.IntentScreen
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import hymnal.libraries.model.HymnalAppConfig
+import hymnal.libraries.navigation.BrowserIntentScreen
 import hymnal.libraries.navigation.DonateScreen
 import hymnal.libraries.navigation.MoreScreen
 import timber.log.Timber
@@ -60,7 +62,7 @@ class MorePresenter(
             InfoLink.Feedback -> sendFeedback(event.context)
             InfoLink.ShareApp -> shareApp(event.context)
             InfoLink.Rate,
-            InfoLink.Review -> openPlayStore(event.context)
+            InfoLink.Review -> openPlayStore()
             InfoLink.PrivacyPolicy -> openPolicy(event.context)
         }
     }
@@ -77,13 +79,7 @@ class MorePresenter(
                 "${context.getString(L10nR.string.app_name)} v${appConfig.version}"
             )
         }
-
-        try {
-            context.startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            // No email app available, do nothing for now
-            Timber.e(e)
-        }
+        navigator.goTo(IntentScreen(intent))
     }
 
     private fun shareApp(context: Context) {
@@ -102,27 +98,20 @@ class MorePresenter(
         context.startActivity(chooser)
     }
 
-    private fun openPlayStore(context: Context) {
-        val packageName = "com.tinashe.sdah"
+    private fun openPlayStore() {
+        val packageName = appConfig.appId
         try {
-            context.startActivity(
-                Intent(Intent.ACTION_VIEW, "market://details?id=$packageName".toUri())
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
+            navigator.goTo(BrowserIntentScreen("market://details?id=$packageName".toUri()))
         } catch (e: ActivityNotFoundException) {
-            context.startActivity(
-                Intent(Intent.ACTION_VIEW,
-                    "https://play.google.com/store/apps/details?id=$packageName".toUri())
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            Timber.e(e)
+            navigator.goTo(
+                BrowserIntentScreen("https://play.google.com/store/apps/details?id=$packageName".toUri())
             )
         }
     }
 
     private fun openPolicy(context: Context) {
         val url = context.getString(L10nR.string.app_policy)
-        val intent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        context.startActivity(intent)
+        navigator.goTo(BrowserIntentScreen(url.toUri()))
     }
 }

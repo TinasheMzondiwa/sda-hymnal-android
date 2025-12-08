@@ -29,6 +29,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
+import java.util.Locale
 
 @ContributesBinding(scope = AppScope::class, binding<HymnalContentSyncProvider>())
 @Inject
@@ -132,7 +133,7 @@ class HymnalContentSyncProviderImpl(
         ported.forEach { favorite ->
             val hymn = LegacyHymnal.from(favorite.language) ?: return@forEach
             val hymnId = when (hymn) {
-                LegacyHymnal.New -> String.format("%03d", favorite.number)
+                LegacyHymnal.New -> String.format(Locale.getDefault(), "%03d", favorite.number)
                 LegacyHymnal.Old -> "${1000 + favorite.number}"
             }
 

@@ -68,6 +68,7 @@ interface AppGraph {
         buildNumber = BuildConfig.VERSION_CODE,
         isDebug = BuildConfig.DEBUG,
         webClientId = context.getString(R.string.default_web_client_id),
+        appId = BuildConfig.APPLICATION_ID,
     )
 
     val contentSyncProvider: HymnalContentSyncProvider
