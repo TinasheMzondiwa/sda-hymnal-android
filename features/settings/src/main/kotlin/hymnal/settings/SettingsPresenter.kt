@@ -33,7 +33,7 @@ class SettingsPresenter(
     override fun present(): State {
         val coroutineScope = rememberStableCoroutineScope()
         val openLastViewedHymn by produceRetainedState(false) {
-            prefs.defaultToLastHymn()
+            prefs.showLastHymn()
                 .catch { Timber.e(it) }
                 .collect {
                     value = it
@@ -42,7 +42,7 @@ class SettingsPresenter(
         return State(openLastViewedHymn = openLastViewedHymn) { event ->
             when (event) {
                 is Event.OnToggleLastViewedHymn -> {
-                    coroutineScope.launch { prefs.setDefaultToLastHymn(event.enable) }
+                    coroutineScope.launch { prefs.setShowLastHymn(event.enable) }
                 }
             }
         }
