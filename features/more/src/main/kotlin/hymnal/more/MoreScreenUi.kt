@@ -29,6 +29,7 @@ import hymnal.more.components.AboutCard
 import hymnal.more.components.InfoItemsCard
 import hymnal.more.components.MoreTopAppBar
 import hymnal.libraries.navigation.MoreScreen
+import hymnal.libraries.navigation.SettingsScreen
 import hymnal.ui.extensions.plus
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.size.HymnalDimens
@@ -78,6 +79,10 @@ fun MoreScreenUi(state: State, modifier: Modifier = Modifier) {
                         state.eventSink(Event.OnNavEvent(it))
                     }
                 )
+            }
+
+            item("settings-card") {
+                CircuitContent(screen = SettingsScreen)
             }
 
             itemCards {
