@@ -37,12 +37,15 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
@@ -52,6 +55,8 @@ import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.sharedelements.PreviewSharedElementTransitionLayout
 import com.slack.circuit.sharedelements.SharedElementTransitionScope
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.zacsweers.metro.AppScope
 import hymnal.donate.ui.DonateTopBar
 import hymnal.donate.ui.TierButton
@@ -65,12 +70,18 @@ import hymnal.ui.widget.placeholder.placeholder
 import hymnal.ui.widget.scaffold.HazeScaffold
 import hymnal.libraries.l10n.R as L10nR
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalHazeMaterialsApi::class
+)
 @CircuitInject(DonateScreen::class, AppScope::class)
 @Composable
 fun DonateScreenUi(state: State, modifier: Modifier = Modifier) {
     SharedElementTransitionScope {
         val showButtons by remember { derivedStateOf { !isTransitionActive } }
+        val scrollBehavior =
+            TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+        val horizontalPadding = HymnalDimens.horizontalPadding(24.dp)
+        val layoutDirection = LocalLayoutDirection.current
 
         HazeScaffold(
             modifier = modifier
@@ -83,17 +94,24 @@ fun DonateScreenUi(state: State, modifier: Modifier = Modifier) {
                         ),
                     animatedVisibilityScope =
                         requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                ),
-            topBar = { DonateTopBar(state) },
+                )
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = { DonateTopBar(state = state, scrollBehavior = scrollBehavior) },
             bottomBar = { BottomBar(state) },
+            hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer),
+            blurTopBar = true,
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
         ) { contentPadding ->
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(contentPadding)
-                    .padding(horizontal = 24.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = contentPadding.plus(
+                    layoutDirection = layoutDirection,
+                    start = horizontalPadding,
+                    top = 16.dp,
+                    end = horizontalPadding,
+                    bottom = 0.dp
+                ),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {

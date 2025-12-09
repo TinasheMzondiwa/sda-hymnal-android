@@ -11,6 +11,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +26,11 @@ import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DonateTopBar(state: State, modifier: Modifier = Modifier) {
+fun DonateTopBar(
+    state: State,
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+) {
     val hapticFeedback = LocalAppHapticFeedback.current
     val context = LocalContext.current
 
@@ -69,6 +74,7 @@ fun DonateTopBar(state: State, modifier: Modifier = Modifier) {
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent,
             scrolledContainerColor = Color.Transparent,
-        )
+        ),
+        scrollBehavior = scrollBehavior,
     )
 }
