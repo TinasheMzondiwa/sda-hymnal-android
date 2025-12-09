@@ -12,11 +12,11 @@ import hymnal.ui.extensions.LocalWindowWidthSizeClass
 object HymnalDimens {
 
     @Composable
-    fun horizontalPadding(): Dp {
+    fun horizontalPadding(compatPadding: Dp = 16.dp): Dp {
         val windowWidthSizeClass = LocalWindowWidthSizeClass.current
 
         return if (windowWidthSizeClass == WindowWidthSizeClass.Compact) {
-            16.dp
+            compatPadding
         } else {
             64.dp
         }

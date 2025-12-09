@@ -40,6 +40,7 @@ include(
     ":services:prefs:model",
     ":services:sabbath:api",
     ":services:sabbath:impl",
+    ":features:settings",
     ":services:storage"
 )
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
