@@ -29,9 +29,11 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 @ContributesBinding(scope = AppScope::class)
 @Inject
 class HymnalPrefsImpl(
-    private val context: Context,
+    context: Context,
     private val dispatcherProvider: DispatcherProvider
 ) : HymnalPrefs {
+
+    private val dataStore: DataStore<Preferences> by lazy { context.dataStore }
 
     override fun themeStyle(): Flow<ThemeStyle> =
         combine(
@@ -57,67 +59,67 @@ class HymnalPrefsImpl(
         }
     }
 
-    private val appTheme: Flow<AppTheme> = context.dataStore.data.map { preferences ->
+    private val appTheme: Flow<AppTheme> = dataStore.data.map { preferences ->
         AppTheme.fromName(preferences[PreferenceKeys.APP_THEME])
     }
 
-    private val textSize: Flow<Float> = context.dataStore.data.map { preferences ->
+    private val textSize: Flow<Float> = dataStore.data.map { preferences ->
         preferences[PreferenceKeys.FONT_SIZE] ?: DEFAULT_FONT_SIZE
     }
-    private val typeface: Flow<AppFont> = context.dataStore.data.map { preferences ->
+    private val typeface: Flow<AppFont> = dataStore.data.map { preferences ->
         AppFont.fromName(preferences[PreferenceKeys.TYPEFACE_NAME])
     }
 
-    private val dynamicColors: Flow<Boolean> = context.dataStore.data.map { preferences ->
+    private val dynamicColors: Flow<Boolean> = dataStore.data.map { preferences ->
         preferences[PreferenceKeys.DYNAMIC_COLORS] ?: false
     }
 
     private suspend fun updateAppTheme(theme: AppTheme) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PreferenceKeys.APP_THEME] = theme.name
         }
     }
 
     private suspend fun updateFontSize(newSize: Float) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PreferenceKeys.FONT_SIZE] = newSize
         }
     }
 
     private suspend fun updateTypeface(newTypefaceName: String) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PreferenceKeys.TYPEFACE_NAME] = newTypefaceName
         }
     }
 
     private suspend fun updateDynamicColors(dynamicColors: Boolean) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PreferenceKeys.DYNAMIC_COLORS] = dynamicColors
         }
     }
 
     override fun sabbathRemindersEnabled(): Flow<Boolean> {
-        return context.dataStore.data.map { preferences ->
+        return dataStore.data.map { preferences ->
             preferences[PreferenceKeys.SABBATH_REMINDER] ?: false
         }.flowOn(dispatcherProvider.io)
     }
 
     override suspend fun isSabbathRemindersEnabled(): Boolean {
         return withContext(dispatcherProvider.io) {
-            val preferences = context.dataStore.data.first()
+            val preferences = dataStore.data.first()
             preferences[PreferenceKeys.SABBATH_REMINDER] ?: false
         }
     }
 
     override suspend fun setSabbathRemindersEnabled(enabled: Boolean): Unit =
         withContext(dispatcherProvider.io) {
-        context.dataStore.edit { preferences ->
+            dataStore.edit { preferences ->
             preferences[PreferenceKeys.SABBATH_REMINDER] = enabled
         }
     }
 
     override fun currentHymnal(): Flow<Hymnal> {
-        return context.dataStore.data.map { preferences ->
+        return dataStore.data.map { preferences ->
             val year = preferences[PreferenceKeys.CURRENT_HYMNAL] ?: Hymnal.NewHymnal.year
             Hymnal.fromYear(year) ?: Hymnal.NewHymnal
         }.flowOn(dispatcherProvider.io)
@@ -125,10 +127,35 @@ class HymnalPrefsImpl(
 
     override suspend fun updateCurrentHymnal(hymnal: Hymnal): Unit =
         withContext(dispatcherProvider.io) {
-            context.dataStore.edit { preferences ->
+            dataStore.edit { preferences ->
                 preferences[PreferenceKeys.CURRENT_HYMNAL] = hymnal.year
             }
         }
+
+    override fun showLastHymn(): Flow<Boolean> {
+        return dataStore.data.map { preferences ->
+            preferences[PreferenceKeys.SHOW_LAST_HYMN] ?: false
+        }.flowOn(dispatcherProvider.io)
+    }
+
+    override suspend fun setShowLastHymn(enable: Boolean): Unit =
+        withContext(dispatcherProvider.io) {
+            dataStore.edit { preferences ->
+                preferences[PreferenceKeys.SHOW_LAST_HYMN] = enable
+            }
+        }
+
+    override fun lastHymnIndex(): Flow<String?> {
+        return dataStore.data.map { preferences ->
+            preferences[PreferenceKeys.LAST_HYMN_INDEX]
+        }
+    }
+
+    override suspend fun setLastHymnIndex(index: String): Unit = withContext(dispatcherProvider.io) {
+        dataStore.edit { preferences ->
+            preferences[PreferenceKeys.LAST_HYMN_INDEX] = index
+        }
+    }
 
     // Define preference keys
     private object PreferenceKeys {
@@ -138,6 +165,8 @@ class HymnalPrefsImpl(
         val TYPEFACE_NAME = stringPreferencesKey("typeface_name")
         val SABBATH_REMINDER = booleanPreferencesKey("sabbath_reminders_enabled")
         val CURRENT_HYMNAL = stringPreferencesKey("current_hymnal")
+        val SHOW_LAST_HYMN = booleanPreferencesKey("show_last_hymn_card")
+        val LAST_HYMN_INDEX = stringPreferencesKey("last_hymn_index")
     }
 
     // Default values

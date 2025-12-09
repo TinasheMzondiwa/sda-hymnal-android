@@ -4,6 +4,7 @@
 package hymnal.sing
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -58,6 +59,8 @@ class SingHymnPresenter(
 
         val topBarState = topBarStateProducer(navigator = navigator, hymn = hymn)
         val bottomBarState = bottomBarStateProducer(hymn) { hymnIndex = it }
+
+        LaunchedEffect(hymnIndex) { prefs.setLastHymnIndex(hymnIndex) }
 
         return when {
             hymn != null -> State.Content(
