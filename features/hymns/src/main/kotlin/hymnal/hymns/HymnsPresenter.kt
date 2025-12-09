@@ -36,6 +36,7 @@ class HymnsPresenter (
     @Assisted private val navigator: Navigator,
     private val contentProvider: HymnalContentProvider,
     private val hymnsStateProducer: HymnsStateProducer,
+    private val lastOpenedHymnStateProducer: LastOpenedHymnStateProducer,
     private val prefs: HymnalPrefs,
 ) : Presenter<State> {
     @Composable
@@ -76,6 +77,8 @@ class HymnsPresenter (
             sortType = sortType,
         )
 
+        val lastOpenedHymn = lastOpenedHymnStateProducer(navigator)
+
         return State(
             sortType = sortType,
             selectedCategory = selectedCategory,
@@ -83,6 +86,7 @@ class HymnsPresenter (
             filterItems = filterItems,
             hymns = filteredHymns,
             searchResults = searchResults.toImmutableList(),
+            lastOpenedHymn = lastOpenedHymn,
             overlayState = overlayState,
             eventSink = { event ->
                 when (event) {

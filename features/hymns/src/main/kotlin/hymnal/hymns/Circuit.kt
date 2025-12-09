@@ -25,6 +25,7 @@ data class State(
     val filterItems: ImmutableList<FilterItem>,
     val hymns: ImmutableList<Hymn>,
     val searchResults: ImmutableList<SearchResult>,
+    val lastOpenedHymn: OpenedHymnState,
     val overlayState: OverlayState?,
     val eventSink: (Event) -> Unit
 ) : CircuitUiState

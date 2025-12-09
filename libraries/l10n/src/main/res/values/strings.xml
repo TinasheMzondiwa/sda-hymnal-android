@@ -51,6 +51,7 @@
     <string name="info_rate_app">Rate the App</string>
     <string name="info_write_review">Write a Review</string>
     <string name="info_privacy_policy">Privacy Policy</string>
+    <string name="last_hymn">Last hymn</string>
     <string name="label_color">Color</string>
     <string name="label_description">Description (optional)</string>
     <string name="label_title">Title</string>
@@ -58,8 +59,8 @@
     <string name="more">More</string>
     <string name="nav_back">Navigate back</string>
     <string name="new_collection">New collection</string>
-    <string name="pref_last_hymn_desc">When enabled, the app will open to the last hymn you viewed.</string>
-    <string name="pref_last_hymn_title">Default to last viewed hymn</string>
+    <string name="pref_last_hymn_desc">When enabled, the app will show a quick access card for the last hymn you viewed.</string>
+    <string name="pref_last_hymn_title">Show last viewed hymn</string>
     <string name="pref_theme_dark">Dark</string>
     <string name="pref_theme_follow_system">Follow system</string>
     <string name="pref_theme_light">Light</string>

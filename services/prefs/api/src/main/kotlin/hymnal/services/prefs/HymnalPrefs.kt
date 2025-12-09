@@ -41,4 +41,18 @@ interface HymnalPrefs {
      */
     suspend fun updateCurrentHymnal(hymnal: Hymnal)
 
+    /**
+     * Whether the user has enabled the last hymn access card.
+     */
+    fun showLastHymn(): Flow<Boolean>
+
+    /**
+     * Updates the show last hymn preference.
+     */
+    suspend fun setShowLastHymn(enable: Boolean)
+
+    fun lastHymnIndex(): Flow<String?>
+
+    suspend fun setLastHymnIndex(index: String)
+
 }

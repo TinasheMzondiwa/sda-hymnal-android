@@ -4,10 +4,12 @@
 package hymnal.hymns
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -23,6 +25,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Dialpad
+import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
@@ -47,6 +50,7 @@ import com.slack.circuit.overlay.OverlayEffect
 import dev.zacsweers.metro.AppScope
 import hymnal.hymns.components.HymnCard
 import hymnal.hymns.components.HymnsTopAppBar
+import hymnal.hymns.components.LastHymnBar
 import hymnal.hymns.components.filters.ChooseHymnalOverlayContent
 import hymnal.hymns.components.filters.ChooseSortOverlayContent
 import hymnal.hymns.components.filters.FiltersRow
@@ -73,6 +77,7 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
     val horizontalPadding = HymnalDimens.horizontalPadding()
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val bottomAppBarScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
     val fabVisible by remember { derivedStateOf { !listState.isScrollInProgress } }
 
     HazeScaffold(
@@ -80,6 +85,30 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = { HymnsTopAppBar(state, Modifier, scrollBehavior) },
+        bottomBar = {
+            val barState = state.lastOpenedHymn
+            AnimatedVisibility(
+                visible = barState is OpenedHymnState.Visible,
+                modifier = Modifier.fillMaxWidth(),
+                enter = fadeIn(
+                    animationSpec = tween(
+                        durationMillis = 150,
+                        delayMillis = 50
+                    )
+                ) + slideInVertically { it },
+            ) {
+                when (barState) {
+                    OpenedHymnState.Hidden -> Unit
+                    is OpenedHymnState.Visible -> {
+                        LastHymnBar(
+                            state = barState,
+                            modifier = Modifier,
+                            scrollBehavior = bottomAppBarScrollBehavior,
+                        )
+                    }
+                }
+            }
+        },
         floatingActionButton = {
             AnimatedVisibility(
                 visible = fabVisible,
@@ -103,6 +132,7 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
         blurTopBar = true,
     ) { contentPadding ->
         LazyColumn(
+            modifier = Modifier.nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
             state = listState,
             contentPadding = contentPadding.plus(
                 layoutDirection = layoutDirection,
@@ -222,6 +252,7 @@ private fun Preview() {
                 filterItems = persistentListOf(),
                 hymns = persistentListOf(previewHymn, previewHymn.copy(index = "2")),
                 searchResults = persistentListOf(),
+                lastOpenedHymn = OpenedHymnState.Visible("100", 100, "Great is thy faithfulness") {},
                 overlayState = null,
                 eventSink = {},
             )
