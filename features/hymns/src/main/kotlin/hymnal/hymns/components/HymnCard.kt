@@ -177,6 +177,7 @@ internal val previewHymn = Hymn(
             ),
         ),
     ),
+    revision = 1,
 )
 
 @OptIn(ExperimentalSharedTransitionApi::class)

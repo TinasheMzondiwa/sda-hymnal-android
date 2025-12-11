@@ -17,4 +17,5 @@ data class Hymn(
     val authorLink: String?,
     val lyrics: List<HymnLyrics>,
     val year: String,
+    val revision: Int,
 )

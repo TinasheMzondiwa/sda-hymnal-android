@@ -46,7 +46,8 @@ internal suspend fun Storage.downloadHymns(hymnal: Hymnal): List<Hymn>? {
                         )
                         else -> null
                     }
-                }
+                },
+                revision = remoteHymn.revision ?: 1
             )
         }
     } catch (e: Exception) {

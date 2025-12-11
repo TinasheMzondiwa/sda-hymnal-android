@@ -81,6 +81,7 @@ class HymnalContentSyncProviderImpl(
                 author = hymn.author,
                 authorLink = hymn.authorLink,
                 year = hymn.year,
+                revision = hymn.revision
             )
 
             val lyricParts = hymn.lyrics.map { lyrics ->

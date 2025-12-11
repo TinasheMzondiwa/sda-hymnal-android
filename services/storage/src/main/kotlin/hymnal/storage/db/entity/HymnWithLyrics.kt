@@ -38,7 +38,8 @@ data class HymnWithLyrics(
                         lines = part.lines
                     )
                 }
-            }
+            },
+            revision = hymn.revision,
         )
     }
 }
