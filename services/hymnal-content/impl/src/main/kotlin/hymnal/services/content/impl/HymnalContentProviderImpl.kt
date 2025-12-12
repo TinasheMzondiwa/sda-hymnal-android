@@ -106,8 +106,12 @@ class HymnalContentProviderImpl(
 
     override suspend fun hymn(number: Int, year: String): Hymn? {
         return withContext(dispatcherProvider.io) {
-            hymnsDao.getHymnWithLyricsByNumber(number, year)
-                ?.toDomainHymn()
+            try {
+                hymnsDao.getHymnWithLyricsByNumber(number, year)?.toDomainHymn()
+            } catch (e: Exception) {
+                Timber.e(e)
+                null
+            }
         }
     }
 

@@ -5,8 +5,11 @@ package hymnal.sing.immersive
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.produceRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import dev.zacsweers.metro.AppScope
@@ -16,11 +19,11 @@ import dev.zacsweers.metro.AssistedInject
 import hymnal.services.content.HymnalContentProvider
 import hymnal.services.model.Hymn
 import hymnal.services.model.HymnLyrics
+import hymnal.sing.immersive.state.TopBarStateProducer
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.catch
 import timber.log.Timber
-import hymnal.sing.immersive.ImmersiveContentScreen.Event as UiEvent
 import hymnal.sing.immersive.ImmersiveContentScreen.State as UiState
 
 @AssistedInject
@@ -28,26 +31,24 @@ class ImmersiveContentPresenter(
     @Assisted private val navigator: Navigator,
     @Assisted private val screen: ImmersiveContentScreen,
     private val contentProvider: HymnalContentProvider,
+    private val topBarStateProducer: TopBarStateProducer,
 ) : Presenter<UiState> {
 
     @Composable
     override fun present(): UiState {
-        val pages by produceRetainedState(emptyList(), key1 = screen.hymnId) {
-            contentProvider.hymn(screen.hymnId)
+        var currentIndex by rememberRetained { mutableStateOf(screen.hymnId) }
+        val currentHymn by produceRetainedState<Hymn?>(null, key1 = currentIndex) {
+            contentProvider.hymn(currentIndex)
                 .catch { Timber.e(it) }
-                .collect {
-                    value = it?.toPages() ?: emptyList()
-                }
+                .collect { value = it }
         }
+
+        val topBarState = topBarStateProducer(navigator, currentHymn) { currentIndex = it }
 
         return UiState(
             showControls = screen.showControls,
-            pages = pages.toImmutableList(),
-            eventSink = { event ->
-                when (event) {
-                    UiEvent.OnNavBack -> navigator.pop()
-                }
-            }
+            topBarState = topBarState,
+            pages = currentHymn?.toPages()?.toImmutableList() ?: persistentListOf(),
         )
     }
 

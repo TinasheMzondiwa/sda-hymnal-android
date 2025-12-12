@@ -3,11 +3,13 @@
 
 package hymnal.libraries.navigation.number
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -27,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -127,6 +130,17 @@ fun PadContentUi(
     state: UiState,
     modifier: Modifier = Modifier,
 ) {
+    val orientation = LocalConfiguration.current.orientation
+
+    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        HorizontalPadContentUi(state, modifier)
+    } else {
+        VerticalPadContentUi(state, modifier)
+    }
+}
+
+@Composable
+private fun VerticalPadContentUi(state: UiState, modifier: Modifier = Modifier) {
     val hapticFeedback = LocalAppHapticFeedback.current
     val onNumberClick: (Int) -> Unit = { number ->
         hapticFeedback.performClick()
@@ -210,6 +224,103 @@ fun PadContentUi(
 }
 
 @Composable
+fun HorizontalPadContentUi(state: UiState, modifier: Modifier = Modifier) {
+    val hapticFeedback = LocalAppHapticFeedback.current
+    val onNumberClick: (Int) -> Unit = { number ->
+        hapticFeedback.performClick()
+        state.eventSink(UiEvent.OnNumberClicked(number))
+    }
+
+    Row(
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly) {
+                NumberButton(onClick = { onNumberClick(1) }, number = 1, Modifier.weight(1f))
+                NumberButton(onClick = { onNumberClick(2) }, number = 2, Modifier.weight(1f))
+                NumberButton(onClick = { onNumberClick(3) }, number = 3, Modifier.weight(1f))
+            }
+            Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+                NumberButton(onClick = { onNumberClick(4) }, number = 4, Modifier.weight(1f))
+                NumberButton(onClick = { onNumberClick(5) }, number = 5, Modifier.weight(1f))
+                NumberButton(onClick = { onNumberClick(6) }, number = 6, Modifier.weight(1f))
+            }
+            Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+                NumberButton(onClick = { onNumberClick(7) }, number = 7, Modifier.weight(1f))
+                NumberButton(onClick = { onNumberClick(8) }, number = 8, Modifier.weight(1f))
+                NumberButton(onClick = { onNumberClick(9) }, number = 9, Modifier.weight(1f))
+            }
+
+            NumberButton(
+                onClick = { onNumberClick(0) },
+                number = 0,
+                enabled = state.input.isNotEmpty(),
+            )
+        }
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(Modifier.size(48.dp))
+                Text(
+                    text = state.input,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 6.sp
+                    )
+                )
+
+                AnimatedVisibility(
+                    visible = state.input.isNotEmpty(),
+                    modifier = Modifier.sizeIn(48.dp, minHeight = 48.dp)
+                ) {
+                    IconButton(
+                        onClick = {
+                            hapticFeedback.performError()
+                            state.eventSink(UiEvent.OnBackspaceClicked)
+                        },
+                        enabled = state.input.isNotEmpty(),
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Rounded.Backspace,
+                            contentDescription = null
+                        )
+                    }
+                }
+            }
+
+            FilledTonalButton(onClick = {
+                hapticFeedback.performSuccess()
+                state.eventSink(UiEvent.OnConfirm)
+            }, enabled = state.input.isNotEmpty()) {
+                Text(
+                    text = stringResource(L10nR.string.submit),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun NumberButton(
     onClick: () -> Unit,
     number: Int,
@@ -237,6 +348,19 @@ private fun Preview() {
     HymnalTheme {
         Surface {
             PadContentUi(
+                state = UiState("25", {}),
+                modifier = Modifier
+            )
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun PreviewHorizontal() {
+    HymnalTheme {
+        Surface {
+            HorizontalPadContentUi(
                 state = UiState("25", {}),
                 modifier = Modifier
             )
