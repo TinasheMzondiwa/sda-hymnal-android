@@ -22,22 +22,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Clear
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -48,19 +40,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import dev.zacsweers.metro.AppScope
-import hymnal.ui.haptics.LocalAppHapticFeedback
+import hymnal.sing.components.tune.rememberTunePlayer
+import hymnal.sing.immersive.components.ImmersiveTopAppBar
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.scaffold.HazeScaffold
 import kotlinx.collections.immutable.persistentListOf
-import hymnal.sing.immersive.ImmersiveContentScreen.Event as UiEvent
 import hymnal.sing.immersive.ImmersiveContentScreen.State as UiState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @CircuitInject(ImmersiveContentScreen::class, AppScope::class)
 @Composable
 fun ImmersiveContent(state: UiState, modifier: Modifier = Modifier) {
-    val hapticFeedback = LocalAppHapticFeedback.current
     val contentColor = MaterialTheme.colorScheme.onSurface
+    val player = rememberTunePlayer(state.topBarState.number)
 
     HazeScaffold(
         modifier = modifier,
@@ -69,25 +60,9 @@ fun ImmersiveContent(state: UiState, modifier: Modifier = Modifier) {
                 visible = state.showControls,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                TopAppBar(
-                    title = {},
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                hapticFeedback.performClick()
-                                state.eventSink(UiEvent.OnNavBack)
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Clear,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent,
-                        scrolledContainerColor = Color.Transparent,
-                    )
+                ImmersiveTopAppBar(
+                    state = state.topBarState,
+                    player = player,
                 )
             }
         },
@@ -193,7 +168,14 @@ private fun Preview() {
     HymnalTheme {
         ImmersiveContent(
             state = UiState(
-                showControls = false,
+                showControls = true,
+                topBarState = TopBarState(
+                    number = 1,
+                    isTuneSupported = true,
+                    isPlayEnabled = true,
+                    overlayState = null,
+                    eventSink = {},
+                ),
                 pages = persistentListOf(
                     ContentPage(
                         lines = persistentListOf(
@@ -223,7 +205,6 @@ private fun Preview() {
                         )
                     )
                 ),
-                eventSink = {}
             )
         )
     }

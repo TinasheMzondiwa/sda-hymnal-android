@@ -7,6 +7,7 @@ import androidx.compose.runtime.Immutable
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
+import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.parcelize.Parcelize
 
@@ -14,13 +15,29 @@ import kotlinx.parcelize.Parcelize
 data class ImmersiveContentScreen(val hymnId: String, val showControls: Boolean) : Screen {
     data class State(
         val showControls: Boolean,
+        val topBarState: TopBarState,
         val pages: ImmutableList<ContentPage>,
-        val eventSink: (Event) -> Unit,
     ) : CircuitUiState
+}
 
-    sealed interface Event : CircuitUiEvent {
-        data object OnNavBack : Event
-    }
+data class TopBarState(
+    val number: Int,
+    val isTuneSupported: Boolean,
+    val isPlayEnabled: Boolean,
+    val overlayState: TopBarOverlayState?,
+    val eventSink: (Event) -> Unit,
+): CircuitUiState
+
+sealed interface Event : CircuitUiEvent {
+    data object OnNavBack : Event
+    data object OnGoToHymn : Event
+}
+
+sealed interface TopBarOverlayState : CircuitUiState {
+    data class NumberPadSheet(
+        val hymns: Int,
+        val onResult: (NumberPadBottomSheet.Result) -> Unit,
+    ) : TopBarOverlayState
 }
 
 @Immutable

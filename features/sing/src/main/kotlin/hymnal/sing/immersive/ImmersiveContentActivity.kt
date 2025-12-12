@@ -27,8 +27,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.foundation.Circuit
+import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.NavEvent
+import com.slack.circuit.overlay.ContentWithOverlays
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
@@ -102,23 +104,27 @@ class ImmersiveContentActivity(
             }
 
             HymnalTheme(darkTheme = isDarkTheme, dynamicColor = dynamicColors ?: false) {
-                CircuitContent(
-                    screen = ImmersiveContentScreen(
-                        hymnId = hymnId,
-                        showControls = controlsVisible
-                    ),
-                    circuit = circuit,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable { onClickStuff() },
-                    onNavEvent = { navEvent ->
-                        when (navEvent) {
-                            is NavEvent.Pop -> onBackPressedDispatcher.onBackPressed()
-                            else -> Unit
-                        }
-                    },
-                    key = hymnId,
-                )
+                CircuitCompositionLocals(circuit = circuit) {
+                    ContentWithOverlays {
+                        CircuitContent(
+                            screen = ImmersiveContentScreen(
+                                hymnId = hymnId,
+                                showControls = controlsVisible
+                            ),
+                            circuit = circuit,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable { onClickStuff() },
+                            onNavEvent = { navEvent ->
+                                when (navEvent) {
+                                    is NavEvent.Pop -> onBackPressedDispatcher.onBackPressed()
+                                    else -> Unit
+                                }
+                            },
+                            key = hymnId,
+                        )
+                    }
+                }
             }
 
             SystemUiEffect(lightStatusBar = !isDarkTheme)
