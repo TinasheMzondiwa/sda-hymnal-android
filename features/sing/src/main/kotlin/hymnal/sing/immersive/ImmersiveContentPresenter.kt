@@ -35,9 +35,7 @@ class ImmersiveContentPresenter(
         val pages by produceRetainedState(emptyList(), key1 = screen.hymnId) {
             contentProvider.hymn(screen.hymnId)
                 .catch { Timber.e(it) }
-                .collect {
-                    value = it?.toPages() ?: emptyList()
-                }
+                .collect { value = it?.toPages() ?: emptyList() }
         }
 
         return UiState(

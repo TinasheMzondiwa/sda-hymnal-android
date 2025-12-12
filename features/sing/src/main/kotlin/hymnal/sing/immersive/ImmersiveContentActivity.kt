@@ -6,17 +6,21 @@ package hymnal.sing.immersive
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -29,6 +33,9 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.binding
+import hymnal.services.prefs.HymnalPrefs
+import hymnal.services.prefs.model.AppTheme
+import hymnal.services.prefs.model.ThemeStyle
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import libraries.hymnal.di.ActivityKey
@@ -37,16 +44,15 @@ import libraries.hymnal.di.ActivityKey
 @ActivityKey(ImmersiveContentActivity::class)
 @Inject
 class ImmersiveContentActivity(
-    private val circuit: Circuit
+    private val circuit: Circuit,
+    private val prefs: HymnalPrefs,
 ) : ComponentActivity() {
 
     private val controlsVisible = MutableStateFlow(true)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
-        )
+        enableEdgeToEdge()
 
         val hymnId = intent?.getStringExtra(HYMN_ID) ?: return finish()
 
@@ -83,8 +89,19 @@ class ImmersiveContentActivity(
 
         setContent {
             val controlsVisible by controlsVisible.collectAsStateWithLifecycle(initialValue = true)
+            val themeStyle: ThemeStyle? by prefs.themeStyle()
+                .collectAsStateWithLifecycle(null)
+            val appTheme = themeStyle?.theme
+            val dynamicColors = themeStyle?.dynamicColors
 
-            HymnalTheme(darkTheme = true, dynamicColor = false) {
+            val isSystemInDarkTheme = isSystemInDarkTheme()
+            val isDarkTheme by remember(appTheme) {
+                derivedStateOf {
+                    appTheme == AppTheme.DARK || (appTheme == AppTheme.FOLLOW_SYSTEM && isSystemInDarkTheme)
+                }
+            }
+
+            HymnalTheme(darkTheme = isDarkTheme, dynamicColor = dynamicColors ?: false) {
                 CircuitContent(
                     screen = ImmersiveContentScreen(
                         hymnId = hymnId,
@@ -93,9 +110,7 @@ class ImmersiveContentActivity(
                     circuit = circuit,
                     modifier = Modifier
                         .fillMaxSize()
-                        .clickable {
-                            onClickStuff()
-                        },
+                        .clickable { onClickStuff() },
                     onNavEvent = { navEvent ->
                         when (navEvent) {
                             is NavEvent.Pop -> onBackPressedDispatcher.onBackPressed()
@@ -105,6 +120,8 @@ class ImmersiveContentActivity(
                     key = hymnId,
                 )
             }
+
+            SystemUiEffect(lightStatusBar = !isDarkTheme)
         }
     }
 
@@ -117,6 +134,27 @@ class ImmersiveContentActivity(
         ): Intent {
             return Intent(context, ImmersiveContentActivity::class.java).apply {
                 putExtra(HYMN_ID, hymnId)
+            }
+        }
+    }
+}
+
+@Composable
+private fun SystemUiEffect(
+    lightStatusBar: Boolean,
+    isSystemInDarkTheme: Boolean = isSystemInDarkTheme(),
+) {
+    val localView = LocalView.current
+    if (!localView.isInEditMode) {
+        DisposableEffect(lightStatusBar) {
+            val window = (localView.context as Activity).window
+            WindowCompat.getInsetsController(window, localView).isAppearanceLightStatusBars =
+                lightStatusBar
+            onDispose {
+                WindowCompat.getInsetsController(
+                    window,
+                    localView
+                ).isAppearanceLightStatusBars = !isSystemInDarkTheme
             }
         }
     }
