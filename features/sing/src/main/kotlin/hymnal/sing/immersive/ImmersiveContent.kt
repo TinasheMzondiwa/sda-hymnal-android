@@ -25,6 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -70,6 +71,11 @@ fun ImmersiveContent(state: UiState, modifier: Modifier = Modifier) {
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) {
         val pagerState = rememberPagerState { state.pages.size }
+
+        // Reset the pager to the first page whenever the list of pages changes
+        LaunchedEffect(state.pages) {
+            pagerState.animateScrollToPage(0)
+        }
 
         Box(modifier = Modifier.fillMaxSize()) {
 
