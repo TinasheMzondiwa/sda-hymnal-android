@@ -58,7 +58,8 @@ class HymnalContentSyncProviderImpl(
     private suspend fun syncHymnal(hymnal: Hymnal) {
         val hymns = hymnsDao.getAllHymns(hymnal.year)
 
-        if (hymns.isEmpty()) {
+        // Download hymns if not found in the database or we need to migrate NewHymnal to v2
+        if (hymns.isEmpty() || (hymnal == Hymnal.NewHymnal && hymns.any { it.hymn.revision == 1 })) {
             val downloadedHymns = supabase.storage.downloadHymns(hymnal)
             if (downloadedHymns != null) {
                 saveHymnsToDatabase(downloadedHymns)
