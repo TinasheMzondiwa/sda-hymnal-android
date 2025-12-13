@@ -10,7 +10,8 @@ import kotlinx.serialization.json.Json
 import timber.log.Timber
 
 private const val BUCKET_ID = "hymnals"
-private const val FILE_PATH = "sda-hymnal-db.json"
+private const val FILE_PATH = "sda-hymnal-db-v2.json"
+private const val FILE_PATH_CHORUSES = "choruses.json"
 private const val FILE_PATH_OLD_HYMN = "church-hymnal-db.json"
 
 internal suspend fun Storage.downloadHymns(hymnal: Hymnal): List<Hymn>? {
@@ -23,7 +24,8 @@ internal suspend fun Storage.downloadHymns(hymnal: Hymnal): List<Hymn>? {
             .downloadAuthenticated(path)
 
         val jsonString = bytes.decodeToString() // Convert ByteArray to String
-        val hymns: List<RemoteHymn> = Json.decodeFromString<List<RemoteHymn>>(jsonString)
+        val json = Json { ignoreUnknownKeys = true }
+        val hymns: List<RemoteHymn> = json.decodeFromString<List<RemoteHymn>>(jsonString)
 
         hymns.map { remoteHymn ->
             Hymn(
