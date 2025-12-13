@@ -42,13 +42,16 @@ class ImmersiveContentPresenter(
                 .catch { Timber.e(it) }
                 .collect { value = it }
         }
+        val pages = rememberRetained(currentHymn) {
+            currentHymn?.toPages()?.toImmutableList() ?: persistentListOf()
+        }
 
         val topBarState = topBarStateProducer(navigator, currentHymn) { currentIndex = it }
 
         return UiState(
             showControls = screen.showControls,
             topBarState = topBarState,
-            pages = currentHymn?.toPages()?.toImmutableList() ?: persistentListOf(),
+            pages = pages,
         )
     }
 
