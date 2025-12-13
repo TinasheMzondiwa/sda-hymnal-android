@@ -19,6 +19,7 @@ internal suspend fun Storage.downloadHymns(hymnal: Hymnal): List<Hymn>? {
         val path = when (hymnal) {
             Hymnal.OldHymnal -> FILE_PATH_OLD_HYMN
             Hymnal.NewHymnal -> FILE_PATH
+            Hymnal.Choruses -> FILE_PATH_CHORUSES
         }
         val bytes = from(BUCKET_ID)
             .downloadAuthenticated(path)
