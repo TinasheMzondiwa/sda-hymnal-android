@@ -4,8 +4,9 @@
 package hymnal.libraries.model
 
 enum class Hymnal(val year: String, val title: String, val hymns: Int) {
-    OldHymnal("1941", "The Church Hymnal (1941)", 703),
-    NewHymnal("1985", "Seventh-day Adventist Hymnal (1985)", 695);
+    OldHymnal("1941", "Church Hymnal (1941)", 703),
+    NewHymnal("1985", "Seventh-day Adventist Hymnal (1985)", 695),
+    Choruses("chorus", "Choruses", 68);
 
     companion object Companion {
         fun fromYear(year: String): Hymnal? = entries.associateBy(Hymnal::year)[year]

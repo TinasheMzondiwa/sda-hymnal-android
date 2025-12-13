@@ -107,5 +107,6 @@ internal val previewHymn = Hymn(
             ),
         ),
     ),
-    year = "1985"
+    year = "1985",
+    revision = 1,
 )

@@ -156,6 +156,7 @@ class CollectionsRepositoryImpl(
                     authorLink = hymn.authorLink,
                     year = hymn.year,
                     lyrics = emptyList(), // Purposely avoid loading lyrics in collections
+                    revision = hymn.revision,
                 )
             },
             created = collection.created,

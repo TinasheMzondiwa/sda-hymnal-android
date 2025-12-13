@@ -129,7 +129,4 @@ class BottomBarStateProducerImpl(
     }
 }
 
-internal fun Hymnal.hasTunes(): Boolean = when (this) {
-    Hymnal.OldHymnal -> false
-    Hymnal.NewHymnal -> true
-}
+internal fun Hymnal.hasTunes(): Boolean = this == Hymnal.NewHymnal

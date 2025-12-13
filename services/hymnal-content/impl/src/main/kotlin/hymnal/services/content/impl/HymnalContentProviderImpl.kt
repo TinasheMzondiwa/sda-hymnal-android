@@ -76,8 +76,11 @@ class HymnalContentProviderImpl(
                         add(HymnCategory("650–659", "Christian Home", 650, 659))
                         add(HymnCategory("660–695", "Sentences and Responses", 660, 695))
                     }
-                }
 
+                    Hymnal.Choruses -> {
+                        // No categories for choruses
+                    }
+                }
             }
 
             emit(categories)

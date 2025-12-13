@@ -24,6 +24,7 @@ internal data class RemoteHymn(
     val lyrics: List<LyricSection>,
     val author: String? = null,
     @SerialName("author_link") val authorLink: String? = null,
+    val revision: Int? = 1
 )
 
 @OptIn(InternalSerializationApi::class)

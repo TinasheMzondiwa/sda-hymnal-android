@@ -16,4 +16,5 @@ data class HymnEntity(
     val author: String?,
     val authorLink: String?,
     @ColumnInfo(defaultValue = "1985") val year: String,
+    @ColumnInfo(defaultValue = "1") val revision: Int,
 )
