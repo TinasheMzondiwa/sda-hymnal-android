@@ -330,19 +330,7 @@ fun SearchBarButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
 
                 Text(
                     text = stringResource(id = L10nR.string.search_hymnal),
-                    modifier = Modifier
-                        .sharedBounds(
-                            sharedContentState =
-                                rememberSharedContentState(
-                                    SearchSharedTransitionKey(
-                                        id = SearchSharedTransitionKey.FIELD_ID,
-                                        type = SearchSharedTransitionKey.ElementType.TextField,
-                                    )
-                                ),
-                            animatedVisibilityScope =
-                                requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                        )
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

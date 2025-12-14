@@ -7,11 +7,9 @@ data class SearchSharedTransitionKey(val id: String = BUTTON_ID, val type: Eleme
     enum class ElementType {
         Button,
         Icon,
-        TextField
     }
     companion object {
         const val BUTTON_ID = "search_button"
         const val ICON_ID = "search_icon"
-        const val FIELD_ID = "search_field"
     }
 }

@@ -46,6 +46,8 @@ class SearchPresenter(
         var query by rememberRetained { mutableStateOf("") }
         val recentHymns by rememberRecentHymns()
         var selectedHymnal by rememberRetained(hymnal) { mutableStateOf(hymnal) }
+        // local flag to prevent showing empty results during search debounce
+        var fetching by rememberRetained { mutableStateOf(false) }
 
         val searchResults by produceRetainedState(persistentListOf(), query) {
             if (query.isBlank()) {
@@ -53,11 +55,16 @@ class SearchPresenter(
                 return@produceRetainedState
             }
 
+            fetching = true
+
             delay(300)
 
             contentProvider.search(query)
                 .catch { Timber.e(it) }
-                .collect { hymns -> value = hymns.toImmutableList() }
+                .collect { hymns ->
+                    value = hymns.toImmutableList()
+                    fetching = false
+                }
         }
 
         val resultsFilters by rememberResultsFilters(hymnal, selectedHymnal, searchResults)
@@ -85,7 +92,7 @@ class SearchPresenter(
                 eventSink = eventSink,
             )
 
-            searchResults.isNotEmpty() -> State.SearchResults(
+            searchResults.isNotEmpty() || fetching -> State.SearchResults(
                 filters = resultsFilters,
                 hymns = searchResults
                     .filter { it.year == selectedHymnal.year }

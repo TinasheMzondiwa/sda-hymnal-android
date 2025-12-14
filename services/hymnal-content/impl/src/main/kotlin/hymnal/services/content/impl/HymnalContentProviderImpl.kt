@@ -98,10 +98,10 @@ class HymnalContentProviderImpl(
             }
     }
 
-    override fun hymn(index: String, ignoreRecent: Boolean): Flow<Hymn?> {
+    override fun hymn(index: String): Flow<Hymn?> {
         return hymnsDao.getHymnWithLyricsById(index)
             .onEach {
-                if (it != null && !ignoreRecent) {
+                if (it != null) {
                     addToRecent(index)
                 }
             }
@@ -129,8 +129,8 @@ class HymnalContentProviderImpl(
         }
     }
 
-    override fun recentHymns(): Flow<List<Hymn>> {
-        return hymnsDao.getRecentHymns()
+    override fun recentHymns(limit: Int): Flow<List<Hymn>> {
+        return hymnsDao.getRecentHymns(limit)
             .map { it.map(HymnWithLyrics::toDomainHymn) }
             .flowOn(dispatcherProvider.io)
             .catch {

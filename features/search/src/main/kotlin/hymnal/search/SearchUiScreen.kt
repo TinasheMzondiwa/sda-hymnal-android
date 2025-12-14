@@ -3,6 +3,13 @@
 
 package hymnal.search
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.speech.RecognizerIntent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.tween
@@ -24,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.History
+import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -71,6 +79,7 @@ import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.scaffold.HazeScaffold
 import kotlinx.collections.immutable.persistentListOf
+import timber.log.Timber
 import hymnal.libraries.l10n.R as L10nR
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,
@@ -83,6 +92,15 @@ fun SearchUiScreen(state: State, modifier: Modifier = Modifier) {
     val scrollBehavior =
         TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+
+    var textFieldValueState by remember(state.query) {
+        mutableStateOf(
+            TextFieldValue(
+                text = state.query,
+                selection = TextRange(state.query.length)
+            )
+        )
+    }
 
     SharedElementTransitionScope {
         HazeScaffold(
@@ -102,19 +120,12 @@ fun SearchUiScreen(state: State, modifier: Modifier = Modifier) {
                 TopAppBar(
                     title = {
                         SearchTextField(
-                            query = state.query,
-                            onQuery = { state.eventSink(Event.OnQueryChange(it)) },
-                            modifier = Modifier.sharedBounds(
-                                sharedContentState =
-                                    rememberSharedContentState(
-                                        SearchSharedTransitionKey(
-                                            id = SearchSharedTransitionKey.FIELD_ID,
-                                            type = SearchSharedTransitionKey.ElementType.TextField,
-                                        )
-                                    ),
-                                animatedVisibilityScope =
-                                    requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                            )
+                            textFieldValueState = textFieldValueState,
+                            onValueChange = {
+                                textFieldValueState = it
+                                state.eventSink(Event.OnQueryChange(it.text))
+                            },
+                            modifier = Modifier
                         )
                     },
                     navigationIcon = {
@@ -142,21 +153,24 @@ fun SearchUiScreen(state: State, modifier: Modifier = Modifier) {
                         }
                     },
                     actions = {
-                        AnimatedVisibility(
-                            visible = state.query.isNotEmpty(),
-                            enter = fadeIn(),
-                            exit = fadeOut(),
-                        ) {
-                            IconButton(onClick = {
+                        SearchTrailingIcon(
+                            state = if (textFieldValueState.text.isEmpty()) {
+                                SearchState.Empty
+                            } else {
+                                SearchState.Results
+                            },
+                            onVoiceQuery = { query ->
+                                textFieldValueState = TextFieldValue(
+                                    text = query,
+                                    selection = TextRange(query.length)
+                                )
+                                state.eventSink(Event.OnQueryChange(query))
+                            },
+                            onClearQuery = {
                                 hapticFeedback.performError()
                                 state.eventSink(Event.OnClearQuery)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Clear,
-                                    contentDescription = "Clear"
-                                )
                             }
-                        }
+                        )
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color.Transparent,
@@ -178,19 +192,11 @@ fun SearchUiScreen(state: State, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SearchTextField(
-    query: String,
-    onQuery: (String) -> Unit,
+    textFieldValueState: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
-    var textFieldValueState by remember(query) {
-        mutableStateOf(
-            TextFieldValue(
-                text = query,
-                selection = TextRange(query.length)
-            )
-        )
-    }
 
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart) {
         AnimatedVisibility(
@@ -211,10 +217,7 @@ private fun SearchTextField(
 
         BasicTextField(
             value = textFieldValueState,
-            onValueChange = { newTextFieldValue ->
-                textFieldValueState = newTextFieldValue
-                onQuery(newTextFieldValue.text)
-            },
+            onValueChange = onValueChange,
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester),
@@ -347,6 +350,70 @@ private fun SearchContent(
         }
     }
 }
+
+@Composable
+private fun SearchTrailingIcon(
+    state: SearchState,
+    modifier: Modifier = Modifier,
+    onVoiceQuery: (String) -> Unit = {},
+    onClearQuery: () -> Unit = {},
+) {
+    val hapticFeedback = LocalAppHapticFeedback.current
+    // Launcher for voice input
+    val voiceInputLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            val recognitionResults = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            recognitionResults?.firstOrNull()?.trim()?.takeIf { it.isNotBlank() }?.let { spokenText ->
+                onVoiceQuery(spokenText)
+            }
+        }
+    }
+
+    val voicePrompt = stringResource(id = L10nR.string.search_prompt_voice)
+    val voiceIntent: Intent = remember {
+        Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_PROMPT, voicePrompt)
+        }
+    }
+
+    AnimatedContent(targetState = state, modifier = modifier) { targetState ->
+        when (targetState) {
+            SearchState.Empty -> {
+                IconButton(onClick = {
+                    hapticFeedback.performClick()
+                    try {
+                        voiceInputLauncher.launch(voiceIntent)
+                    } catch (e: ActivityNotFoundException) {
+                        Timber.e(e, "Voice recognition not available")
+                    }
+                }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Mic,
+                        contentDescription = stringResource(id = L10nR.string.voice_search)
+                    )
+                }
+            }
+
+            SearchState.Results -> {
+                IconButton(onClick = {
+                    hapticFeedback.performClick()
+                    onClearQuery()
+                }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Clear,
+                        contentDescription = stringResource(id = L10nR.string.clear_search)
+                    )
+                }
+            }
+        }
+    }
+
+}
+
+private enum class SearchState { Empty, Results }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @PreviewLightDark
