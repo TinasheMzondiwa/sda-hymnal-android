@@ -10,13 +10,19 @@ import android.speech.RecognizerIntent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -52,11 +58,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.slack.circuit.sharedelements.PreviewSharedElementTransitionLayout
+import com.slack.circuit.sharedelements.SharedElementTransitionScope
+import hymnal.libraries.navigation.key.SearchSharedTransitionKey
 import hymnal.ui.extensions.LocalWindowWidthSizeClass
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
@@ -262,19 +276,92 @@ private fun SearchResultContent(result: SearchResult, modifier: Modifier = Modif
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@Composable
+fun SearchBarButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    SharedElementTransitionScope {
+        Surface(
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .windowInsetsPadding(SearchBarDefaults.windowInsets)
+                    .semantics { isTraversalGroup = true },
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ) {
+            Row(
+                modifier = Modifier
+                    .sharedElement(
+                        sharedContentState =
+                            rememberSharedContentState(
+                                SearchSharedTransitionKey(
+                                    type = SearchSharedTransitionKey.ElementType.Button,
+                                )
+                            ),
+                        animatedVisibilityScope =
+                            requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                    )
+                    .fillMaxWidth()
+                    .padding(start = 6.dp, end = 18.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        shape = SearchBarDefaults.inputFieldShape
+                    )
+                    .clip(SearchBarDefaults.inputFieldShape)
+                    .clickable(onClick = onClick, role = Role.Button)
+                    .padding(horizontal = 12.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Search,
+                    contentDescription = null,
+                    modifier = Modifier.sharedBounds(
+                        sharedContentState =
+                            rememberSharedContentState(
+                                SearchSharedTransitionKey(
+                                    id = SearchSharedTransitionKey.ICON_ID,
+                                    type = SearchSharedTransitionKey.ElementType.Icon,
+                                )
+                            ),
+                        animatedVisibilityScope =
+                            requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                    )
+                )
+
+                Text(
+                    text = stringResource(id = L10nR.string.search_hymnal),
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedContentState =
+                                rememberSharedContentState(
+                                    SearchSharedTransitionKey(
+                                        id = SearchSharedTransitionKey.FIELD_ID,
+                                        type = SearchSharedTransitionKey.ElementType.TextField,
+                                    )
+                                ),
+                            animatedVisibilityScope =
+                                requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                        )
+                        .fillMaxWidth(),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
 @PreviewLightDark
 @Composable
-private fun Preview() {
-    HymnalTheme {
-        Surface {
-            SearchResultContent(
-                result = SearchResult(
-                    index = "1",
-                    title = "Amazing Grace",
-                    number = 1
-                ),
-                modifier = Modifier.padding(16.dp),
-            )
+private fun PreviewSearchButton() {
+    PreviewSharedElementTransitionLayout {
+        HymnalTheme {
+            Surface {
+                SearchBarButton(
+                    onClick = {},
+                    modifier = Modifier.padding(16.dp),
+                )
+            }
         }
     }
 }

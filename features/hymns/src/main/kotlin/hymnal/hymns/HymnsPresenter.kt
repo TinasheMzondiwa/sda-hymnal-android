@@ -17,10 +17,10 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
-import hymnal.hymns.components.SearchResult
 import hymnal.hymns.components.filters.FilterItem
 import hymnal.libraries.model.Hymnal
 import hymnal.libraries.navigation.HymnsScreen
+import hymnal.libraries.navigation.SearchScreen
 import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.content.HymnalContentProvider
@@ -47,7 +47,6 @@ class HymnsPresenter (
                 .catch { Timber.e(it) }
                 .collect { value = it }
         }
-        var searchQuery by rememberRetained { mutableStateOf("") }
         val hymns by produceRetainedState(emptyList(), hymnal) {
             contentProvider.hymns(hymnal.year)
                 .catch { Timber.e(it) }
@@ -57,11 +56,6 @@ class HymnsPresenter (
             contentProvider.categories(hymnal.year)
                 .catch { Timber.e(it) }
                 .collect { value = it }
-        }
-        val searchResults by produceRetainedState(emptyList(), searchQuery, hymnal) {
-            contentProvider.search(searchQuery, hymnal.year)
-                .catch { Timber.e(it) }
-                .collect { hymn -> value = hymn.map { SearchResult(it) } }
         }
 
         var sortType by rememberRetained { mutableStateOf(SortType.NUMBER) }
@@ -85,18 +79,12 @@ class HymnsPresenter (
             categories = categories.toImmutableList(),
             filterItems = filterItems,
             hymns = filteredHymns,
-            searchResults = searchResults.toImmutableList(),
             lastOpenedHymn = lastOpenedHymn,
             overlayState = overlayState,
             eventSink = { event ->
                 when (event) {
+                    Event.OnSearch -> navigator.goTo(SearchScreen)
                     is Event.OnCategorySelected -> selectedCategory = event.category
-                    is Event.OnQueryChanged -> {
-                        searchQuery = event.query.trim()
-                    }
-                    is Event.OnSearchResultClicked -> {
-                        navigator.goTo(SingHymnScreen(event.result.index))
-                    }
                     is Event.OnFilterItemClicked -> {
                         overlayState = when (event.item) {
                             is FilterItem.Hymnal -> OverlayState.ChooseHymnalSheet(
