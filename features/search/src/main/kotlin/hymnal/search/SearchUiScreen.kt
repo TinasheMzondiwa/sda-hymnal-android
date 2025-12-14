@@ -366,7 +366,7 @@ private fun SearchTrailingIcon(
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
             val recognitionResults = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            recognitionResults?.firstOrNull()?.trim()?.takeIf { it.isNotEmpty() }?.let { spokenText ->
+            recognitionResults?.firstOrNull()?.trim()?.takeIf { it.isNotBlank() }?.let { spokenText ->
                 onVoiceQuery(spokenText)
             }
         }
