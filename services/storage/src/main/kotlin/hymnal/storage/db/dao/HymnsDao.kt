@@ -44,16 +44,21 @@ interface HymnsDao : BaseDao<HymnEntity> {
         val lyricsWithOwnerId = lyricParts.map { it.copy(hymnOwnerId = hymn.hymnId) }
         internalInsertLyricParts(lyricsWithOwnerId)
 
-        // Prepare FTS data including title, number, and lyrics
+        // Prepare FTS data
         val lyricsText = lyricsWithOwnerId.joinToString(separator = "\n") { lyricPart ->
             lyricPart.lines.joinToString(separator = "\n")
         }
-        // Combine title, number (as string), major key, author, and lyrics for FTS
-        val searchableContent = "${hymn.title}\n${hymn.number}\n${hymn.majorKey.orEmpty()}\n${hymn.author.orEmpty()}\n$lyricsText"
+        // Content for the 'content' column (everything except the title)
+        val otherContent = "${hymn.number}\n${hymn.majorKey.orEmpty()}\n${hymn.author.orEmpty()}\n$lyricsText"
 
-        if (searchableContent.isNotBlank()) {
-            insertHymnFts(HymnFtsEntity(hymnId = hymn.hymnId, lyricsContent = searchableContent))
-        }
+        // Insert into the FTS table with separate columns
+        insertHymnFts(
+            HymnFtsEntity(
+                hymnId = hymn.hymnId,
+                title = hymn.title,
+                lyricsContent = otherContent
+            )
+        )
     }
 
     @Transaction
@@ -77,15 +82,31 @@ interface HymnsDao : BaseDao<HymnEntity> {
     fun getHymnsWithLyricsInRange(numbers: List<Int>, year: String): Flow<List<HymnWithLyrics>>
 
     /**
-     * Searches hymns based on lyrics content.
+     * Searches hymns based on lyrics content, prioritizing title matches.
      * The query should be a valid FTS query string (e.g., "search term", "search* term", etc.).
      */
     @Transaction
     @Query("""
-        SELECT h.* FROM hymns h
-        JOIN hymns_fts fts ON h.hymnId = fts.hymnId
-        WHERE fts.lyricsContent MATCH :query
-    """)
+    SELECT h.* FROM hymns h
+    JOIN (
+        -- Priority 1: Matches in the TITLE
+        SELECT hymnId, 1 AS rank_score 
+        FROM hymns_fts 
+        WHERE title MATCH :query
+        
+        UNION ALL
+        
+        -- Priority 2: Matches in the LYRICS
+        SELECT hymnId, 2 AS rank_score 
+        FROM hymns_fts 
+        WHERE lyricsContent MATCH :query
+    ) AS fts_hits ON h.hymnId = fts_hits.hymnId
+    
+    -- Grouping handles cases where a hymn matches BOTH title and lyrics.
+    -- We keep the MIN(rank_score) so it counts as a "Priority 1" match.
+    GROUP BY h.hymnId 
+    ORDER BY MIN(fts_hits.rank_score) ASC, h.number ASC
+""")
     fun searchLyrics(query: String): Flow<List<HymnWithLyrics>>
 }
 
