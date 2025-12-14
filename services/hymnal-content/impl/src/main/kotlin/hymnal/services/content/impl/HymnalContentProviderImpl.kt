@@ -87,8 +87,8 @@ class HymnalContentProviderImpl(
         }
     }
 
-    override fun search(query: String, year: String): Flow<List<Hymn>> {
-        return hymnsDao.searchLyrics(query, year)
+    override fun search(query: String): Flow<List<Hymn>> {
+        return hymnsDao.searchLyrics(query)
             .map { it.map(HymnWithLyrics::toDomainHymn) }
             .flowOn(dispatcherProvider.io)
             .catch {

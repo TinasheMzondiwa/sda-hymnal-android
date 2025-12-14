@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface HymnalContentProvider {
     fun hymns(year: String): Flow<List<Hymn>>
     fun categories(year: String): Flow<List<HymnCategory>>
-    fun search(query: String, year: String): Flow<List<Hymn>>
+    fun search(query: String): Flow<List<Hymn>>
     fun hymn(index: String): Flow<Hymn?>
     suspend fun hymn(number: Int, year: String): Hymn?
     fun sabbathHymns(): Flow<List<Hymn>>

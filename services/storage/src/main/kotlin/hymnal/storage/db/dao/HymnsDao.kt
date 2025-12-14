@@ -85,8 +85,7 @@ interface HymnsDao : BaseDao<HymnEntity> {
         SELECT h.* FROM hymns h
         JOIN hymns_fts fts ON h.hymnId = fts.hymnId
         WHERE fts.lyricsContent MATCH :query
-        AND h.year = :year
     """)
-    fun searchLyrics(query: String, year: String): Flow<List<HymnWithLyrics>>
+    fun searchLyrics(query: String): Flow<List<HymnWithLyrics>>
 }
 
