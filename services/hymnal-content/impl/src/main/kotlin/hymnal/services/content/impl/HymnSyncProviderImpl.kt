@@ -40,7 +40,7 @@ class HymnSyncProviderImpl(
     override fun invoke(index: String) {
         scope.launch(exceptionLogger) {
             // Caller guarantees existence, so this safe-guard is fine
-            val hymn = hymnsDao.get(index) ?: return@launch
+            val (hymn, _) = hymnsDao.get(index) ?: return@launch
 
             val model = supabase
                 .from(REVISIONS_TABLE)
@@ -49,12 +49,12 @@ class HymnSyncProviderImpl(
                 }
                 .decodeSingleOrNull<ApiHymnRevision>() ?: return@launch
 
-            if (model.revision > hymn.hymn.revision) {
+            if (model.revision > hymn.revision) {
                 val apiHymn = json.decodeFromJsonElement<RemoteHymn>(model.payload)
 
                 saveHymnToDatabase(
                     hymn = apiHymn,
-                    year = hymn.hymn.year,
+                    year = hymn.year,
                     revision = model.revision,
                 )
             } else {
