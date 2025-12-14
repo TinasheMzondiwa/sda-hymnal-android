@@ -20,6 +20,7 @@
     <string name="back">Back</string>
     <string name="cancel">Cancel</string>
     <string name="chorus">Chorus</string>
+    <string name="chorus_number"># %1d</string>
     <string name="clear_search">Clear search</string>
     <string name="collections">Collections</string>
     <string name="community">Community</string>

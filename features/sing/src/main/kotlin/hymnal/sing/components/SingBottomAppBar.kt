@@ -219,7 +219,7 @@ private fun HymnNavigationButton(
             colors = textButtonColors,
         ) {
             Text(
-                text = stringResource(L10nR.string.hymn_number, state.number),
+                text = stringResource(state.titleLabelRes, state.number),
                 style = MaterialTheme.typography.titleMediumEmphasized.copy(
                     fontWeight = FontWeight.Bold
                 )
@@ -266,6 +266,7 @@ private fun Preview() {
                     number = 123,
                     previousEnabled = true,
                     nextEnabled = false,
+                    titleLabelRes = L10nR.string.hymn_number,
                     overlayState = null,
                     eventSink = {}
                 )
@@ -288,6 +289,7 @@ private fun PreviewNoTune() {
                     number = 100,
                     previousEnabled = true,
                     nextEnabled = false,
+                    titleLabelRes = L10nR.string.chorus_number,
                     overlayState = null,
                     eventSink = {}
                 )

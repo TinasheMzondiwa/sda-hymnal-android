@@ -4,6 +4,7 @@
 package hymnal.sing
 
 import android.content.Context
+import androidx.annotation.StringRes
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
@@ -58,6 +59,7 @@ data class BottomBarState(
     val showTuneToolTip: Boolean,
     val previousEnabled: Boolean,
     val nextEnabled: Boolean,
+    @param:StringRes val titleLabelRes: Int,
     val overlayState: BottomBarOverlayState?,
     val eventSink: (Event) -> Unit,
 ) : CircuitUiState {

@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import hymnal.libraries.l10n.R as L10nR
 
 @Stable
 interface BottomBarStateProducer {
@@ -82,6 +83,11 @@ class BottomBarStateProducerImpl(
             showTuneToolTip = showTuneTooltip,
             previousEnabled = hymn?.let { it.number > 1 } ?: false,
             nextEnabled = hymn?.let { it.number < hymnal.hymns } ?: false,
+            titleLabelRes = if (hymnal == Hymnal.Choruses) {
+                L10nR.string.chorus_number
+            } else {
+                L10nR.string.hymn_number
+            },
             overlayState = overlayState,
             eventSink = { event ->
                 when (event) {
