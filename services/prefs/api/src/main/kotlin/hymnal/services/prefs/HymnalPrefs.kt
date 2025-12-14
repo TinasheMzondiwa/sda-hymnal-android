@@ -51,8 +51,4 @@ interface HymnalPrefs {
      */
     suspend fun setShowLastHymn(enable: Boolean)
 
-    fun lastHymnIndex(): Flow<String?>
-
-    suspend fun setLastHymnIndex(index: String)
-
 }

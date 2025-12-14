@@ -64,22 +64,20 @@ class LastOpenedHymnStateProducerImpl(
         val lastHymn by produceRetainedState<OpenedHymn?>(null) {
             combine(
                 prefs.showLastHymn(),
-                prefs.lastHymnIndex(),
-            ) { defaultToLastHymn, lastHymnIndex ->
-                defaultToLastHymn to lastHymnIndex
-            }.flatMapLatest { (defaultToLastHymn, lastHymnIndex) ->
-                if (defaultToLastHymn && lastHymnIndex != null) {
-                    contentProvider.hymn(index = lastHymnIndex, ignoreRecent = true)
-                        .filterNotNull()
-                        .map { hymn ->
-                            OpenedHymn(
-                                index = hymn.index,
-                                number = hymn.number,
-                                title = hymn.title,
-                            )
-                        }
+                contentProvider.recentHymns(limit = 1),
+            ) { defaultToLastHymn, hymns ->
+                defaultToLastHymn to hymns
+            }.map { (defaultToLastHymn, hymns) ->
+                if (defaultToLastHymn) {
+                    hymns.firstOrNull()?.let { hymn ->
+                        OpenedHymn(
+                            index = hymn.index,
+                            number = hymn.number,
+                            title = hymn.title,
+                        )
+                    }
                 } else {
-                    flowOf(null)
+                    null
                 }
             }
                 .catch { Timber.e(it) }

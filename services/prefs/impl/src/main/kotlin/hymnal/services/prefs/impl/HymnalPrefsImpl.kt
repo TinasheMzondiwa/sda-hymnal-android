@@ -145,18 +145,6 @@ class HymnalPrefsImpl(
             }
         }
 
-    override fun lastHymnIndex(): Flow<String?> {
-        return dataStore.data.map { preferences ->
-            preferences[PreferenceKeys.LAST_HYMN_INDEX]
-        }
-    }
-
-    override suspend fun setLastHymnIndex(index: String): Unit = withContext(dispatcherProvider.io) {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.LAST_HYMN_INDEX] = index
-        }
-    }
-
     // Define preference keys
     private object PreferenceKeys {
         val APP_THEME = stringPreferencesKey("app_theme")
@@ -166,7 +154,6 @@ class HymnalPrefsImpl(
         val SABBATH_REMINDER = booleanPreferencesKey("sabbath_reminders_enabled")
         val CURRENT_HYMNAL = stringPreferencesKey("current_hymnal")
         val SHOW_LAST_HYMN = booleanPreferencesKey("show_last_hymn_card")
-        val LAST_HYMN_INDEX = stringPreferencesKey("last_hymn_index")
     }
 
     // Default values
