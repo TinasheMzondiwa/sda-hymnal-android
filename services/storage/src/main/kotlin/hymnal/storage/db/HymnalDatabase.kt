@@ -17,6 +17,7 @@ import hymnal.storage.db.entity.CollectionHymnCrossRef
 import hymnal.storage.db.entity.HymnEntity
 import hymnal.storage.db.entity.HymnFtsEntity
 import hymnal.storage.db.entity.LyricPartEntity
+import hymnal.storage.db.entity.RecentHymnEntity
 import hymnal.storage.db.entity.SabbathResourceEntity
 import hymnal.storage.db.entity.SabbathTimesEntity
 
@@ -29,8 +30,9 @@ import hymnal.storage.db.entity.SabbathTimesEntity
         CollectionHymnCrossRef::class,
         SabbathTimesEntity::class,
         SabbathResourceEntity::class,
+        RecentHymnEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
@@ -38,6 +40,7 @@ import hymnal.storage.db.entity.SabbathTimesEntity
         AutoMigration(from = 3, to = 4),
         AutoMigration(from = 4, to = 5),
         AutoMigration(from = 5, to = 6),
+        AutoMigration(from = 7, to = 8),
     ],
 )
 internal abstract class HymnalDatabase : RoomDatabase() {

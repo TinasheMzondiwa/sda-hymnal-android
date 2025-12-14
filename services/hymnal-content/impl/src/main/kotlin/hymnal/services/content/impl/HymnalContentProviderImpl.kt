@@ -17,6 +17,7 @@ import hymnal.services.model.HymnCategory
 import hymnal.storage.db.dao.HymnsDao
 import hymnal.storage.db.dao.SabbathResourceDao
 import hymnal.storage.db.entity.HymnWithLyrics
+import hymnal.storage.db.entity.RecentHymnEntity
 import hymnal.storage.db.entity.SabbathResourceEntity
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
@@ -97,14 +98,24 @@ class HymnalContentProviderImpl(
             }
     }
 
-    override fun hymn(index: String): Flow<Hymn?> {
+    override fun hymn(index: String, ignoreRecent: Boolean): Flow<Hymn?> {
         return hymnsDao.getHymnWithLyricsById(index)
+            .onEach {
+                if (it != null && !ignoreRecent) {
+                    addToRecent(index)
+                }
+            }
             .map { it?.toDomainHymn() }
             .flowOn(dispatcherProvider.io)
             .catch {
                 Timber.e(it)
                 emit(null)
             }
+    }
+
+    private suspend fun addToRecent(hymnId: String) = withContext(dispatcherProvider.io) {
+        hymnsDao.insertRecentHymn(RecentHymnEntity(hymnId = hymnId))
+        hymnsDao.trimRecentHistory()
     }
 
     override suspend fun hymn(number: Int, year: String): Hymn? {

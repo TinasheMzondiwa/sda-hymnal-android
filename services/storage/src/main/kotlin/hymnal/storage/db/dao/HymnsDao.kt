@@ -12,6 +12,7 @@ import hymnal.storage.db.entity.HymnEntity
 import hymnal.storage.db.entity.HymnFtsEntity
 import hymnal.storage.db.entity.HymnWithLyrics
 import hymnal.storage.db.entity.LyricPartEntity
+import hymnal.storage.db.entity.RecentHymnEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -108,5 +109,30 @@ interface HymnsDao : BaseDao<HymnEntity> {
     ORDER BY MIN(fts_hits.rank_score) ASC, h.number ASC
 """)
     fun searchLyrics(query: String): Flow<List<HymnWithLyrics>>
+
+    /**
+     * Get recent hymns: Joins the tables and sorts by time
+     */
+    @Query(
+        """
+        SELECT hymns.* FROM hymns 
+        INNER JOIN recent_hymns ON hymns.hymnId = recent_hymns.hymnId 
+        ORDER BY recent_hymns.accessedAt DESC 
+        LIMIT :limit
+    """
+    )
+    fun getRecentHymns(limit: Int = 10): Flow<List<HymnEntity>>
+
+    /**
+     * Add/Update history: "REPLACE" updates the timestamp if the ID already exists
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertRecentHymn(recent: RecentHymnEntity)
+
+    /**
+     * Maintenance: Keep history clean by deleting old entries
+     */
+    @Query("DELETE FROM recent_hymns WHERE hymnId NOT IN (SELECT hymnId FROM recent_hymns ORDER BY accessedAt DESC LIMIT 50)")
+    suspend fun trimRecentHistory()
 }
 
