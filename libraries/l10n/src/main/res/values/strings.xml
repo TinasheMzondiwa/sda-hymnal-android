@@ -86,6 +86,8 @@
     <string name="save_to_collection">Save to collection</string>
     <string name="search_hymnal">Search Hymnal</string>
     <string name="search_prompt_voice">Speak to search</string>
+    <string name="search_query">Title, lyrics, or number...</string>
+    <string name="search_results_empty">No hymns found</string>
     <string name="settings">Settings</string>
     <string name="settings_text_size">Text size</string>
     <string name="settings_theme">Theme</string>
