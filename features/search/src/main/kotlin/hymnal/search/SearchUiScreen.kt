@@ -22,8 +22,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Clear
-import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -284,8 +285,10 @@ private fun SearchContent(
                             contentPadding = PaddingValues(horizontal = 20.dp)
                         ) {
                             items(state.filters, { it.year }) { filter ->
-                                ElevatedFilterChip(
-                                    selected = filter.selected,
+                                val selected = filter.selected
+
+                                FilterChip(
+                                    selected = selected,
                                     onClick = {
                                         hapticFeedback.performToggleSwitch(!filter.selected)
                                         state.eventSink(Event.OnFilterChange(filter))
@@ -295,7 +298,12 @@ private fun SearchContent(
                                             text = filter.label,
                                             fontWeight = FontWeight.Medium,
                                         )
-                                    }
+                                    },
+                                    border = FilterChipDefaults.filterChipBorder(
+                                        enabled = true,
+                                        selected = selected,
+                                        selectedBorderColor = MaterialTheme.colorScheme.primary
+                                    )
                                 )
                             }
                         }
@@ -321,6 +329,26 @@ private fun Preview() {
     PreviewSharedElementTransitionLayout {
         HymnalTheme {
             SearchUiScreen(State.RecentHymns(hymns = persistentListOf(), query = "sing") {})
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@PreviewLightDark
+@Composable
+private fun PreviewResults() {
+    PreviewSharedElementTransitionLayout {
+        HymnalTheme {
+            SearchUiScreen(
+                State.SearchResults(
+                    filters = persistentListOf(
+                        FilterItem(selected = true, label = "New hymnal", year = "1985"),
+                        FilterItem(selected = false, label = "Old hymnal", year = "1941"),
+                        FilterItem(selected = false, label = "Choruses", year = "chorus")
+                    ),
+                    hymns = persistentListOf(previewHymn), query = "sing"
+                ) {}
+            )
         }
     }
 }
