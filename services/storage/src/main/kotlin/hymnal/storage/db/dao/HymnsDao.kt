@@ -121,7 +121,7 @@ interface HymnsDao : BaseDao<HymnEntity> {
         LIMIT :limit
     """
     )
-    fun getRecentHymns(limit: Int = 10): Flow<List<HymnEntity>>
+    fun getRecentHymns(limit: Int = 10): Flow<List<HymnWithLyrics>>
 
     /**
      * Add/Update history: "REPLACE" updates the timestamp if the ID already exists

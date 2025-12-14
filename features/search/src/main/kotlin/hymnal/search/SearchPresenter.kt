@@ -44,7 +44,7 @@ class SearchPresenter(
                 .collect { value = it }
         }
         var query by rememberRetained { mutableStateOf("") }
-        val recentHymns by rememberRetained { mutableStateOf<ImmutableList<Hymn>>(persistentListOf()) }
+        val recentHymns by rememberRecentHymns()
         var selectedHymnal by rememberRetained(hymnal) { mutableStateOf(hymnal) }
 
         val searchResults by produceRetainedState(persistentListOf(), query) {
@@ -99,6 +99,13 @@ class SearchPresenter(
                 eventSink = eventSink,
             )
         }
+    }
+
+    @Composable
+    private fun rememberRecentHymns() = produceRetainedState(persistentListOf()) {
+        contentProvider.recentHymns()
+            .catch { Timber.e(it) }
+            .collect { hymns -> value = hymns.toImmutableList() }
     }
 
     @Composable

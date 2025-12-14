@@ -40,7 +40,7 @@ import hymnal.storage.db.entity.SabbathTimesEntity
         AutoMigration(from = 3, to = 4),
         AutoMigration(from = 4, to = 5),
         AutoMigration(from = 5, to = 6),
-        AutoMigration(from = 7, to = 8),
+        AutoMigration(from = 6, to = 7),
     ],
 )
 internal abstract class HymnalDatabase : RoomDatabase() {

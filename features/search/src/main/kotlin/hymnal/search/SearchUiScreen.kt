@@ -11,6 +11,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.History
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -265,6 +267,30 @@ private fun SearchContent(
             }
 
             is State.RecentHymns -> {
+
+                if (state.hymns.isNotEmpty()) {
+                    item("recent-hymns") {
+                        Row(
+                            modifier = Modifier
+                                .animateItem()
+                                .padding(horizontal = 20.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.History,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Text(
+                                text = stringResource(L10nR.string.recent_hymns),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
+
                 items(items = state.hymns, key = { it.index }) { hymn ->
                     HymnResult(
                         hymn = hymn,
@@ -328,7 +354,11 @@ private fun SearchContent(
 private fun Preview() {
     PreviewSharedElementTransitionLayout {
         HymnalTheme {
-            SearchUiScreen(State.RecentHymns(hymns = persistentListOf(), query = "sing") {})
+            SearchUiScreen(
+                State.RecentHymns(
+                    hymns = persistentListOf(previewHymn),
+                    query = "sing"
+                ) {})
         }
     }
 }

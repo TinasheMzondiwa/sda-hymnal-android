@@ -129,6 +129,16 @@ class HymnalContentProviderImpl(
         }
     }
 
+    override fun recentHymns(): Flow<List<Hymn>> {
+        return hymnsDao.getRecentHymns()
+            .map { it.map(HymnWithLyrics::toDomainHymn) }
+            .flowOn(dispatcherProvider.io)
+            .catch {
+                Timber.e(it)
+                emit(emptyList())
+            }
+    }
+
     override fun sabbathHymns(): Flow<List<Hymn>> {
         val numbers = buildList {
             add(40)
