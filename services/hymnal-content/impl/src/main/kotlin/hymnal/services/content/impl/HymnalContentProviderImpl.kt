@@ -8,6 +8,7 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.coroutines.DispatcherProvider
 import hymnal.libraries.model.Hymnal
+import hymnal.libraries.model.HymnalAppConfig
 import hymnal.libraries.model.SabbathResource
 import hymnal.services.content.HymnSyncProvider
 import hymnal.services.content.HymnalContentProvider
@@ -40,6 +41,7 @@ import java.time.temporal.WeekFields
 @ContributesBinding(AppScope::class)
 @Inject
 class HymnalContentProviderImpl(
+    private val appConfig: HymnalAppConfig,
     private val hymnsDao: HymnsDao,
     private val dispatcherProvider: DispatcherProvider,
     private val supabase: SupabaseClient,
@@ -124,7 +126,9 @@ class HymnalContentProviderImpl(
         hymnsDao.insertRecentHymn(RecentHymnEntity(hymnId = index))
         hymnsDao.trimRecentHistory()
 
-        hymnSyncProvider(index)
+        if (appConfig.syncHymnsEnabled) {
+            hymnSyncProvider(index)
+        }
     }
 
     override suspend fun hymn(number: Int, year: String): Hymn? {
@@ -183,7 +187,7 @@ class HymnalContentProviderImpl(
                 .select(
                     request = { filter { ApiSabbathResource::week eq week } }
                 )
-                .decodeSingle<ApiSabbathResource>()
+                .decodeSingleOrNull<ApiSabbathResource>() ?: return@withContext
 
             sabbathResourceDao.insertAll(model.toEntity())
         } catch (e: Exception) {
