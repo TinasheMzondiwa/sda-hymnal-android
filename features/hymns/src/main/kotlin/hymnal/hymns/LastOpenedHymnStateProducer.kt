@@ -69,7 +69,7 @@ class LastOpenedHymnStateProducerImpl(
                 defaultToLastHymn to lastHymnIndex
             }.flatMapLatest { (defaultToLastHymn, lastHymnIndex) ->
                 if (defaultToLastHymn && lastHymnIndex != null) {
-                    contentProvider.hymn(lastHymnIndex)
+                    contentProvider.hymn(index = lastHymnIndex, ignoreRecent = true)
                         .filterNotNull()
                         .map { hymn ->
                             OpenedHymn(

@@ -105,6 +105,7 @@ dependencies {
     implementation(projects.features.more)
     implementation(projects.features.sabbath)
     implementation(projects.features.sabbath.widget)
+    implementation(projects.features.search)
     implementation(projects.features.settings)
     implementation(projects.features.sing)
     implementation(projects.libraries.coreUi)

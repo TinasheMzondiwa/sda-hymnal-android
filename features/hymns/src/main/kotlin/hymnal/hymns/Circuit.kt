@@ -7,7 +7,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
-import hymnal.hymns.components.SearchResult
 import hymnal.hymns.components.filters.FilterItem
 import hymnal.libraries.model.Hymnal
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
@@ -24,18 +23,16 @@ data class State(
     val categories: ImmutableList<HymnCategory>,
     val filterItems: ImmutableList<FilterItem>,
     val hymns: ImmutableList<Hymn>,
-    val searchResults: ImmutableList<SearchResult>,
     val lastOpenedHymn: OpenedHymnState,
     val overlayState: OverlayState?,
     val eventSink: (Event) -> Unit
 ) : CircuitUiState
 
 sealed interface Event : CircuitUiEvent {
+    data object OnSearch : Event
     data class OnCategorySelected(val category: HymnCategory) : Event
-    data class OnQueryChanged(val query: String) : Event
     data class OnFilterItemClicked(val item: FilterItem) : Event
     data class OnHymnClicked(val index: String) : Event
-    data class OnSearchResultClicked(val result: SearchResult) : Event
     data object OnNumberPadClicked : Event
 }
 

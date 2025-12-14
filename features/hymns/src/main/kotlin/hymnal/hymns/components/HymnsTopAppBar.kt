@@ -34,14 +34,11 @@ fun HymnsTopAppBar(
     Column(modifier = modifier.fillMaxWidth()) {
         TopAppBar(
             title = {
-                HymnsSearchBar(
-                    results = state.searchResults,
-                    onSearch = {
-                        state.eventSink(Event.OnQueryChanged(it.toString()))
-                    },
-                    onResultClick = {
-                        state.eventSink(Event.OnSearchResultClicked(it))
-                    },
+                SearchBarButton(
+                    onClick = {
+                        hapticFeedback.performClick()
+                        state.eventSink(Event.OnSearch)
+                    }
                 )
             },
             scrollBehavior = scrollBehavior,

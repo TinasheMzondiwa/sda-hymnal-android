@@ -13,6 +13,9 @@ data class HymnFtsEntity(
     @ColumnInfo(name = "hymnId")
     val hymnId: String,
 
+    @ColumnInfo(defaultValue = "")
+    val title: String,
+
     @ColumnInfo(name = "lyricsContent")
     val lyricsContent: String
 )

@@ -251,7 +251,6 @@ private fun Preview() {
                 categories = previewCategories,
                 filterItems = persistentListOf(),
                 hymns = persistentListOf(previewHymn, previewHymn.copy(index = "2")),
-                searchResults = persistentListOf(),
                 lastOpenedHymn = OpenedHymnState.Visible("100", 100, "Great is thy faithfulness") {},
                 overlayState = null,
                 eventSink = {},

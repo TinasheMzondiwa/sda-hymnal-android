@@ -22,6 +22,7 @@ include(
     ":features:more",
     ":features:sabbath",
     ":features:sabbath:widget",
+    ":features:search",
     ":features:sing",
     ":libraries:core-ui",
     ":libraries:di",
