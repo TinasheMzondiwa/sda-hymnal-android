@@ -8,7 +8,9 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.coroutines.DispatcherProvider
 import hymnal.libraries.model.Hymnal
+import hymnal.libraries.model.HymnalAppConfig
 import hymnal.libraries.model.SabbathResource
+import hymnal.services.content.HymnSyncProvider
 import hymnal.services.content.HymnalContentProvider
 import hymnal.services.content.impl.model.ApiSabbathResource
 import hymnal.services.content.impl.model.toEntity
@@ -21,12 +23,15 @@ import hymnal.storage.db.entity.RecentHymnEntity
 import hymnal.storage.db.entity.SabbathResourceEntity
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.DayOfWeek
@@ -36,11 +41,15 @@ import java.time.temporal.WeekFields
 @ContributesBinding(AppScope::class)
 @Inject
 class HymnalContentProviderImpl(
+    private val appConfig: HymnalAppConfig,
     private val hymnsDao: HymnsDao,
     private val dispatcherProvider: DispatcherProvider,
     private val supabase: SupabaseClient,
     private val sabbathResourceDao: SabbathResourceDao,
+    private val hymnSyncProvider: HymnSyncProvider,
 ) : HymnalContentProvider {
+
+    private val scope = CoroutineScope(dispatcherProvider.io + SupervisorJob())
 
     override fun hymns(year: String): Flow<List<Hymn>> {
         return hymnsDao.getAllHymnsWithLyrics(year)
@@ -102,7 +111,7 @@ class HymnalContentProviderImpl(
         return hymnsDao.getHymnWithLyricsById(index)
             .onEach {
                 if (it != null) {
-                    addToRecent(index)
+                    syncHymn(index)
                 }
             }
             .map { it?.toDomainHymn() }
@@ -113,9 +122,13 @@ class HymnalContentProviderImpl(
             }
     }
 
-    private suspend fun addToRecent(hymnId: String) = withContext(dispatcherProvider.io) {
-        hymnsDao.insertRecentHymn(RecentHymnEntity(hymnId = hymnId))
+    private fun syncHymn(index: String) = scope.launch {
+        hymnsDao.insertRecentHymn(RecentHymnEntity(hymnId = index))
         hymnsDao.trimRecentHistory()
+
+        if (appConfig.syncHymnsEnabled) {
+            hymnSyncProvider(index)
+        }
     }
 
     override suspend fun hymn(number: Int, year: String): Hymn? {
@@ -174,7 +187,7 @@ class HymnalContentProviderImpl(
                 .select(
                     request = { filter { ApiSabbathResource::week eq week } }
                 )
-                .decodeSingle<ApiSabbathResource>()
+                .decodeSingleOrNull<ApiSabbathResource>() ?: return@withContext
 
             sabbathResourceDao.insertAll(model.toEntity())
         } catch (e: Exception) {

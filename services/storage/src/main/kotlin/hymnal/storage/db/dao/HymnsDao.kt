@@ -134,5 +134,9 @@ interface HymnsDao : BaseDao<HymnEntity> {
      */
     @Query("DELETE FROM recent_hymns WHERE hymnId NOT IN (SELECT hymnId FROM recent_hymns ORDER BY accessedAt DESC LIMIT 50)")
     suspend fun trimRecentHistory()
+
+    @Transaction
+    @Query("SELECT * FROM hymns WHERE hymnId = :index")
+    suspend fun get(index: String): HymnWithLyrics?
 }
 
