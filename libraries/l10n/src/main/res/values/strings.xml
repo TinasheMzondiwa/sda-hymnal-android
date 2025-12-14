@@ -62,6 +62,7 @@
     <string name="new_collection">New collection</string>
     <string name="pref_last_hymn_desc">When enabled, the app will show a quick access card for the last hymn you viewed.</string>
     <string name="pref_last_hymn_title">Show last viewed hymn</string>
+    <string name="pref_theme">Theme</string>
     <string name="pref_theme_dark">Dark</string>
     <string name="pref_theme_follow_system">Follow system</string>
     <string name="pref_theme_light">Light</string>
