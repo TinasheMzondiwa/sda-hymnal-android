@@ -16,6 +16,7 @@ foundry {
 ksp { arg("circuit.codegen.mode", "metro") }
 
 dependencies {
+    implementation(libs.androidx.activity.compose)
     implementation(libs.kotlinx.immutable)
     implementation(libs.timber)
     implementation(projects.libraries.coreUi)
