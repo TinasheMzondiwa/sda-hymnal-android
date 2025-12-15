@@ -7,6 +7,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import timber.log.Timber
 
 @Stable
 interface AppHapticFeedback {
@@ -59,12 +60,28 @@ val LocalAppHapticFeedback =
 internal class DefaultHapticFeedback(
     private val hapticFeedback: HapticFeedback
 ) : AppHapticFeedback {
-    override fun performClick() = hapticFeedback.performHapticFeedback(HapticFeedbackType.ContextClick)
-    override fun performLongPress() = hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-    override fun performSuccess() = hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-    override fun performError() = hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
-    override fun performScreenView() = hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-    override fun performSegmentSwitch() = hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentTick)
-    override fun performToggleSwitch(on: Boolean) = hapticFeedback.performHapticFeedback(if (on) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff)
-    override fun performGestureEnd() = hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureEnd)
+    override fun performClick() = safePerform(HapticFeedbackType.ContextClick)
+    override fun performLongPress() = safePerform(HapticFeedbackType.LongPress)
+    override fun performSuccess() = safePerform(HapticFeedbackType.Confirm)
+    override fun performError() = safePerform(HapticFeedbackType.Reject)
+    override fun performScreenView() = safePerform(HapticFeedbackType.Confirm)
+    override fun performSegmentSwitch() = safePerform(HapticFeedbackType.SegmentTick)
+
+    override fun performToggleSwitch(on: Boolean) = safePerform(
+        if (on) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+    )
+
+    override fun performGestureEnd() = safePerform(HapticFeedbackType.GestureEnd)
+
+    /**
+     * Safely attempts to perform haptic feedback.
+     * Catches exceptions caused by broken vendor implementations (e.g., ZTE Richtap).
+     */
+    private fun safePerform(type: HapticFeedbackType) {
+        try {
+            hapticFeedback.performHapticFeedback(type)
+        } catch (e: Exception) {
+            Timber.e(e, "Ignored haptic feedback crash on device")
+        }
+    }
 }
