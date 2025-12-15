@@ -18,7 +18,9 @@ import androidx.credentials.exceptions.NoCredentialException
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -164,6 +166,15 @@ class AccountPresenter(
 
                 } catch (e: GoogleIdTokenParsingException) {
                     Timber.e("Received an invalid google id token response - $e")
+                    false
+                } catch (e: FirebaseNetworkException) {
+                    Timber.e(e, "Network error during Firebase Sign in")
+                    false
+                } catch (e: FirebaseAuthException) {
+                    Timber.e(e, "Firebase Auth failed: ${e.errorCode}")
+                    false
+                } catch (e: Exception) {
+                    Timber.e(e, "Unknown error during sign in")
                     false
                 }
             } else {
