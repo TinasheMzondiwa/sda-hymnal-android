@@ -25,5 +25,6 @@ class HymnalApplication : Application(), MetroApplication, Configuration.Provide
         super.onCreate()
         appGraph.firebaseAppCheck()
         appGraph.sabbathWidgetHelper.refreshPreview()
+        appGraph.remoteConfigService.fetchAndActivate()
     }
 }

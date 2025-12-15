@@ -18,5 +18,6 @@ dependencies {
     implementation(libs.google.firebase.appcheck.debug)
     implementation(libs.google.firebase.appcheck.playintegrity)
     implementation(libs.timber)
+    implementation(projects.libraries.foundation.coroutines)
     implementation(projects.libraries.model)
 }

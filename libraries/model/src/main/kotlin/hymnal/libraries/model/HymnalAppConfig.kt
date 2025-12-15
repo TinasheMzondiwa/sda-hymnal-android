@@ -14,5 +14,4 @@ data class HymnalAppConfig(
     val isDebug: Boolean,
     val webClientId: String,
     val appId: String,
-    val syncHymnsEnabled: Boolean,
 )

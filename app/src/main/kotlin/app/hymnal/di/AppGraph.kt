@@ -21,7 +21,7 @@ import hymnal.services.content.HymnalContentSyncProvider
 import hymnal.services.sabbath.api.SabbathWidgetHelper
 import libraries.hymnal.di.MetroWorkerFactory
 import services.hymnal.firebase.FirebaseAppCheck
-import services.hymnal.firebase.FirebaseAppConfig
+import services.hymnal.firebase.RemoteConfigService
 
 @DependencyGraph(AppScope::class)
 interface AppGraph : MetroAppComponentProviders {
@@ -29,7 +29,7 @@ interface AppGraph : MetroAppComponentProviders {
     val workerFactory: MetroWorkerFactory
     val sabbathWidgetHelper: SabbathWidgetHelper
     val firebaseAppCheck: FirebaseAppCheck
-    val firebaseAppConfig: FirebaseAppConfig
+    val remoteConfigService: RemoteConfigService
 
     @Provides
     fun provideApplicationContext(application: Application): Context = application
@@ -55,14 +55,13 @@ interface AppGraph : MetroAppComponentProviders {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideAppConfig(context: Context, config: FirebaseAppConfig): HymnalAppConfig =
+    fun provideAppConfig(context: Context): HymnalAppConfig =
         HymnalAppConfig(
         version = BuildConfig.VERSION_NAME,
         buildNumber = BuildConfig.VERSION_CODE,
         isDebug = BuildConfig.DEBUG,
         webClientId = context.getString(R.string.default_web_client_id),
         appId = BuildConfig.APPLICATION_ID,
-            syncHymnsEnabled = config.syncHymnsEnabled,
     )
 
     val contentSyncProvider: HymnalContentSyncProvider

@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import services.hymnal.firebase.RemoteConfigService
 import timber.log.Timber
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -41,9 +42,9 @@ import java.time.temporal.WeekFields
 @ContributesBinding(AppScope::class)
 @Inject
 class HymnalContentProviderImpl(
-    private val appConfig: HymnalAppConfig,
     private val hymnsDao: HymnsDao,
     private val dispatcherProvider: DispatcherProvider,
+    private val remoteConfigService: RemoteConfigService,
     private val supabase: SupabaseClient,
     private val sabbathResourceDao: SabbathResourceDao,
     private val hymnSyncProvider: HymnSyncProvider,
@@ -126,7 +127,7 @@ class HymnalContentProviderImpl(
         hymnsDao.insertRecentHymn(RecentHymnEntity(hymnId = index))
         hymnsDao.trimRecentHistory()
 
-        if (appConfig.syncHymnsEnabled) {
+        if (remoteConfigService.syncHymnsEnabled) {
             hymnSyncProvider(index)
         }
     }
