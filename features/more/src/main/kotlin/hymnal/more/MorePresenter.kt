@@ -79,7 +79,11 @@ class MorePresenter(
                 "${context.getString(L10nR.string.app_name)} v${appConfig.version}"
             )
         }
-        navigator.goTo(IntentScreen(intent))
+        try {
+            navigator.goTo(IntentScreen(intent))
+        } catch (e: ActivityNotFoundException) {
+            Timber.e(e)
+        }
     }
 
     private fun shareApp(context: Context) {
