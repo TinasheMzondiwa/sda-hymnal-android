@@ -177,7 +177,7 @@ private fun Preview() {
                 showControls = true,
                 topBarState = TopBarState(
                     number = 1,
-                    isTuneSupported = true,
+                    tuneIndex = "001",
                     isPlayEnabled = true,
                     overlayState = null,
                     eventSink = {},

@@ -22,7 +22,7 @@ import hymnal.services.model.Hymn
 import hymnal.services.prefs.HymnalPrefs
 import hymnal.sing.immersive.TopBarOverlayState
 import hymnal.sing.immersive.TopBarState
-import hymnal.sing.state.hasTunes
+import hymnal.sing.state.TuneIndexStateProducer
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -41,6 +41,7 @@ interface TopBarStateProducer {
 class TopBarStateProducerImpl(
     private val prefs: HymnalPrefs,
     private val contentProvider: HymnalContentProvider,
+    private val tuneIndexStateProducer: TuneIndexStateProducer,
 ) : TopBarStateProducer {
 
     @Composable
@@ -65,12 +66,13 @@ class TopBarStateProducerImpl(
                 .collect { value = it }
         }
 
+        val tuneIndex = tuneIndexStateProducer(hymn?.index ?: "", hymnal)
         var overlayState by rememberRetained { mutableStateOf<TopBarOverlayState?>(null) }
 
         return TopBarState(
             number = hymn?.number ?: 1,
-            isTuneSupported = hymnal.hasTunes(),
-            isPlayEnabled = hymnal.hasTunes() && hymn != null,
+            tuneIndex = tuneIndex,
+            isPlayEnabled = !tuneIndex.isNullOrEmpty() && hymn != null,
             overlayState = overlayState,
             eventSink = { event ->
                 when (event) {

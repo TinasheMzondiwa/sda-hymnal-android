@@ -43,6 +43,7 @@ class BottomBarStateProducerImpl(
     private val contentProvider: HymnalContentProvider,
     private val userOrientation: UserOrientation,
     private val prefs: HymnalPrefs,
+    private val tuneIndexStateProducer: TuneIndexStateProducer,
 ) : BottomBarStateProducer {
     @Composable
     override fun invoke(hymn: HymnContent?, onIndex: (String) -> Unit): BottomBarState {
@@ -61,9 +62,10 @@ class BottomBarStateProducerImpl(
                 .catch { Timber.e(it) }
                 .collect { value = it }
         }
+        val tuneIndex = tuneIndexStateProducer(hymn?.index ?: "", hymnal)
         var overlayState by rememberRetained { mutableStateOf<BottomBarOverlayState?>(null) }
         val showTuneTooltip by produceRetainedState(false, hymnal) {
-            if (hymnal.hasTunes()) {
+            if (!tuneIndex.isNullOrEmpty()) {
                 userOrientation.shouldShow(Education.TunePlaybackTooltip)
                     .catch { Timber.e(it) }
                     .collect { value = it }
@@ -78,8 +80,8 @@ class BottomBarStateProducerImpl(
 
         return BottomBarState(
             number = hymn?.number ?: 1,
-            isTuneSupported = hymnal.hasTunes(),
-            isPlayEnabled = hymnal.hasTunes() && hymn != null,
+            tuneIndex = tuneIndex,
+            isPlayEnabled = tuneIndex != null && hymn != null,
             showTuneToolTip = showTuneTooltip,
             previousEnabled = hymn?.let { it.number > 1 } ?: false,
             nextEnabled = hymn?.let { it.number < hymnal.hymns } ?: false,
@@ -134,5 +136,3 @@ class BottomBarStateProducerImpl(
         )
     }
 }
-
-internal fun Hymnal.hasTunes(): Boolean = this == Hymnal.NewHymnal

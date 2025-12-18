@@ -85,7 +85,7 @@ internal fun ImmersiveTopAppBar(
             }
         },
         actions = {
-            AnimatedVisibility(visible = state.isTuneSupported) {
+            AnimatedVisibility(visible = !state.tuneIndex.isNullOrEmpty()) {
                 PlaybackButton(
                     state = state,
                     player = player,
@@ -148,7 +148,7 @@ private fun PlaybackButton(
         CombinedIconButton(
             onClick = {
                 hapticFeedback.performClick()
-                player?.playPause(state.number)
+                state.tuneIndex?.let { player?.playPause(it)  }
             },
             onLongClick = {
                 hapticFeedback.performLongPress()

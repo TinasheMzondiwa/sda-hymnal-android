@@ -1,0 +1,64 @@
+// Copyright (C) 2025 Tinashe Mzondiwa
+// SPDX-License-Identifier: Apache-2.0
+
+package hymnal.sing.state
+
+import android.content.res.Resources
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.ui.platform.LocalResources
+import com.slack.circuit.retained.rememberRetained
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
+import hymnal.libraries.model.Hymnal
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
+import timber.log.Timber
+import hymnal.sing.R as SingR
+
+/**
+ * A producer that determines the correct tune index for the specified hymn index in the hymnal.
+ */
+@Stable
+interface TuneIndexStateProducer {
+
+    @Composable
+    operator fun invoke(index: String, hymnal: Hymnal): String?
+}
+
+@SingleIn(AppScope::class)
+@Inject
+@ContributesBinding(scope = AppScope::class)
+class TuneIndexStateProducerImpl : TuneIndexStateProducer {
+    @Composable
+    override fun invoke(index: String, hymnal: Hymnal): String? {
+        val resources = LocalResources.current
+        val hymnsMapping = rememberRetained(resources) {
+            loadMapFromResources(resources)
+        }
+
+        return when (hymnal) {
+            Hymnal.OldHymnal -> hymnsMapping[index]
+            Hymnal.NewHymnal -> index.takeUnless { it.isEmpty() }
+            Hymnal.Choruses -> null
+        }
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun loadMapFromResources(resources: Resources): Map<String, String> {
+        return try {
+            resources.openRawResource(
+                SingR.raw.church_sda_map
+            ).use { inputStream ->
+                Json.decodeFromStream<Map<String, String>>(inputStream)
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to load hymn mapping json")
+            emptyMap()
+        }
+    }
+
+}

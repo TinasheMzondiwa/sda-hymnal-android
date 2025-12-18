@@ -101,7 +101,7 @@ fun SingBottomAppBar(
         scrollBehavior = scrollBehavior,
     ) {
 
-        AnimatedVisibility(visible = state.isTuneSupported) {
+        AnimatedVisibility(visible = !state.tuneIndex.isNullOrEmpty()) {
             PlaybackButton(
                 state = state,
                 hapticFeedback = hapticFeedback,
@@ -152,7 +152,7 @@ private fun PlaybackButton(
         CombinedIconButton(
             onClick = {
                 hapticFeedback.performClick()
-                player?.playPause(state.number)
+                state.tuneIndex?.let { player?.playPause(it) }
             },
             onLongClick = {
                 hapticFeedback.performLongPress()
@@ -260,7 +260,7 @@ private fun Preview() {
         Surface {
             SingBottomAppBar(
                 state = BottomBarState(
-                    isTuneSupported = true,
+                    tuneIndex = "123",
                     isPlayEnabled = true,
                     showTuneToolTip = false,
                     number = 123,
@@ -283,7 +283,7 @@ private fun PreviewNoTune() {
         Surface {
             SingBottomAppBar(
                 state = BottomBarState(
-                    isTuneSupported = false,
+                    tuneIndex = null,
                     isPlayEnabled = false,
                     showTuneToolTip = false,
                     number = 100,

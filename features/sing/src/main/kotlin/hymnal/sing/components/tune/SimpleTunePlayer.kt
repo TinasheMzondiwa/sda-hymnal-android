@@ -39,7 +39,6 @@ internal class SimpleTunePlayer(
     private val context: Context
 ) : DefaultLifecycleObserver {
 
-    @Suppress("RawDispatchersUse")
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private val _playbackState = MutableStateFlow(PlaybackState.IDLE)
@@ -51,12 +50,11 @@ internal class SimpleTunePlayer(
     private var mediaPlayer: MediaPlayer? = null
     private var progressJob: Job? = null
 
-    fun play(number: Int) {
+    fun play(index: String) {
         stopMedia() // release any prior instance
 
         try {
-            val hymn = number.toString().padStart(3, '0')
-            val afd = context.assets.openFd("$FOLDER/$hymn$EXTENSION")
+            val afd = context.assets.openFd("$FOLDER/$index$EXTENSION")
 
             mediaPlayer = MediaPlayer().apply {
                 setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
@@ -128,7 +126,7 @@ internal class SimpleTunePlayer(
     }
 
     /** Toggle pause/resume without changing the current media source. */
-    fun playPause(number: Int) {
+    fun playPause(index: String) {
         mediaPlayer?.let { mp ->
             if (mp.isPlaying) {
                 pause()
@@ -136,7 +134,7 @@ internal class SimpleTunePlayer(
                 resume()
             }
         } ?: run {
-            play(number)
+            play(index)
         }
     }
 
