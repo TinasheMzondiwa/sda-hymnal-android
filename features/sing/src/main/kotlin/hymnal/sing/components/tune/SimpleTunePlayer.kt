@@ -39,6 +39,7 @@ internal class SimpleTunePlayer(
     private val context: Context
 ) : DefaultLifecycleObserver {
 
+    @Suppress("RawDispatchersUse")
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private val _playbackState = MutableStateFlow(PlaybackState.IDLE)
