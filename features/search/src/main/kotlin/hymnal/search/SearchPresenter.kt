@@ -134,7 +134,7 @@ class SearchPresenter(
                     add(
                         FilterItem(
                             selected = hymnal == selectedHymnal,
-                            label = "${hymnal.label()} (${grouped[hymnal.year]?.size ?: 0})",
+                            label = "${hymnal.label} (${grouped[hymnal.year]?.size ?: 0})",
                             year = hymnal.year
                         )
                     )
@@ -145,7 +145,7 @@ class SearchPresenter(
                                 add(
                                     FilterItem(
                                         selected = selectedHymnal == it,
-                                        label = "${it.label()} (${hymns.size})",
+                                        label = "${it.label} (${hymns.size})",
                                         year = it.year
                                     )
                                 )
@@ -155,12 +155,6 @@ class SearchPresenter(
                 }
             }.toImmutableList()
         }
-
-    private fun Hymnal.label(): String = when (this) {
-        Hymnal.OldHymnal -> "Old hymnal"
-        Hymnal.NewHymnal -> "New hymnal"
-        Hymnal.Choruses -> "Choruses"
-    }
 
     @CircuitInject(SearchScreen::class, AppScope::class)
     @AssistedFactory

@@ -138,7 +138,7 @@ class HymnsPresenter (
             mutableStateOf(
                 persistentListOf(
                     FilterItem.Hymnal(
-                        title = hymnal.year,
+                        title = hymnal.label,
                         selected = hymnal != Hymnal.NewHymnal,
                     ),
                     FilterItem.Sort(
