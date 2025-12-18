@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.foundry.base)
     alias(libs.plugins.ksp)
 }
@@ -20,6 +21,7 @@ ksp { arg("circuit.codegen.mode", "metro") }
 dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.kotlinx.immutable)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.timber)
     implementation(projects.libraries.coreUi)
     implementation(projects.libraries.di)

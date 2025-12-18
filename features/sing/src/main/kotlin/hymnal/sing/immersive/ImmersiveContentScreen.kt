@@ -22,7 +22,7 @@ data class ImmersiveContentScreen(val hymnId: String, val showControls: Boolean)
 
 data class TopBarState(
     val number: Int,
-    val isTuneSupported: Boolean,
+    val tuneIndex: String?,
     val isPlayEnabled: Boolean,
     val overlayState: TopBarOverlayState?,
     val eventSink: (Event) -> Unit,
