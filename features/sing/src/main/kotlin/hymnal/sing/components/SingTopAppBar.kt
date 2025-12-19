@@ -4,15 +4,15 @@
 package hymnal.sing.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.BookmarkAdded
-import androidx.compose.material.icons.rounded.BookmarkBorder
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.TextFormat
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -34,7 +34,7 @@ import hymnal.libraries.l10n.R as L10nR
 import hymnal.sing.R as SingR
 import hymnal.sing.TopBarState.Event as TopBarEvent
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SingTopAppBar(
     state: TopBarState,
@@ -53,8 +53,8 @@ fun SingTopAppBar(
                 state.eventSink(TopBarEvent.OnNavBack)
             }) {
                 Icon(
-                    Icons.AutoMirrored.Rounded.ArrowBack,
-                    stringResource(L10nR.string.nav_back)
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = stringResource(L10nR.string.nav_back)
                 )
             }
         },
@@ -64,21 +64,23 @@ fun SingTopAppBar(
                 state.eventSink(TopBarEvent.OnStyleClick)
             }) {
                 Icon(
-                    Icons.Rounded.TextFormat,
-                    stringResource(L10nR.string.text_format)
+                    imageVector = Icons.Rounded.TextFormat,
+                    contentDescription = stringResource(L10nR.string.text_format)
                 )
             }
             IconButton(onClick = {
                 hapticFeedback.performClick()
                 state.eventSink(TopBarEvent.OnSaveClick)
             }) {
-                AnimatedContent(state.isSavedToCollection) { isSaved ->
+                AnimatedContent(
+                    targetState = state.isSavedToCollection,
+                    transitionSpec = { fadeIn() togetherWith fadeOut() },
+                ) { isSaved ->
                     Icon(
-                        imageVector = if (isSaved) Icons.Rounded.BookmarkAdded else Icons.Rounded.BookmarkBorder,
+                        painter = painterResource(if (isSaved) SingR.drawable.ic_favorite_fill else SingR.drawable.ic_favorite),
                         contentDescription = stringResource(L10nR.string.save_to_collection)
                     )
                 }
-
             }
             IconButton(onClick = {
                 hapticFeedback.performClick()
@@ -86,7 +88,7 @@ fun SingTopAppBar(
             }) {
                 Icon(
                     painterResource(SingR.drawable.ic_mobile_landscape),
-                    stringResource(L10nR.string.fullscreen)
+                    contentDescription = stringResource(L10nR.string.fullscreen)
                 )
             }
             IconButton(onClick = {
@@ -94,8 +96,8 @@ fun SingTopAppBar(
                 state.eventSink(TopBarEvent.OnShareClick(context))
             }) {
                 Icon(
-                    Icons.Rounded.Share,
-                    stringResource(L10nR.string.share)
+                    imageVector = Icons.Rounded.Share,
+                    contentDescription = stringResource(L10nR.string.share)
                 )
             }
         },
@@ -103,7 +105,7 @@ fun SingTopAppBar(
             containerColor = Color.Transparent,
             scrolledContainerColor = Color.Transparent,
         ),
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
     )
 }
 
