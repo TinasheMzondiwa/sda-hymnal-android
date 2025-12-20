@@ -173,32 +173,7 @@ class FirebaseSyncImpl(
         when (event) {
             is SnapShotEvent.Added,
             is SnapShotEvent.Modified -> {
-                // Attempt to find the collection locally
-                var collection = collectionsDao.get(crossRef.collectionId)
-
-                // We received the hymns event before the collection event,
-                // This handles the race condition without hitting the network
-                var attempts = 0
-                while (collection == null && attempts < 5) {
-                    Timber.w("Waiting for collection ${crossRef.collectionId} to arrive...")
-                    delay(200) // Wait 200ms
-                    collection = collectionsDao.get(crossRef.collectionId)
-                    attempts++
-                }
-                if (collection != null) {
-                    collectionsDao.addHymnToCollection(crossRef)
-                } else {
-                    Timber.e("Collection not found for hymn ${crossRef.hymnId}")
-                    // Handle race condition where collection is not persisted locally yet
-                    Timber.e("Skipping hymn insert: Parent Collection ${crossRef.collectionId} missing after waiting.")
-
-                    fetchAndInsertCollection(crossRef.collectionId)
-                    try {
-                        collectionsDao.addHymnToCollection(crossRef)
-                    } catch (e: Exception) {
-                        Timber.e(e)
-                    }
-                }
+                insetCollectionHymnCrossRef(crossRef)
             }
 
             is SnapShotEvent.Removed -> {
@@ -206,6 +181,35 @@ class FirebaseSyncImpl(
                     crossRef.collectionId,
                     crossRef.hymnId,
                 )
+            }
+        }
+    }
+
+    private suspend fun insetCollectionHymnCrossRef(crossRef: CollectionHymnCrossRef) {
+        // Attempt to find the collection locally
+        var collection = collectionsDao.get(crossRef.collectionId)
+
+        // We received the hymns event before the collection event,
+        // This handles the race condition without hitting the network
+        var attempts = 0
+        while (collection == null && attempts < 5) {
+            Timber.w("Waiting for collection ${crossRef.collectionId} to arrive...")
+            delay(200) // Wait 200ms
+            collection = collectionsDao.get(crossRef.collectionId)
+            attempts++
+        }
+        if (collection != null) {
+            collectionsDao.addHymnToCollection(crossRef)
+        } else {
+            Timber.e("Collection not found for hymn ${crossRef.hymnId}")
+            // Handle race condition where collection is not persisted locally yet
+            Timber.e("Skipping hymn insert: Parent Collection ${crossRef.collectionId} missing after waiting.")
+
+            fetchAndInsertCollection(crossRef.collectionId)
+            try {
+                collectionsDao.addHymnToCollection(crossRef)
+            } catch (e: Exception) {
+                Timber.e(e)
             }
         }
     }
@@ -279,7 +283,7 @@ class FirebaseSyncImpl(
                     .set(joinData)
                     .await()
             } ?: run {
-                collectionsDao.addHymnToCollection(ref)
+                insetCollectionHymnCrossRef(ref)
             }
         }
 
