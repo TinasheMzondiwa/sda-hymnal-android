@@ -135,8 +135,7 @@ private fun PlaybackButton(
     val playbackProgress by player.progressOrZero.collectAsStateWithLifecycle()
     val isPlaying by remember { derivedStateOf { playbackState == PlaybackState.ON_PLAY } }
 
-    val animatedProgress by
-    animateFloatAsState(
+    val animatedProgress by animateFloatAsState(
         targetValue = playbackProgress.percent,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
     )
@@ -268,7 +267,7 @@ private fun Preview() {
                     nextEnabled = false,
                     titleLabelRes = L10nR.string.hymn_number,
                     overlayState = null,
-                    eventSink = {}
+                    eventSink = {},
                 )
             )
         }
@@ -291,7 +290,7 @@ private fun PreviewNoTune() {
                     nextEnabled = false,
                     titleLabelRes = L10nR.string.chorus_number,
                     overlayState = null,
-                    eventSink = {}
+                    eventSink = {},
                 )
             )
         }

@@ -38,45 +38,59 @@ fun FiltersRow(
 
     LazyRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(items) { item ->
-            FilterChip(
-                selected = item.selected,
-                onClick = {
+            FilterItemChip(
+                item = item,
+                onItemClick = {
                     hapticFeedback.performClick()
                     onItemClick(item)
                 },
-                label = {
-                    val label = when (item) {
-                        is FilterItem.Hymnal -> item.title
-                        is FilterItem.Sort -> stringResource(item.titleRes)
-                    }
-                    Text(text = label)
-                },
                 modifier = Modifier.animateItem(),
-                leadingIcon = {
-                    if (item is FilterItem.Sort) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.Sort,
-                            contentDescription = null,
-                            tint = if (item.selected) {
-                                MaterialTheme.colorScheme.onSecondaryContainer
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            },
-                        )
-                    }
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowDropDown,
-                        contentDescription = null,
-                    )
-                },
             )
         }
     }
+}
+
+@Composable
+private fun FilterItemChip(
+    item: FilterItem,
+    onItemClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    FilterChip(
+        selected = item.selected,
+        onClick = onItemClick,
+        label = {
+            Text(
+                text = when (item) {
+                    is FilterItem.Hymnal -> item.title
+                    is FilterItem.Sort -> stringResource(item.titleRes)
+                }
+            )
+        },
+        modifier = modifier,
+        leadingIcon = {
+            if (item is FilterItem.Sort) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.Sort,
+                    contentDescription = null,
+                    tint = if (item.selected) {
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                )
+            }
+        },
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Rounded.ArrowDropDown,
+                contentDescription = null,
+            )
+        },
+    )
 }
 
 @PreviewLightDark

@@ -63,12 +63,10 @@ internal fun CombinedIconButton(
     showTooltip: Boolean = false,
     enabled: Boolean = true,
     colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
-    interactionSource: MutableInteractionSource? = null,
+    interactionSource: MutableInteractionSource? = remember { MutableInteractionSource() },
     shape: Shape = IconButtonDefaults.standardShape,
     content: @Composable () -> Unit,
 ) {
-    @Suppress("NAME_SHADOWING")
-    val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
     val buttonContent = @Composable {
         Box(
             modifier =
@@ -112,20 +110,23 @@ private fun TooltipContainer(modifier: Modifier = Modifier, content: @Composable
     } else {
         TooltipBox(
             modifier = modifier,
-            positionProvider = rememberTooltipPositionProvider(TooltipAnchorPosition.Above, 6.dp),
+            positionProvider = rememberTooltipPositionProvider(
+                positioning = TooltipAnchorPosition.Above,
+                spacingBetweenTooltipAndAnchor = 6.dp,
+            ),
             tooltip = {
                 RichTooltip(
-                    title = { Text(stringResource(L10nR.string.tune_tooltip_title)) },
+                    title = { Text(text = stringResource(L10nR.string.tune_tooltip_title)) },
                     action = {
                         TextButton(
                             onClick = {
                                 tooltipState.dismiss()
                                 isDismissed = true
                             }
-                        ) { Text(stringResource(L10nR.string.tune_tooltip_action)) }
+                        ) { Text(text = stringResource(L10nR.string.tune_tooltip_action)) }
                     },
                 ) {
-                    Text(stringResource(L10nR.string.tune_tooltip_description))
+                    Text(text = stringResource(L10nR.string.tune_tooltip_description))
                 }
             },
             state = tooltipState,

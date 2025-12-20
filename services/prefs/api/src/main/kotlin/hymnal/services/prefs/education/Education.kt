@@ -14,6 +14,6 @@ sealed class Education(
     data object TunePlaybackTooltip : Education(
         key = "tune_playback_tooltip_v2",
         timesToShow = 2,
-        showAfterDays = 1
+        showAfterDays = 0,
     )
 }
