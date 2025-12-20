@@ -45,7 +45,10 @@ fun HymnalApp(
             SharedElementTransitionLayout {
                 ContentWithOverlays {
                     val navigator =
-                        rememberAndroidScreenAwareNavigator(circuitNavigator, LocalContext.current)
+                        rememberAndroidScreenAwareNavigator(
+                            delegate = circuitNavigator,
+                            context = LocalContext.current,
+                        )
 
                     val decoratorFactory = remember(navigator) {
                         // Something strange happening on Android 14
@@ -79,8 +82,8 @@ private fun SystemUiEffect(
     if (!localView.isInEditMode) {
         DisposableEffect(lightStatusBar) {
             val window = (localView.context as Activity).window
-            WindowCompat.getInsetsController(window, localView).isAppearanceLightStatusBars =
-                lightStatusBar
+            WindowCompat.getInsetsController(window, localView)
+                .isAppearanceLightStatusBars = lightStatusBar
             onDispose {
                 WindowCompat.getInsetsController(
                     window,
