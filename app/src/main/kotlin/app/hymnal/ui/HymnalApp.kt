@@ -4,8 +4,7 @@
 package app.hymnal.ui
 
 import android.app.Activity
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.LocalActivity
+import android.os.Build
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -15,21 +14,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import app.hymnal.ui.navigator.AndroidSupportingNavigator
 import com.slack.circuit.backstack.SaveableBackStack
-import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
-import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.sharedelements.SharedElementTransitionLayout
 import com.slack.circuitx.android.rememberAndroidScreenAwareNavigator
 import com.slack.circuitx.gesturenavigation.GestureNavigationDecorationFactory
+import hymnal.sabbath.widget.sdk.isAtLeastApi
 import hymnal.ui.theme.HymnalTheme
-import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -52,13 +47,20 @@ fun HymnalApp(
                     val navigator =
                         rememberAndroidScreenAwareNavigator(circuitNavigator, LocalContext.current)
 
+                    val decoratorFactory = remember(navigator) {
+                        // Something strange happening on Android 14
+                        if (isAtLeastApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)) {
+                            GestureNavigationDecorationFactory(onBackInvoked = navigator::pop)
+                        } else {
+                            null
+                        }
+                    }
+
                     NavigableCircuitContent(
                         navigator = navigator,
                         backStack = backstack,
                         circuit = circuit,
-                        decoratorFactory = remember(navigator) {
-                            GestureNavigationDecorationFactory(onBackInvoked = navigator::pop)
-                        },
+                        decoratorFactory = decoratorFactory,
                     )
                 }
             }
