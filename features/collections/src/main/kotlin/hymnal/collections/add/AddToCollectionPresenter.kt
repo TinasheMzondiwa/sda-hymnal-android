@@ -21,12 +21,14 @@ import hymnal.services.model.HymnsCollection
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import services.hymnal.firebase.AnalyticsService
 import timber.log.Timber
 
 @AssistedInject
 class AddToCollectionPresenter(
     @Assisted private val navigator: Navigator,
     @Assisted private val screen: AddToCollectionScreen,
+    private val analyticsService: AnalyticsService,
     private val repository: CollectionsRepository,
 ) : Presenter<State> {
 
@@ -53,8 +55,10 @@ class AddToCollectionPresenter(
 
                         if (event.spec.isSelected) {
                             repository.removeHymnFromCollection(collectionId, hymnId)
+                            analyticsService.logEvent("remove_hymn_from_collection")
                         } else {
                             repository.addHymnToCollection(collectionId, hymnId)
+                            analyticsService.logEvent("add_hymn_to_collection")
                         }
                     }
                 }

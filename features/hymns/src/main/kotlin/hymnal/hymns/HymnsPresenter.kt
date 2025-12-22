@@ -29,11 +29,13 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import services.hymnal.firebase.AnalyticsService
 import timber.log.Timber
 
 @AssistedInject
 class HymnsPresenter (
     @Assisted private val navigator: Navigator,
+    private val analyticsService: AnalyticsService,
     private val contentProvider: HymnalContentProvider,
     private val hymnsStateProducer: HymnsStateProducer,
     private val lastOpenedHymnStateProducer: LastOpenedHymnStateProducer,
@@ -92,6 +94,11 @@ class HymnsPresenter (
                                 onSelection = {
                                     overlayState = null
                                     coroutineScope.launch { prefs.updateCurrentHymnal(it) }
+
+                                    analyticsService.logEvent(
+                                        eventName = "switch_hymnal",
+                                        params = mapOf("hymnal" to it.name),
+                                    )
                                 },
                                 onResult = { overlayState = null }
                             )
@@ -102,13 +109,23 @@ class HymnsPresenter (
                                 onSelection = {
                                     overlayState = null
                                     sortType = it
+
+                                    analyticsService.logEvent(
+                                        eventName = "switch_sort_type",
+                                        params = mapOf("sort_type" to it.name),
+                                    )
                                 },
                                 onResult = { overlayState = null }
                             )
                         }
                     }
                     is Event.OnHymnClicked -> {
-                        navigator.goTo(SingHymnScreen(event.index))
+                        navigator.goTo(
+                            SingHymnScreen(
+                                index = event.index,
+                                source = SingHymnScreen.Source.HOME,
+                            )
+                        )
                     }
                     Event.OnNumberPadClicked -> {
                         overlayState = OverlayState.NumberPadSheet(
@@ -120,7 +137,12 @@ class HymnsPresenter (
                                     is NumberPadBottomSheet.Result.Confirm -> {
                                         val hymn = hymns.firstOrNull { it.number == result.number }
                                         if (hymn != null) {
-                                            navigator.goTo(SingHymnScreen(hymn.index))
+                                            navigator.goTo(
+                                                SingHymnScreen(
+                                                    index = hymn.index,
+                                                    source = SingHymnScreen.Source.NUMBER_PICKER,
+                                                )
+                                            )
                                         }
                                     }
                                 }

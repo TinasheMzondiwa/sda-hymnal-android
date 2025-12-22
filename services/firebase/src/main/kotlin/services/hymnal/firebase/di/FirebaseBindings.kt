@@ -6,6 +6,8 @@
 package services.hymnal.firebase.di
 
 import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,6 +21,10 @@ import dev.zacsweers.metro.SingleIn
 @ContributesTo(AppScope::class)
 @BindingContainer
 object FirebaseBindings {
+
+    @Provides
+    @SingleIn(AppScope::class)
+    fun providesAnalytics(): FirebaseAnalytics = Firebase.analytics
 
     @Provides
     @SingleIn(AppScope::class)

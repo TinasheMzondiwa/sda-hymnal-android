@@ -16,6 +16,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.model.Hymnal
+import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.content.HymnalContentProvider
 import hymnal.services.prefs.HymnalPrefs
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import services.hymnal.firebase.AnalyticsService
 import timber.log.Timber
 import hymnal.libraries.l10n.R as L10nR
 
@@ -40,6 +42,7 @@ interface BottomBarStateProducer {
 @ContributesBinding(AppScope::class)
 @Inject
 class BottomBarStateProducerImpl(
+    private val analyticsService: AnalyticsService,
     private val contentProvider: HymnalContentProvider,
     private val userOrientation: UserOrientation,
     private val prefs: HymnalPrefs,
@@ -107,6 +110,11 @@ class BottomBarStateProducerImpl(
                                                 year = hymnal.year
                                             ) ?: return@launch
                                             onIndex(selected.index)
+
+                                            logImpression(
+                                                index = selected.index,
+                                                source = SingHymnScreen.Source.NUMBER_PICKER.name,
+                                            )
                                         }
                                     }
                                 }
@@ -120,6 +128,8 @@ class BottomBarStateProducerImpl(
                             val next = contentProvider.hymn(number = number, year = hymnal.year)
                                 ?: return@launch
                             onIndex(next.index)
+
+                            logImpression(index = next.index, source = "GO_TO_NEXT")
                         }
                     }
                     BottomBarState.Event.OnPreviousHymn -> {
@@ -129,10 +139,19 @@ class BottomBarStateProducerImpl(
                             val previous = contentProvider.hymn(number = number, year = hymnal.year)
                                 ?: return@launch
                             onIndex(previous.index)
+
+                            logImpression(index = previous.index, source = "GO_TO_PREVIOUS")
                         }
                     }
                 }
             }
+        )
+    }
+
+    private fun logImpression(index: String, source: String) {
+        analyticsService.logEvent(
+            eventName = "open_hymn",
+            params = mapOf("hymn_index" to index, "source" to source)
         )
     }
 }

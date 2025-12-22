@@ -51,7 +51,9 @@ class CollectionHymnsPresenter(
                     eventSink = { event ->
                         when (event) {
                             is Event.OnNavBack -> navigator.pop()
-                            is Event.OnHymnClicked -> navigator.goTo(SingHymnScreen(event.index))
+                            is Event.OnHymnClicked -> navigator.goTo(
+                                SingHymnScreen(index = event.index, source = SingHymnScreen.Source.COLLECTION)
+                            )
                             Event.OnDeleteCollectionClicked -> {
                                 coroutineScope.launch {
                                     repository.deleteCollection(collection.collectionId)
