@@ -38,7 +38,12 @@ class SabbathHymnsPresenter(
             eventSink = { event ->
                 when (event) {
                     Event.OnNavBackClicked -> navigator.pop()
-                    is Event.OnHymnClicked -> navigator.goTo(SingHymnScreen(event.index))
+                    is Event.OnHymnClicked -> navigator.goTo(
+                        SingHymnScreen(
+                            index = event.index,
+                            source = SingHymnScreen.Source.SABBATH,
+                        )
+                    )
                 }
             }
         )

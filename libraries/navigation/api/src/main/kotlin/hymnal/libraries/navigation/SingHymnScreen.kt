@@ -7,4 +7,16 @@ import com.slack.circuit.runtime.screen.Screen
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class SingHymnScreen(val index: String) : Screen
+data class SingHymnScreen(val index: String, val source: Source) : Screen {
+
+    /** Source of the hymn for analytics. */
+    enum class Source {
+        COLLECTION,
+        HOME,
+        LAST_OPENED_HYMN,
+        NUMBER_PICKER,
+        SABBATH,
+        SEARCH_HISTORY,
+        SEARCH_RESULT,
+    }
+}

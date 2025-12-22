@@ -13,6 +13,7 @@ import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuitx.effects.ImpressionEffect
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
@@ -27,12 +28,14 @@ import hymnal.sing.state.BottomBarStateProducer
 import hymnal.sing.state.TopBarStateProducer
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import services.hymnal.firebase.AnalyticsService
 import timber.log.Timber
 
 @AssistedInject
 class SingHymnPresenter(
     @Assisted private val navigator: Navigator,
     @Assisted private val screen: SingHymnScreen,
+    private val analyticsService: AnalyticsService,
     private val contentProvider: HymnalContentProvider,
     private val prefs: HymnalPrefs,
     private val topBarStateProducer: TopBarStateProducer,
@@ -59,6 +62,8 @@ class SingHymnPresenter(
         val topBarState = topBarStateProducer(navigator = navigator, hymn = hymn)
         val bottomBarState = bottomBarStateProducer(hymn) { hymnIndex = it }
 
+        ImpressionEffect { logImpression() }
+
         return when {
             hymn != null -> State.Content(
                 hymn = hymn,
@@ -76,6 +81,16 @@ class SingHymnPresenter(
             )
             else -> State.Loading(screen.index)
         }
+    }
+
+    private fun logImpression() {
+        analyticsService.logEvent(
+            eventName = "open_hymn",
+            params = mapOf(
+                "hymn_index" to screen.index,
+                "source" to screen.source.name,
+            ),
+        )
     }
 
     @CircuitInject(SingHymnScreen::class, AppScope::class)

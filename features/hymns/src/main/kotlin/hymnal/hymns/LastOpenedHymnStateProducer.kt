@@ -20,9 +20,6 @@ import hymnal.services.prefs.HymnalPrefs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -96,7 +93,12 @@ class LastOpenedHymnStateProducerImpl(
                             coroutineScope.launch { prefs.setShowLastHymn(false) }
                         }
                         is OpenedHymnEvent.GoToHymn -> {
-                            navigator.goTo(SingHymnScreen(event.index))
+                            navigator.goTo(
+                                SingHymnScreen(
+                                    index = event.index,
+                                    source = SingHymnScreen.Source.LAST_OPENED_HYMN,
+                                )
+                            )
                         }
                     }
                 },

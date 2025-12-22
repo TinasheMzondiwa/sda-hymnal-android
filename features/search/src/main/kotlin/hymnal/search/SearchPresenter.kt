@@ -81,7 +81,14 @@ class SearchPresenter(
                     query = event.query.trimStart()
                 }
 
-                is Event.OnHymnClick -> navigator.goTo(SingHymnScreen(event.hymn.index))
+                is Event.OnHymnClick -> {
+                    val source = if (searchResults.isNotEmpty()) {
+                        SingHymnScreen.Source.SEARCH_RESULT
+                    } else {
+                        SingHymnScreen.Source.SEARCH_HISTORY
+                    }
+                    navigator.goTo(SingHymnScreen(index = event.hymn.index, source = source))
+                }
             }
         }
 

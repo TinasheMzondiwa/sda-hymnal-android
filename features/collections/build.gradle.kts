@@ -26,6 +26,7 @@ dependencies {
     implementation(projects.libraries.coreUi)
     implementation(projects.libraries.l10n)
     implementation(projects.libraries.navigation.api)
+    implementation(projects.services.firebase)
     implementation(projects.services.hymnalContent.api)
     implementation(projects.services.prefs.api)
 

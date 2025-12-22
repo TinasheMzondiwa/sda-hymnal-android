@@ -7,7 +7,7 @@ package hymnal.services.prefs.education
 sealed class Education(
     val key: String,
     val timesToShow: Int = 1,
-    val showAfterDays: Int = 0
+    val showAfterDays: Int = 1,
 ) {
 
     /** Tune playback tooltip **/
