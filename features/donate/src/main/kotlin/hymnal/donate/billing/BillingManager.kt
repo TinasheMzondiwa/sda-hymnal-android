@@ -95,6 +95,19 @@ class BillingManagerImpl(
     override fun purchaseState(): Flow<BillingData> = billingData
 
     override fun initiatePurchase(product: DonateProduct, activity: Activity) {
+        val client = billingClient
+        if (client == null || !client.isReady) {
+            coroutineScope?.launch {
+                billingData.emit(
+                    BillingData.Message(
+                        BillingData.Status.ERROR,
+                        L10nR.string.error_billing_client_unavailable
+                    )
+                )
+            }
+            return
+        }
+
         if (purchaseHistory.find { it.sku == product.sku } != null) {
             coroutineScope?.launch {
                 if (product.type == BillingClient.ProductType.SUBS) {
@@ -113,25 +126,24 @@ class BillingManagerImpl(
         }
 
         val productDetails = productDetailsList.find { it.productId == product.sku } ?: return
-        val offerToken = productDetails.subscriptionOfferDetails?.firstOrNull()
-            ?.offerToken
-
-        val flowBuilder = BillingFlowParams.ProductDetailsParams.newBuilder()
-            .setProductDetails(productDetails)
-        offerToken?.let { flowBuilder.setOfferToken(it) }
+        // Ensure we are not passing an empty list or invalid params
+        val productDetailsParamsList = listOf(
+            BillingFlowParams.ProductDetailsParams.newBuilder()
+                .setProductDetails(productDetails)
+                .apply {
+                    val offerToken =
+                        productDetails.subscriptionOfferDetails?.firstOrNull()?.offerToken
+                    if (offerToken != null) setOfferToken(offerToken)
+                }
+                .build()
+        )
 
         val flowParams = BillingFlowParams.newBuilder()
-            .setProductDetailsParamsList(listOf(flowBuilder.build()))
+            .setProductDetailsParamsList(productDetailsParamsList)
             .build()
 
-        val responseCode = try {
-            billingClient?.launchBillingFlow(activity, flowParams)?.responseCode
-        } catch (e: Exception) {
-            Timber.e(e)
-            BillingClient.BillingResponseCode.ERROR
-        }
-
-        if (responseCode != BillingClient.BillingResponseCode.OK) {
+        val billingResult = client.launchBillingFlow(activity, flowParams)
+        if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
             coroutineScope?.launch {
                 billingData.emit(
                     BillingData.Message(
@@ -196,17 +208,24 @@ class BillingManagerImpl(
 
     private suspend fun handlePurchase(purchase: Purchase) {
         if (!purchase.isAcknowledged) {
-            val params = AcknowledgePurchaseParams.newBuilder()
-                .setPurchaseToken(purchase.purchaseToken)
-                .build()
-            val consumeParams =
-                ConsumeParams.newBuilder()
+            val productType = productDetailsList.find { it.productId == purchase.sku }?.productType
+
+            if (productType == BillingClient.ProductType.INAPP) {
+                // One-time donations must be consumed to be purchasable again
+                val consumeParams = ConsumeParams.newBuilder()
                     .setPurchaseToken(purchase.purchaseToken)
                     .build()
-            billingClient?.acknowledgePurchase(params)
-            billingClient?.consumePurchase(consumeParams)
+                billingClient?.consumePurchase(consumeParams)
+            } else {
+                // Subscriptions just need acknowledgement
+                val params = AcknowledgePurchaseParams.newBuilder()
+                    .setPurchaseToken(purchase.purchaseToken)
+                    .build()
+                billingClient?.acknowledgePurchase(params)
+            }
         }
     }
+
 
     override fun onBillingSetupFinished(result: BillingResult) {
         Timber.i("Billing SetupFinished: ${result.responseCode}")
