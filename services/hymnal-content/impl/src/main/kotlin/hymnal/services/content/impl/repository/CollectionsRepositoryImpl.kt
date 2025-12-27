@@ -29,10 +29,6 @@ class CollectionsRepositoryImpl(
     private val firebaseSync: FirebaseSync,
 ) : CollectionsRepository {
 
-    init {
-        firebaseSync.attachCollectionListener()
-    }
-
     override fun listAll(): Flow<List<HymnsCollection>> {
         return collectionsDao.getAllCollectionsWithHymns()
             .map { it.map { collectionWithHymns -> collectionWithHymns.toHymnsCollection() } }

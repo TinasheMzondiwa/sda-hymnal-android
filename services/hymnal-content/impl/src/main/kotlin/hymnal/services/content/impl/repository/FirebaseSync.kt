@@ -215,7 +215,9 @@ class FirebaseSyncImpl(
     }
 
     private suspend fun fetchAndInsertCollection(id: String) {
-        val entity = collectionsRef?.document(id)?.get()?.await()?.toCollectionEntity()
+        val entity = collectionsRef?.document(id)
+            ?.get()?.await()
+            ?.toCollectionEntity()
         if (entity != null) collectionsDao.insert(entity)
     }
 
