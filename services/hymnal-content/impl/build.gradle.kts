@@ -27,7 +27,10 @@ android {
     }
 }
 
-foundry { features { metro() } }
+foundry {
+    features { metro() }
+    android { features { robolectric() } }
+}
 
 dependencies {
     api(projects.services.hymnalContent.api)
@@ -41,4 +44,13 @@ dependencies {
     implementation(libs.timber)
     implementation(projects.services.firebase)
     implementation(projects.services.storage)
+
+    testImplementation(libs.test.androidx.ext)
+    testImplementation(libs.test.androidx.runner)
+    testImplementation(libs.test.coroutines)
+    testImplementation(libs.test.robolectric)
+    testImplementation(libs.test.junit)
+    testImplementation(libs.test.truth)
+    testImplementation(libs.test.turbine)
+    testImplementation(projects.libraries.foundation.coroutines.test)
 }
