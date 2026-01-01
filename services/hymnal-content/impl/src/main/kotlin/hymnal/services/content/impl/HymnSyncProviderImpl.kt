@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
+import services.hymnal.firebase.AnalyticsService
 import timber.log.Timber
 
 @ContributesBinding(scope = AppScope::class, binding<HymnSyncProvider>())
@@ -32,6 +33,7 @@ class HymnSyncProviderImpl(
     private val hymnsDao: HymnsDao,
     private val dispatcherProvider: DispatcherProvider,
     private val supabase: SupabaseClient,
+    private val analyticsService: AnalyticsService,
 ) : HymnSyncProvider, Scopable by ioScopable(dispatcherProvider) {
 
     private val exceptionLogger = CoroutineExceptionHandler { _, e -> Timber.e(e) }
@@ -56,6 +58,15 @@ class HymnSyncProviderImpl(
                     hymn = apiHymn,
                     year = hymn.year,
                     revision = model.revision,
+                )
+
+                analyticsService.logEvent(
+                    eventName = EVENT_NAME,
+                    params = mapOf(
+                        "hymn" to hymn.hymnId,
+                        "revision_from" to hymn.revision,
+                        "revision_to" to model.revision,
+                    )
                 )
             } else {
                 Timber.i("Hymn $index is up to date.")
@@ -98,5 +109,6 @@ class HymnSyncProviderImpl(
 
     private companion object {
         const val REVISIONS_TABLE = "hymn_revisions"
+        const val EVENT_NAME = "hymn_synced"
     }
 }
