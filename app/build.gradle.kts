@@ -117,6 +117,7 @@ dependencies {
     implementation(projects.libraries.navigation.number)
     implementation(projects.services.firebase)
     implementation(projects.services.hymnalContent.impl)
+    implementation(projects.services.playback)
     implementation(projects.services.prefs.impl)
     implementation(projects.services.sabbath.impl)
     implementation(projects.services.storage)

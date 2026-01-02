@@ -12,6 +12,7 @@ data class SingHymnScreen(val index: String, val source: Source) : Screen {
     /** Source of the hymn for analytics. */
     enum class Source {
         COLLECTION,
+        DEEP_LINK,
         HOME,
         LAST_OPENED_HYMN,
         NUMBER_PICKER,

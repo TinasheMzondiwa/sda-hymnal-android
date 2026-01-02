@@ -43,11 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.overlay.OverlayEffect
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
+import hymnal.services.playback.PlaybackState
+import hymnal.services.playback.TunePlayer
+import hymnal.services.playback.playbackStateOrIdle
+import hymnal.services.playback.progressOrZero
 import hymnal.sing.components.tune.CombinedIconButton
-import hymnal.sing.components.tune.PlaybackState
-import hymnal.sing.components.tune.SimpleTunePlayer
-import hymnal.sing.components.tune.playbackStateOrIdle
-import hymnal.sing.components.tune.progressOrZero
 import hymnal.sing.immersive.TopBarOverlayState
 import hymnal.sing.immersive.TopBarState
 import hymnal.ui.haptics.AppHapticFeedback
@@ -59,7 +59,7 @@ import hymnal.sing.immersive.Event as UiEvent
 @Composable
 internal fun ImmersiveTopAppBar(
     state: TopBarState,
-    player: SimpleTunePlayer?,
+    player: TunePlayer?,
     modifier: Modifier = Modifier
 ) {
     val hapticFeedback = LocalAppHapticFeedback.current
@@ -85,7 +85,7 @@ internal fun ImmersiveTopAppBar(
             }
         },
         actions = {
-            AnimatedVisibility(visible = !state.tuneIndex.isNullOrEmpty()) {
+            AnimatedVisibility(visible = state.tune != null) {
                 PlaybackButton(
                     state = state,
                     player = player,
@@ -122,7 +122,7 @@ internal fun ImmersiveTopAppBar(
 @Composable
 private fun PlaybackButton(
     state: TopBarState,
-    player: SimpleTunePlayer?,
+    player: TunePlayer?,
     hapticFeedback: AppHapticFeedback,
     iconButtonColors: IconButtonColors,
     modifier: Modifier = Modifier
@@ -148,11 +148,11 @@ private fun PlaybackButton(
         CombinedIconButton(
             onClick = {
                 hapticFeedback.performClick()
-                state.tuneIndex?.let { player?.playPause(it)  }
+                state.tune?.let { player?.playPause(it)  }
             },
             onLongClick = {
                 hapticFeedback.performLongPress()
-                player?.stopMedia()
+                player?.stop()
             },
             modifier = Modifier,
             enabled = state.isPlayEnabled,

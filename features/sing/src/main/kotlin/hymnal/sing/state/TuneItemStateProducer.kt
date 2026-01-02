@@ -13,6 +13,8 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import hymnal.libraries.model.Hymnal
+import hymnal.services.playback.TuneItem
+import hymnal.sing.components.HymnContent
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -20,29 +22,46 @@ import timber.log.Timber
 import hymnal.sing.R as SingR
 
 /**
- * A producer that determines the correct tune index for the specified hymn index in the hymnal.
+ * A producer that determines the correct tune item for the specified hymn index in the hymnal.
  */
 @Stable
-interface TuneIndexStateProducer {
+interface TuneItemStateProducer {
 
     @Composable
-    operator fun invoke(index: String, hymnal: Hymnal): String?
+    operator fun invoke(hymn: HymnContent?, hymnal: Hymnal): TuneItem?
 }
 
 @SingleIn(AppScope::class)
 @Inject
 @ContributesBinding(scope = AppScope::class)
-class TuneIndexStateProducerImpl : TuneIndexStateProducer {
+class TuneItemStateProducerImpl : TuneItemStateProducer {
     @Composable
-    override fun invoke(index: String, hymnal: Hymnal): String? {
+    override fun invoke(hymn: HymnContent?, hymnal: Hymnal): TuneItem? {
         val resources = LocalResources.current
         val hymnsMapping = rememberRetained(resources) {
             loadMapFromResources(resources)
         }
 
         return when (hymnal) {
-            Hymnal.OldHymnal -> hymnsMapping[index]
-            Hymnal.NewHymnal -> index.takeUnless { it.isEmpty() }
+            Hymnal.OldHymnal -> hymn?.let { content ->
+                hymnsMapping[content.index]?.let {
+                    TuneItem(
+                        index = it,
+                        number = content.number,
+                        title = content.title,
+                        hymnal = hymnal.label
+                    )
+                }
+
+            }
+            Hymnal.NewHymnal -> hymn?.let {
+                TuneItem(
+                    index = it.index,
+                    number = it.number,
+                    title = it.title,
+                    hymnal = hymnal.label
+                )
+            }
             Hymnal.Choruses -> null
         }
     }

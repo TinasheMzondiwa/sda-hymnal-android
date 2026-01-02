@@ -41,7 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import dev.zacsweers.metro.AppScope
-import hymnal.sing.components.tune.rememberTunePlayer
+import hymnal.services.playback.LocalTunePlayer
+import hymnal.services.playback.TuneItem
 import hymnal.sing.immersive.components.ImmersiveTopAppBar
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.widget.scaffold.HazeScaffold
@@ -52,7 +53,7 @@ import hymnal.sing.immersive.ImmersiveContentScreen.State as UiState
 @Composable
 fun ImmersiveContent(state: UiState, modifier: Modifier = Modifier) {
     val contentColor = MaterialTheme.colorScheme.onSurface
-    val player = rememberTunePlayer(state.topBarState.number)
+    val player = LocalTunePlayer.current
 
     HazeScaffold(
         modifier = modifier,
@@ -177,7 +178,7 @@ private fun Preview() {
                 showControls = true,
                 topBarState = TopBarState(
                     number = 1,
-                    tuneIndex = "001",
+                    tune = TuneItem("123", 123, "Grace", "SDA Hymnal"),
                     isPlayEnabled = true,
                     overlayState = null,
                     eventSink = {},

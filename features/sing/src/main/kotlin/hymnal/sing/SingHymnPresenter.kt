@@ -59,7 +59,7 @@ class SingHymnPresenter(
         }
         val hymn = hymnContent
 
-        val topBarState = topBarStateProducer(navigator = navigator, hymn = hymn)
+        val topBarState = topBarStateProducer(navigator = navigator, hymn = hymn, source = screen.source)
         val bottomBarState = bottomBarStateProducer(hymn) { hymnIndex = it }
 
         ImpressionEffect { logImpression() }

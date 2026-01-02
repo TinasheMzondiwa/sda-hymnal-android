@@ -4,13 +4,14 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.net.toUri
 import app.hymnal.R
+import app.hymnal.ui.home.HomeScreen
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.screen.Screen
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
+import hymnal.libraries.navigation.AppHomeScreen
 import hymnal.libraries.navigation.BrowserIntentScreen
 import timber.log.Timber
 
@@ -23,6 +24,7 @@ class AndroidSupportingNavigator(
     override fun goTo(screen: Screen): Boolean {
         return when (screen) {
             is BrowserIntentScreen -> false.also { activity.launchWebUrl(screen.url) }
+            AppHomeScreen -> false.also { navigator.resetRoot(HomeScreen()) }
             else -> navigator.goTo(screen)
         }
     }

@@ -30,6 +30,7 @@ dependencies {
     implementation(projects.libraries.navigation.number)
     implementation(projects.services.firebase)
     implementation(projects.services.hymnalContent.api)
+    implementation(projects.services.playback)
     implementation(projects.services.prefs.api)
 
     ksp(libs.circuit.codegen)

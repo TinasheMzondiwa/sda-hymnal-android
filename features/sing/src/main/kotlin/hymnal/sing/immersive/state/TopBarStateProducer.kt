@@ -22,9 +22,10 @@ import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.content.HymnalContentProvider
 import hymnal.services.model.Hymn
 import hymnal.services.prefs.HymnalPrefs
+import hymnal.sing.components.HymnContent
 import hymnal.sing.immersive.TopBarOverlayState
 import hymnal.sing.immersive.TopBarState
-import hymnal.sing.state.TuneIndexStateProducer
+import hymnal.sing.state.TuneItemStateProducer
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -45,7 +46,7 @@ class TopBarStateProducerImpl(
     private val analyticsService: AnalyticsService,
     private val prefs: HymnalPrefs,
     private val contentProvider: HymnalContentProvider,
-    private val tuneIndexStateProducer: TuneIndexStateProducer,
+    private val tuneItemStateProducer: TuneItemStateProducer,
 ) : TopBarStateProducer {
 
     @Composable
@@ -70,15 +71,15 @@ class TopBarStateProducerImpl(
                 .collect { value = it }
         }
 
-        val tuneIndex = tuneIndexStateProducer(hymn?.index ?: "", hymnal)
+        val tune = tuneItemStateProducer(hymn?.let { HymnContent(it) }, hymnal)
         var overlayState by rememberRetained { mutableStateOf<TopBarOverlayState?>(null) }
 
         ImpressionEffect { hymn?.let { logImpression(it.index, "IMMERSIVE") }}
 
         return TopBarState(
             number = hymn?.number ?: 1,
-            tuneIndex = tuneIndex,
-            isPlayEnabled = !tuneIndex.isNullOrEmpty() && hymn != null,
+            tune = tune,
+            isPlayEnabled = tune != null && hymn != null,
             overlayState = overlayState,
             eventSink = { event ->
                 when (event) {
