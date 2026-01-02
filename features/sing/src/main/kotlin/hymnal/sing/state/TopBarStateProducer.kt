@@ -19,6 +19,7 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.navigation.AddToCollectionScreen
 import hymnal.libraries.navigation.AppHomeScreen
+import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.services.content.repository.CollectionsRepository
 import hymnal.services.model.HymnLyrics
 import hymnal.sing.SingOverlayState
@@ -32,7 +33,11 @@ import timber.log.Timber
 @Stable
 interface TopBarStateProducer {
     @Composable
-    operator fun invoke(navigator: Navigator, hymn: HymnContent?): TopBarState
+    operator fun invoke(
+        navigator: Navigator,
+        hymn: HymnContent?,
+        source: SingHymnScreen.Source
+    ): TopBarState
 }
 
 @Inject
@@ -41,7 +46,11 @@ class TopBarStateProducerImpl(
     private val collectionsRepository: CollectionsRepository
 ) : TopBarStateProducer {
     @Composable
-    override fun invoke(navigator: Navigator, hymn: HymnContent?): TopBarState {
+    override fun invoke(
+        navigator: Navigator,
+        hymn: HymnContent?,
+        source: SingHymnScreen.Source
+    ): TopBarState {
         val hymnId = hymn?.index
         val collections by produceRetainedState(emptyList(), hymnId) {
             hymnId?.let { id ->
@@ -57,7 +66,12 @@ class TopBarStateProducerImpl(
             overlayState = overlayState,
             eventSink = { event ->
                 when (event) {
-                    is TopBarState.Event.OnNavBack -> navigator.goTo(AppHomeScreen)
+                    is TopBarState.Event.OnNavBack -> {
+                        when (source) {
+                            SingHymnScreen.Source.DEEP_LINK -> navigator.goTo(AppHomeScreen)
+                            else -> navigator.pop()
+                        }
+                    }
                     is TopBarState.Event.OnFullscreenClick -> {
                         hymnId?.let {
                             val intent = ImmersiveContentActivity.launchIntent(event.context, it)
