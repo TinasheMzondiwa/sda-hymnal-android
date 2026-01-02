@@ -46,7 +46,7 @@ class BottomBarStateProducerImpl(
     private val contentProvider: HymnalContentProvider,
     private val userOrientation: UserOrientation,
     private val prefs: HymnalPrefs,
-    private val tuneIndexStateProducer: TuneIndexStateProducer,
+    private val tuneItemStateProducer: TuneItemStateProducer,
 ) : BottomBarStateProducer {
     @Composable
     override fun invoke(hymn: HymnContent?, onIndex: (String) -> Unit): BottomBarState {
@@ -65,7 +65,7 @@ class BottomBarStateProducerImpl(
                 .catch { Timber.e(it) }
                 .collect { value = it }
         }
-        val tune = tuneIndexStateProducer(hymn, hymnal)
+        val tune = tuneItemStateProducer(hymn, hymnal)
         var overlayState by rememberRetained { mutableStateOf<BottomBarOverlayState?>(null) }
         val showTuneTooltip by produceRetainedState(false, hymnal) {
             if (tune != null) {

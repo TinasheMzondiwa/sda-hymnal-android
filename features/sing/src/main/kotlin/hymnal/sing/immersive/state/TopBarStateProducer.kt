@@ -17,7 +17,6 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.model.Hymnal
-import hymnal.libraries.navigation.AppHomeScreen
 import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.content.HymnalContentProvider
@@ -26,7 +25,7 @@ import hymnal.services.prefs.HymnalPrefs
 import hymnal.sing.components.HymnContent
 import hymnal.sing.immersive.TopBarOverlayState
 import hymnal.sing.immersive.TopBarState
-import hymnal.sing.state.TuneIndexStateProducer
+import hymnal.sing.state.TuneItemStateProducer
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -47,7 +46,7 @@ class TopBarStateProducerImpl(
     private val analyticsService: AnalyticsService,
     private val prefs: HymnalPrefs,
     private val contentProvider: HymnalContentProvider,
-    private val tuneIndexStateProducer: TuneIndexStateProducer,
+    private val tuneItemStateProducer: TuneItemStateProducer,
 ) : TopBarStateProducer {
 
     @Composable
@@ -72,7 +71,7 @@ class TopBarStateProducerImpl(
                 .collect { value = it }
         }
 
-        val tune = tuneIndexStateProducer(hymn?.let { HymnContent(it) }, hymnal)
+        val tune = tuneItemStateProducer(hymn?.let { HymnContent(it) }, hymnal)
         var overlayState by rememberRetained { mutableStateOf<TopBarOverlayState?>(null) }
 
         ImpressionEffect { hymn?.let { logImpression(it.index, "IMMERSIVE") }}

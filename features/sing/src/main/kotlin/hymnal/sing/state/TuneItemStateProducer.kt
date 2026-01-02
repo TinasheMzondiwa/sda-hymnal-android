@@ -22,10 +22,10 @@ import timber.log.Timber
 import hymnal.sing.R as SingR
 
 /**
- * A producer that determines the correct tune index for the specified hymn index in the hymnal.
+ * A producer that determines the correct tune item for the specified hymn index in the hymnal.
  */
 @Stable
-interface TuneIndexStateProducer {
+interface TuneItemStateProducer {
 
     @Composable
     operator fun invoke(hymn: HymnContent?, hymnal: Hymnal): TuneItem?
@@ -34,7 +34,7 @@ interface TuneIndexStateProducer {
 @SingleIn(AppScope::class)
 @Inject
 @ContributesBinding(scope = AppScope::class)
-class TuneIndexStateProducerImpl : TuneIndexStateProducer {
+class TuneItemStateProducerImpl : TuneItemStateProducer {
     @Composable
     override fun invoke(hymn: HymnContent?, hymnal: Hymnal): TuneItem? {
         val resources = LocalResources.current
