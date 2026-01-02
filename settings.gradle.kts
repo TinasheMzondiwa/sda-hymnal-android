@@ -36,6 +36,7 @@ include(
     ":services:hymnal-content:api",
     ":services:hymnal-content:impl",
     ":services:hymnal-content:model",
+    ":services:playback",
     ":services:prefs:api",
     ":services:prefs:impl",
     ":services:prefs:model",

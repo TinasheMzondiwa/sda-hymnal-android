@@ -4,9 +4,12 @@
 package hymnal.sing.immersive
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,6 +18,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -35,6 +39,9 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.binding
+import hymnal.services.playback.LocalTunePlayer
+import hymnal.services.playback.TunePlayer
+import hymnal.services.playback.TuneService
 import hymnal.services.prefs.HymnalPrefs
 import hymnal.services.prefs.model.AppTheme
 import hymnal.services.prefs.model.ThemeStyle
@@ -51,6 +58,19 @@ class ImmersiveContentActivity(
 ) : ComponentActivity() {
 
     private val controlsVisible = MutableStateFlow(true)
+
+    private var tunePlayer: TunePlayer? = null
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as TuneService.LocalBinder
+            tunePlayer = binder.getService().tunePlayer
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            tunePlayer = null
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,32 +123,46 @@ class ImmersiveContentActivity(
                 }
             }
 
-            HymnalTheme(darkTheme = isDarkTheme, dynamicColor = dynamicColors ?: false) {
-                CircuitCompositionLocals(circuit = circuit) {
-                    ContentWithOverlays {
-                        CircuitContent(
-                            screen = ImmersiveContentScreen(
-                                hymnId = hymnId,
-                                showControls = controlsVisible
-                            ),
-                            circuit = circuit,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clickable { onClickStuff() },
-                            onNavEvent = { navEvent ->
-                                when (navEvent) {
-                                    is NavEvent.Pop -> onBackPressedDispatcher.onBackPressed()
-                                    else -> Unit
-                                }
-                            },
-                            key = hymnId,
-                        )
+            CompositionLocalProvider(LocalTunePlayer provides tunePlayer) {
+                HymnalTheme(darkTheme = isDarkTheme, dynamicColor = dynamicColors ?: false) {
+                    CircuitCompositionLocals(circuit = circuit) {
+                        ContentWithOverlays {
+                            CircuitContent(
+                                screen = ImmersiveContentScreen(
+                                    hymnId = hymnId,
+                                    showControls = controlsVisible
+                                ),
+                                circuit = circuit,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clickable { onClickStuff() },
+                                onNavEvent = { navEvent ->
+                                    when (navEvent) {
+                                        is NavEvent.Pop -> onBackPressedDispatcher.onBackPressed()
+                                        else -> Unit
+                                    }
+                                },
+                                key = hymnId,
+                            )
+                        }
                     }
                 }
             }
 
             SystemUiEffect(lightStatusBar = !isDarkTheme)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val intent = Intent(this, TuneService::class.java)
+        startForegroundService(intent)
+        bindService(intent, connection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
     }
 
     companion object {

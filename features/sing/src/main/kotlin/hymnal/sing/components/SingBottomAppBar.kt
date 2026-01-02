@@ -57,13 +57,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.overlay.OverlayEffect
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
+import hymnal.services.playback.LocalTunePlayer
+import hymnal.services.playback.PlaybackState
+import hymnal.services.playback.TuneItem
+import hymnal.services.playback.playbackStateOrIdle
+import hymnal.services.playback.progressOrZero
 import hymnal.sing.BottomBarOverlayState
 import hymnal.sing.BottomBarState
 import hymnal.sing.components.tune.CombinedIconButton
-import hymnal.sing.components.tune.PlaybackState
-import hymnal.sing.components.tune.playbackStateOrIdle
-import hymnal.sing.components.tune.progressOrZero
-import hymnal.sing.components.tune.rememberTunePlayer
 import hymnal.ui.extensions.plus
 import hymnal.ui.haptics.AppHapticFeedback
 import hymnal.ui.haptics.LocalAppHapticFeedback
@@ -101,7 +102,7 @@ fun SingBottomAppBar(
         scrollBehavior = scrollBehavior,
     ) {
 
-        AnimatedVisibility(visible = !state.tuneIndex.isNullOrEmpty()) {
+        AnimatedVisibility(visible = state.tune != null) {
             PlaybackButton(
                 state = state,
                 hapticFeedback = hapticFeedback,
@@ -130,7 +131,7 @@ private fun PlaybackButton(
     iconButtonColors: IconButtonColors,
     modifier: Modifier = Modifier
 ) {
-    val player = rememberTunePlayer(state.number)
+    val player = LocalTunePlayer.current
     val playbackState by player.playbackStateOrIdle.collectAsStateWithLifecycle()
     val playbackProgress by player.progressOrZero.collectAsStateWithLifecycle()
     val isPlaying by remember { derivedStateOf { playbackState == PlaybackState.ON_PLAY } }
@@ -151,11 +152,11 @@ private fun PlaybackButton(
         CombinedIconButton(
             onClick = {
                 hapticFeedback.performClick()
-                state.tuneIndex?.let { player?.playPause(it) }
+                state.tune?.let { player?.playPause(it) }
             },
             onLongClick = {
                 hapticFeedback.performLongPress()
-                player?.stopMedia()
+                player?.stop()
             },
             modifier = Modifier,
             enabled = state.isPlayEnabled,
@@ -259,7 +260,7 @@ private fun Preview() {
         Surface {
             SingBottomAppBar(
                 state = BottomBarState(
-                    tuneIndex = "123",
+                    tune = TuneItem("123", 123, "Grace", "SDA Hymnal"),
                     isPlayEnabled = true,
                     showTuneToolTip = false,
                     number = 123,
@@ -282,7 +283,7 @@ private fun PreviewNoTune() {
         Surface {
             SingBottomAppBar(
                 state = BottomBarState(
-                    tuneIndex = null,
+                    tune = null,
                     isPlayEnabled = false,
                     showTuneToolTip = false,
                     number = 100,

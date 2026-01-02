@@ -65,10 +65,10 @@ class BottomBarStateProducerImpl(
                 .catch { Timber.e(it) }
                 .collect { value = it }
         }
-        val tuneIndex = tuneIndexStateProducer(hymn?.index ?: "", hymnal)
+        val tune = tuneIndexStateProducer(hymn, hymnal)
         var overlayState by rememberRetained { mutableStateOf<BottomBarOverlayState?>(null) }
         val showTuneTooltip by produceRetainedState(false, hymnal) {
-            if (!tuneIndex.isNullOrEmpty()) {
+            if (tune != null) {
                 userOrientation.shouldShow(Education.TunePlaybackTooltip)
                     .catch { Timber.e(it) }
                     .collect { value = it }
@@ -83,8 +83,8 @@ class BottomBarStateProducerImpl(
 
         return BottomBarState(
             number = hymn?.number ?: 1,
-            tuneIndex = tuneIndex,
-            isPlayEnabled = tuneIndex != null && hymn != null,
+            tune = tune,
+            isPlayEnabled = tune != null && hymn != null,
             showTuneToolTip = showTuneTooltip,
             previousEnabled = hymn?.let { it.number > 1 } ?: false,
             nextEnabled = hymn?.let { it.number < hymnal.hymns } ?: false,

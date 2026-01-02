@@ -1,0 +1,194 @@
+// Copyright (C) 2025 Tinashe Mzondiwa
+// SPDX-License-Identifier: Apache-2.0
+
+package hymnal.services.playback
+
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
+import android.content.Intent
+import android.graphics.drawable.Icon
+import android.os.Binder
+import android.os.Build
+import android.os.IBinder
+import androidx.core.net.toUri
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
+import hymnal.services.playback.R as PlaybackR
+import hymnal.libraries.l10n.R as L10nR
+
+class TuneService : Service() {
+
+    private val binder = LocalBinder()
+    lateinit var tunePlayer: TunePlayer
+
+    // Scope for observing player state
+    private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    override fun onCreate() {
+        super.onCreate()
+        tunePlayer = TunePlayerImpl(this)
+
+        combine(tunePlayer.playbackState, tunePlayer.nowPlaying) { state, nowPlaying ->
+            state to nowPlaying
+        }
+            .onEach { (state, nowPlaying) ->
+                when (state) {
+                    PlaybackState.IDLE -> Unit
+                    PlaybackState.ON_PLAY -> {
+                        // PROMOTE to Foreground Service (Non-dismissible notification)
+                        val notification = createNotification(isPlaying = true, item = nowPlaying)
+                        startForeground(NOTIFICATION_ID, notification)
+                    }
+                    PlaybackState.ON_PAUSE,
+                    PlaybackState.ON_COMPLETE,
+                    PlaybackState.ERROR -> {
+                        stopForeground(STOP_FOREGROUND_DETACH)
+
+                        // We still want to update the notification UI (e.g. to show "Pause" icon)
+                        // even though we are no longer "Foreground"
+                        val notification = createNotification(isPlaying = false, item = nowPlaying)
+                        getSystemService(NotificationManager::class.java)
+                            .notify(NOTIFICATION_ID, notification)
+                    }
+                    PlaybackState.ON_STOP -> {
+                        stopForeground(STOP_FOREGROUND_DETACH)
+                    }
+                }
+            }
+            .catch { Timber.e(it) }
+            .launchIn(serviceScope)
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Handle Notification Button Clicks
+        when (intent?.action) {
+            ACTION_PAUSE -> tunePlayer.pause()
+            ACTION_PLAY -> tunePlayer.resume()
+            ACTION_STOP -> {
+                tunePlayer.stop()
+                stopForeground(STOP_FOREGROUND_REMOVE)
+                stopSelf() // Kills the service and notification
+            }
+        }
+
+        // We don't call startForeground here anymore;
+        // the state observer above handles it automatically.
+        return START_STICKY
+    }
+
+    override fun onBind(intent: Intent): IBinder {
+        return binder
+    }
+
+    override fun onDestroy() {
+        // Clean up the MediaPlayer
+        (tunePlayer as? TunePlayerImpl)?.release()
+        super.onDestroy()
+    }
+
+    inner class LocalBinder : Binder() {
+        fun getService(): TuneService = this@TuneService
+    }
+
+    private fun createNotification(isPlaying: Boolean, item: TuneItem?): Notification {
+        // 1. Create the Channel (Safe to call repeatedly)
+        val manager = getSystemService(NotificationManager::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "Hymn Playback",
+                NotificationManager.IMPORTANCE_LOW
+            )
+            manager.createNotificationChannel(channel)
+        }
+
+        // 2. Prepare Actions (Play vs Pause)
+        val pauseIntent = Intent(this, TuneService::class.java).apply { action = ACTION_PAUSE }
+        val playIntent = Intent(this, TuneService::class.java).apply { action = ACTION_PLAY }
+        val stopIntent = Intent(this, TuneService::class.java).apply { action = ACTION_STOP }
+
+        val pausePendingIntent =
+            PendingIntent.getService(this, 0, pauseIntent, PendingIntent.FLAG_IMMUTABLE)
+        val playPendingIntent =
+            PendingIntent.getService(this, 1, playIntent, PendingIntent.FLAG_IMMUTABLE)
+        val stopPendingIntent =
+            PendingIntent.getService(this, 2, stopIntent, PendingIntent.FLAG_IMMUTABLE)
+
+        // 3. Build Notification
+        val builder = Notification.Builder(this, CHANNEL_ID)
+            .setContentTitle("${item?.number ?: ""} ${item?.title.orEmpty()}")
+            .setContentText(item?.hymnal.orEmpty())
+            .setSmallIcon(PlaybackR.drawable.ic_stat_sda)
+            .setOngoing(isPlaying)
+            .setStyle(
+                Notification.MediaStyle()
+                    .setShowActionsInCompactView(0, 1)
+            ) // Show first two actions in collapsed view
+
+        // 4. Add Buttons conditionally
+        if (isPlaying) {
+            builder.addAction(
+                Notification.Action.Builder(
+                    Icon.createWithResource(applicationContext, PlaybackR.drawable.ic_pause),
+                    "Pause",
+                    pausePendingIntent,
+                ).build()
+            )
+        } else {
+            builder.addAction(
+                Notification.Action.Builder(
+                    Icon.createWithResource(applicationContext, PlaybackR.drawable.ic_play_arrow),
+                    "Play",
+                    playPendingIntent,
+                ).build()
+            )
+        }
+
+        // Always add a Close/Stop button
+        builder.addAction(
+            Notification.Action.Builder(
+                Icon.createWithResource(applicationContext, PlaybackR.drawable.ic_close),
+                "Stop",
+                stopPendingIntent
+            ).build()
+        )
+
+        // Open Activity on tap
+        item?.index?.let { builder.setContentIntent(contentIntent(it)) }
+
+        return builder.build()
+    }
+
+    private fun contentIntent(index: String): PendingIntent? {
+        val intent =
+            applicationContext.packageManager.getLaunchIntentForPackage(applicationContext.packageName)
+                ?.apply {
+                    data =
+                        "${applicationContext.getString(L10nR.string.app_scheme)}//hymn?index=$index".toUri()
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
+
+        return intent?.let {
+            PendingIntent.getActivity(applicationContext, 0, it, PendingIntent.FLAG_IMMUTABLE)
+        }
+    }
+
+    private companion object {
+        const val NOTIFICATION_ID = 101
+        const val CHANNEL_ID = "hymn_playback_channel"
+
+        // Define action strings
+        const val ACTION_PLAY = "com.tinashe.sdah.ACTION_PLAY"
+        const val ACTION_PAUSE = "com.tinashe.sdah.ACTION_PAUSE"
+        const val ACTION_STOP = "com.tinashe.sdah.ACTION_STOP"
+    }
+}

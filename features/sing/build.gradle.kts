@@ -31,6 +31,7 @@ dependencies {
     implementation(projects.services.firebase)
     implementation(projects.services.hymnalContent.api)
     implementation(projects.services.prefs.api)
+    implementation(projects.services.playback)
 
     ksp(libs.circuit.codegen)
 }

@@ -18,6 +18,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import hymnal.libraries.navigation.AddToCollectionScreen
+import hymnal.libraries.navigation.AppHomeScreen
 import hymnal.services.content.repository.CollectionsRepository
 import hymnal.services.model.HymnLyrics
 import hymnal.sing.SingOverlayState
@@ -56,7 +57,7 @@ class TopBarStateProducerImpl(
             overlayState = overlayState,
             eventSink = { event ->
                 when (event) {
-                    is TopBarState.Event.OnNavBack -> navigator.pop()
+                    is TopBarState.Event.OnNavBack -> navigator.goTo(AppHomeScreen)
                     is TopBarState.Event.OnFullscreenClick -> {
                         hymnId?.let {
                             val intent = ImmersiveContentActivity.launchIntent(event.context, it)

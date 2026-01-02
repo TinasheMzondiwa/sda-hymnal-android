@@ -9,6 +9,7 @@ import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
+import hymnal.services.playback.TuneItem
 import hymnal.sing.components.HymnContent
 import hymnal.sing.components.model.TextStyleSpec
 import hymnal.ui.circuit.BottomSheetOverlay
@@ -54,7 +55,7 @@ data class TopBarState(
 
 data class BottomBarState(
     val number: Int,
-    val tuneIndex: String?,
+    val tune: TuneItem?,
     val isPlayEnabled: Boolean,
     val showTuneToolTip: Boolean,
     val previousEnabled: Boolean,
