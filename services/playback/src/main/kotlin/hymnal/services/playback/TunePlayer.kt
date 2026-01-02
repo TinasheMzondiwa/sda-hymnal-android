@@ -3,6 +3,7 @@
 
 package hymnal.services.playback
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.flow.StateFlow
@@ -34,4 +35,5 @@ interface TunePlayer {
     fun release()
 }
 
+@SuppressLint("ComposeCompositionLocalUsage")
 val LocalTunePlayer = staticCompositionLocalOf<TunePlayer?> { null }

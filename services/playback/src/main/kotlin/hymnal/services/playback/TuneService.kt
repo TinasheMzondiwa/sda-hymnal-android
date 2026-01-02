@@ -11,61 +11,72 @@ import android.app.Service
 import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import androidx.core.net.toUri
+import dev.zacsweers.metro.createGraphFactory
+import hymnal.services.playback.di.ServiceAppGraph
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import timber.log.Timber
-import hymnal.services.playback.R as PlaybackR
 import hymnal.libraries.l10n.R as L10nR
+import hymnal.services.playback.R as PlaybackR
 
 class TuneService : Service() {
 
     private val binder = LocalBinder()
     lateinit var tunePlayer: TunePlayer
 
-    // Scope for observing player state
-    private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val serviceAppGraph: ServiceAppGraph by lazy {
+        createGraphFactory<ServiceAppGraph.Factory>().create(applicationContext)
+    }
+    private val serviceScope: CoroutineScope by lazy {
+        CoroutineScope(SupervisorJob() + serviceAppGraph.dispatcherProvider.main)
+    }
+
+    private val exceptionLogger = CoroutineExceptionHandler { _, e -> Timber.e(e) }
 
     override fun onCreate() {
         super.onCreate()
-        tunePlayer = TunePlayerImpl(this)
+        tunePlayer = TunePlayerImpl(this, serviceAppGraph.dispatcherProvider)
 
-        combine(tunePlayer.playbackState, tunePlayer.nowPlaying) { state, nowPlaying ->
-            state to nowPlaying
-        }
-            .onEach { (state, nowPlaying) ->
-                when (state) {
-                    PlaybackState.IDLE -> Unit
-                    PlaybackState.ON_PLAY -> {
-                        // PROMOTE to Foreground Service (Non-dismissible notification)
-                        val notification = createNotification(isPlaying = true, item = nowPlaying)
-                        startForeground(NOTIFICATION_ID, notification)
-                    }
-                    PlaybackState.ON_PAUSE,
-                    PlaybackState.ON_COMPLETE,
-                    PlaybackState.ERROR -> {
-                        stopForeground(STOP_FOREGROUND_DETACH)
+        serviceScope.launch(exceptionLogger) {
+            combine(tunePlayer.playbackState, tunePlayer.nowPlaying) { state, nowPlaying ->
+                state to nowPlaying
+            }
+                .catch { Timber.e(it) }
+                .collect { (state, nowPlaying) ->
+                    when (state) {
+                        PlaybackState.IDLE -> Unit
+                        PlaybackState.ON_PLAY -> {
+                            // PROMOTE to Foreground Service (Non-dismissible notification)
+                            val notification =
+                                createNotification(isPlaying = true, item = nowPlaying)
+                            startForeground(NOTIFICATION_ID, notification)
+                        }
 
-                        // We still want to update the notification UI (e.g. to show "Pause" icon)
-                        // even though we are no longer "Foreground"
-                        val notification = createNotification(isPlaying = false, item = nowPlaying)
-                        getSystemService(NotificationManager::class.java)
-                            .notify(NOTIFICATION_ID, notification)
-                    }
-                    PlaybackState.ON_STOP -> {
-                        stopForeground(STOP_FOREGROUND_DETACH)
+                        PlaybackState.ON_PAUSE,
+                        PlaybackState.ON_COMPLETE,
+                        PlaybackState.ERROR -> {
+                            stopForeground(STOP_FOREGROUND_DETACH)
+
+                            // We still want to update the notification UI (e.g. to show "Pause" icon)
+                            // even though we are no longer "Foreground"
+                            val notification =
+                                createNotification(isPlaying = false, item = nowPlaying)
+                            getSystemService(NotificationManager::class.java)
+                                .notify(NOTIFICATION_ID, notification)
+                        }
+
+                        PlaybackState.ON_STOP -> {
+                            stopForeground(STOP_FOREGROUND_DETACH)
+                        }
                     }
                 }
-            }
-            .catch { Timber.e(it) }
-            .launchIn(serviceScope)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -80,8 +91,6 @@ class TuneService : Service() {
             }
         }
 
-        // We don't call startForeground here anymore;
-        // the state observer above handles it automatically.
         return START_STICKY
     }
 
@@ -102,14 +111,12 @@ class TuneService : Service() {
     private fun createNotification(isPlaying: Boolean, item: TuneItem?): Notification {
         // 1. Create the Channel (Safe to call repeatedly)
         val manager = getSystemService(NotificationManager::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                "Hymn Playback",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            manager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            "Hymn Playback",
+            NotificationManager.IMPORTANCE_LOW
+        )
+        manager.createNotificationChannel(channel)
 
         // 2. Prepare Actions (Play vs Pause)
         val pauseIntent = Intent(this, TuneService::class.java).apply { action = ACTION_PAUSE }

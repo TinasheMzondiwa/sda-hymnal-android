@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.13.2" type="baseline" client="gradle" dependencies="false" name="AGP (8.13.2)" variant="all" version="8.13.2">
+
+    <issue
+        id="IconDipSize"
+        message="The image `ic_stat_sda.png` varies significantly in its density-independent (dip) size across the various density versions: drawable-hdpi/ic_stat_sda.png: 24x24 dp (36x36 px), drawable-mdpi/ic_stat_sda.png: 24x24 dp (24x24 px), drawable-xhdpi/ic_stat_sda.png: 24x24 dp (48x48 px), drawable-xxxhdpi/ic_stat_sda.png: 18x18 dp (72x72 px)">
+        <location
+            file="src/main/res/drawable-xxxhdpi/ic_stat_sda.png"/>
+        <location
+            file="src/main/res/drawable-xhdpi/ic_stat_sda.png"/>
+        <location
+            file="src/main/res/drawable-mdpi/ic_stat_sda.png"/>
+        <location
+            file="src/main/res/drawable-hdpi/ic_stat_sda.png"/>
+    </issue>
+
+    <issue
+        id="IconMissingDensityFolder"
+        message="Missing density variation folders in `src/main/res`: drawable-xxhdpi">
+        <location
+            file="src/main/res"/>
+    </issue>
+
+</issues>

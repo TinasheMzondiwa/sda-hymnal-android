@@ -6,9 +6,9 @@ package hymnal.services.playback
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import hymnal.libraries.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,10 +19,10 @@ import java.io.IOException
 
 internal class TunePlayerImpl(
     private val context: Context,
+    dispatcherProvider: DispatcherProvider,
 ) : TunePlayer {
 
-    @Suppress("RawDispatchersUse")
-    private val scope = CoroutineScope(Dispatchers.Main + Job())
+    private val scope = CoroutineScope(SupervisorJob() + dispatcherProvider.main)
     private var mediaPlayer: MediaPlayer? = null
 
     // Track the currently loaded index (URI/Path) to support playPause logic
