@@ -21,6 +21,7 @@ internal class TunePlayerImpl(
     private val context: Context,
 ) : TunePlayer {
 
+    @Suppress("RawDispatchersUse")
     private val scope = CoroutineScope(Dispatchers.Main + Job())
     private var mediaPlayer: MediaPlayer? = null
 
@@ -60,12 +61,17 @@ internal class TunePlayerImpl(
                     resume()
                 }
             }
+            _nowPlaying.value = item
         } else {
-            // New track
-            loadAndPlay(item)
+            when (_playbackState.value) {
+                PlaybackState.ON_PLAY -> pause()
+                else -> {
+                    // New track
+                    loadAndPlay(item)
+                    _nowPlaying.value = item
+                }
+            }
         }
-
-        _nowPlaying.value = item
     }
 
     override fun pause() {
