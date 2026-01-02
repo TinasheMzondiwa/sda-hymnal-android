@@ -12,6 +12,7 @@ import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Binder
 import android.os.IBinder
+import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
 import dev.zacsweers.metro.createGraphFactory
 import hymnal.services.playback.di.ServiceAppGraph
@@ -96,7 +97,8 @@ class TuneService : Service() {
             ACTION_PAUSE -> tunePlayer.pause()
             ACTION_PLAY -> {
                 // Check if player lost its state (Service restart)
-                val item = intent.getParcelableExtra(ARG_TUNE_ITEM, TuneItem::class.java)
+                val item =
+                    IntentCompat.getParcelableExtra(intent, ARG_TUNE_ITEM, TuneItem::class.java)
                 if (item != null) {
                     tunePlayer.playPause(item)
                 } else {
