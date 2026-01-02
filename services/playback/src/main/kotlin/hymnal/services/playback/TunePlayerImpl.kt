@@ -5,6 +5,8 @@ package hymnal.services.playback
 
 import android.content.Context
 import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.media.MediaPlayer
 import hymnal.libraries.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
@@ -37,12 +39,58 @@ internal class TunePlayerImpl(
     private val _nowPlaying = MutableStateFlow<TuneItem?>(null)
     override val nowPlaying: StateFlow<TuneItem?> = _nowPlaying
 
+    // Audio Focus variables
+    private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    private var audioFocusRequest: AudioFocusRequest? = null
+    private var resumeOnFocusGain = false // Remember if we should auto-resume
+
     init {
         startProgressTicker()
     }
 
+    // ========================================================================
+    // Audio Focus Listener
+    // ========================================================================
+    private val focusChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
+        println("ON FOCUS state...$focusChange")
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                // We got focus back (e.g., phone call ended)
+                if (resumeOnFocusGain) {
+                    resumeOnFocusGain = false
+                    resume() // Safe resume that updates state
+                }
+                // Restore volume if we were ducked
+                mediaPlayer?.setVolume(1.0f, 1.0f)
+            }
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                // Permanent loss (e.g., user started Spotify) -> Stop/Pause
+                resumeOnFocusGain = false
+                pause()
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                // Temporary loss (e.g., phone call) -> Pause but remember to resume
+                if (_playbackState.value == PlaybackState.ON_PLAY) {
+                    resumeOnFocusGain = true
+                    pause()
+                }
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                if (_playbackState.value == PlaybackState.ON_PLAY) {
+                    mediaPlayer?.setVolume(0.2f, 0.2f)
+                }
+            }
+        }
+    }
+
+    // ========================================================================
+    // Player Implementation
+    // ========================================================================
+
     override fun play(item: TuneItem) {
-        loadAndPlay(item)
+        if (requestAudioFocus()) {
+            loadAndPlay(item)
+        }
         _nowPlaying.value = item
     }
 
@@ -54,8 +102,10 @@ internal class TunePlayerImpl(
                     pause()
                 }
                 PlaybackState.ON_COMPLETE -> {
-                    // Restart if finished
-                    loadAndPlay(item)
+                    if (requestAudioFocus()) {
+                        // Restart if finished
+                        loadAndPlay(item)
+                    }
                 }
                 else -> {
                     resume()
@@ -88,10 +138,12 @@ internal class TunePlayerImpl(
     }
 
     override fun resume() {
-        // Only resume if we are in a valid state (Paused or Prepared)
-        if (_playbackState.value == PlaybackState.ON_PAUSE || _playbackState.value == PlaybackState.IDLE) {
-            mediaPlayer?.start()
-            _playbackState.value = PlaybackState.ON_PLAY
+        if (requestAudioFocus()) {
+            // Only resume if we are in a valid state (Paused or Prepared)
+            if (_playbackState.value == PlaybackState.ON_PAUSE || _playbackState.value == PlaybackState.IDLE) {
+                mediaPlayer?.start()
+                _playbackState.value = PlaybackState.ON_PLAY
+            }
         }
     }
 
@@ -155,6 +207,33 @@ internal class TunePlayerImpl(
 
     override fun release() {
         releaseMediaPlayer()
+        abandonAudioFocus()
+    }
+
+    // ========================================================================
+    // Focus Helpers
+    // ========================================================================
+
+    private fun requestAudioFocus(): Boolean {
+        val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+            .setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+            .setAcceptsDelayedFocusGain(true)
+            .setOnAudioFocusChangeListener(focusChangeListener)
+            .build()
+
+        audioFocusRequest = request
+        val result = audioManager.requestAudioFocus(request)
+
+        return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+    }
+
+    private fun abandonAudioFocus() {
+        audioFocusRequest?.let { audioManager.abandonAudioFocusRequest(it) }
     }
 
     private companion object {

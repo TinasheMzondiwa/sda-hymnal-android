@@ -67,12 +67,23 @@ class TuneService : Service() {
                             // even though we are no longer "Foreground"
                             val notification =
                                 createNotification(isPlaying = false, item = nowPlaying)
-                            getSystemService(NotificationManager::class.java)
-                                .notify(NOTIFICATION_ID, notification)
+
+                            try {
+                                startForeground(NOTIFICATION_ID, notification)
+                            } catch (e: Exception) {
+                                // Fallback for edge cases where service isn't allowed to start foreground
+                                Timber.w(e, "Failed to startForeground during pause update")
+                                getSystemService(NotificationManager::class.java)
+                                    .notify(NOTIFICATION_ID, notification)
+                            }
+
+                            stopForeground(STOP_FOREGROUND_DETACH)
                         }
 
                         PlaybackState.ON_STOP -> {
-                            stopForeground(STOP_FOREGROUND_DETACH)
+                            stopForeground(STOP_FOREGROUND_REMOVE)
+                            getSystemService(NotificationManager::class.java)
+                                .cancel(NOTIFICATION_ID)
                         }
                     }
                 }
@@ -83,11 +94,18 @@ class TuneService : Service() {
         // Handle Notification Button Clicks
         when (intent?.action) {
             ACTION_PAUSE -> tunePlayer.pause()
-            ACTION_PLAY -> tunePlayer.resume()
+            ACTION_PLAY -> {
+                // Check if player lost its state (Service restart)
+                val item = intent.getParcelableExtra(ARG_TUNE_ITEM, TuneItem::class.java)
+                if (item != null) {
+                    tunePlayer.playPause(item)
+                } else {
+                    tunePlayer.resume() // Try resuming anyway
+                }
+            }
             ACTION_STOP -> {
                 tunePlayer.stop()
                 stopForeground(STOP_FOREGROUND_REMOVE)
-                stopSelf() // Kills the service and notification
             }
         }
 
@@ -109,7 +127,6 @@ class TuneService : Service() {
     }
 
     private fun createNotification(isPlaying: Boolean, item: TuneItem?): Notification {
-        // 1. Create the Channel (Safe to call repeatedly)
         val manager = getSystemService(NotificationManager::class.java)
         val channel = NotificationChannel(
             CHANNEL_ID,
@@ -118,19 +135,24 @@ class TuneService : Service() {
         )
         manager.createNotificationChannel(channel)
 
-        // 2. Prepare Actions (Play vs Pause)
-        val pauseIntent = Intent(this, TuneService::class.java).apply { action = ACTION_PAUSE }
-        val playIntent = Intent(this, TuneService::class.java).apply { action = ACTION_PLAY }
+        val pauseIntent = Intent(this, TuneService::class.java).apply {
+            action = ACTION_PAUSE
+            item?.let { putExtra(ARG_TUNE_ITEM, it) }
+        }
+        val playIntent = Intent(this, TuneService::class.java).apply {
+            action = ACTION_PLAY
+            item?.let { putExtra(ARG_TUNE_ITEM, it) }
+        }
         val stopIntent = Intent(this, TuneService::class.java).apply { action = ACTION_STOP }
 
+        val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         val pausePendingIntent =
-            PendingIntent.getService(this, 0, pauseIntent, PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getService(this, 100, pauseIntent, flags)
         val playPendingIntent =
-            PendingIntent.getService(this, 1, playIntent, PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getForegroundService(this, 101, playIntent, flags)
         val stopPendingIntent =
-            PendingIntent.getService(this, 2, stopIntent, PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getService(this, 102, stopIntent, flags)
 
-        // 3. Build Notification
         val builder = Notification.Builder(this, CHANNEL_ID)
             .setContentTitle("${item?.number ?: ""} ${item?.title.orEmpty()}")
             .setContentText(item?.hymnal.orEmpty())
@@ -139,9 +161,8 @@ class TuneService : Service() {
             .setStyle(
                 Notification.MediaStyle()
                     .setShowActionsInCompactView(0, 1)
-            ) // Show first two actions in collapsed view
+            )
 
-        // 4. Add Buttons conditionally
         if (isPlaying) {
             builder.addAction(
                 Notification.Action.Builder(
@@ -192,6 +213,7 @@ class TuneService : Service() {
     private companion object {
         const val NOTIFICATION_ID = 101
         const val CHANNEL_ID = "hymn_playback_channel"
+        const val ARG_TUNE_ITEM = "arg:tune_item"
 
         // Define action strings
         const val ACTION_PLAY = "com.tinashe.sdah.ACTION_PLAY"
