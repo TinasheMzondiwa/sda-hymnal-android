@@ -9,9 +9,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.graphics.drawable.Icon
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
+import androidx.core.app.ServiceCompat
 import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
 import dev.zacsweers.metro.createGraphFactory
@@ -54,15 +57,16 @@ class TuneService : Service() {
                         PlaybackState.IDLE -> Unit
                         PlaybackState.ON_PLAY -> {
                             // PROMOTE to Foreground Service (Non-dismissible notification)
-                            val notification =
-                                createNotification(isPlaying = true, item = nowPlaying)
-                            startForeground(NOTIFICATION_ID, notification)
+                            immediateForeground(nowPlaying)
                         }
 
                         PlaybackState.ON_PAUSE,
                         PlaybackState.ON_COMPLETE,
                         PlaybackState.ERROR -> {
-                            stopForeground(STOP_FOREGROUND_DETACH)
+                            ServiceCompat.stopForeground(
+                                this@TuneService,
+                                ServiceCompat.STOP_FOREGROUND_DETACH
+                            )
 
                             // We still want to update the notification UI (e.g. to show "Pause" icon)
                             // even though we are no longer "Foreground"
@@ -70,7 +74,16 @@ class TuneService : Service() {
                                 createNotification(isPlaying = false, item = nowPlaying)
 
                             try {
-                                startForeground(NOTIFICATION_ID, notification)
+                                ServiceCompat.startForeground(
+                                    this@TuneService,
+                                    NOTIFICATION_ID,
+                                    notification,
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                        ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+                                    } else {
+                                        0
+                                    }
+                                )
                             } catch (e: Exception) {
                                 // Fallback for edge cases where service isn't allowed to start foreground
                                 Timber.w(e, "Failed to startForeground during pause update")
@@ -78,11 +91,17 @@ class TuneService : Service() {
                                     .notify(NOTIFICATION_ID, notification)
                             }
 
-                            stopForeground(STOP_FOREGROUND_DETACH)
+                            ServiceCompat.stopForeground(
+                                this@TuneService,
+                                ServiceCompat.STOP_FOREGROUND_DETACH
+                            )
                         }
 
                         PlaybackState.ON_STOP -> {
-                            stopForeground(STOP_FOREGROUND_REMOVE)
+                            ServiceCompat.stopForeground(
+                                this@TuneService,
+                                ServiceCompat.STOP_FOREGROUND_REMOVE
+                            )
                             getSystemService(NotificationManager::class.java)
                                 .cancel(NOTIFICATION_ID)
                         }
@@ -99,6 +118,9 @@ class TuneService : Service() {
                 // Check if player lost its state (Service restart)
                 val item =
                     IntentCompat.getParcelableExtra(intent, ARG_TUNE_ITEM, TuneItem::class.java)
+
+                immediateForeground(item ?: tunePlayer.nowPlaying.value)
+
                 if (item != null) {
                     tunePlayer.playPause(item)
                 } else {
@@ -107,11 +129,35 @@ class TuneService : Service() {
             }
             ACTION_STOP -> {
                 tunePlayer.stop()
-                stopForeground(STOP_FOREGROUND_REMOVE)
+                ServiceCompat.stopForeground(
+                    this@TuneService,
+                    ServiceCompat.STOP_FOREGROUND_REMOVE
+                )
+                stopSelf()
             }
         }
 
         return START_STICKY
+    }
+
+    private fun immediateForeground(item: TuneItem?) {
+        val notification =
+            createNotification(isPlaying = true, item = item)
+
+        try {
+            ServiceCompat.startForeground(
+                this,
+                NOTIFICATION_ID,
+                notification,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+                } else {
+                    0
+                }
+            )
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to start foreground immediately")
+        }
     }
 
     override fun onBind(intent: Intent): IBinder {
