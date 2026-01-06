@@ -136,7 +136,6 @@ class MainActivity(
     override fun onStart() {
         super.onStart()
         val intent = Intent(this, TuneService::class.java)
-        startService(intent)
         bindService(intent, connection, BIND_AUTO_CREATE)
     }
 
