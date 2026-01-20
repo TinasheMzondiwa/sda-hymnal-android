@@ -1,5 +1,5 @@
 [versions]
-app = "3.2.2"
+app = "3.3.0"
 android-billing = "8.3.0"
 androidx-activity = "1.12.2"
 androidx-annotations = "1.9.1"
