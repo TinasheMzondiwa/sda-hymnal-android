@@ -1,10 +1,12 @@
+import com.android.build.api.dsl.LibraryExtension
+import org.gradle.kotlin.dsl.configure
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.foundry.base)
-    alias(libs.plugins.kotlin.android)
 }
 
-android { namespace = "hymnal.ui" }
+extensions.configure<LibraryExtension> { namespace = "hymnal.ui" }
 
 foundry {
     features { compose() }

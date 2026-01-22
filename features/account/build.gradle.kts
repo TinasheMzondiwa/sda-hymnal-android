@@ -1,11 +1,13 @@
+import com.android.build.api.dsl.LibraryExtension
+import org.gradle.kotlin.dsl.configure
+
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.foundry.base)
     alias(libs.plugins.ksp)
 }
 
-android { namespace = "hymnal.account" }
+extensions.configure<LibraryExtension> { namespace = "hymnal.account" }
 
 foundry {
     features {

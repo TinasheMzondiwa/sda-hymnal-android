@@ -1,9 +1,9 @@
+import com.android.build.api.dsl.LibraryExtension
 import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.foundry.base)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
 }
@@ -16,7 +16,7 @@ if (propertiesFile.exists()) {
     println("Warning: release/api-keys.properties not found. BuildConfig fields will use defaults.")
 }
 
-android {
+extensions.configure<LibraryExtension> {
     defaultConfig {
         // Define supabase URL and key as build config fields
         buildConfigField("String", "SUPABASE_URL", "\"${properties.getProperty("SUPABASE_URL", "YOUR_URL")}\"")

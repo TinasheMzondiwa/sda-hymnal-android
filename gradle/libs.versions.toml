@@ -24,7 +24,7 @@ google-firebase-crashlytics = "3.0.6"
 google-firebase-bom = "34.8.0"
 google-services = "4.4.4"
 googleid = "1.2.0"
-gradle-android = "8.13.2"
+gradle-android = "9.0.0"
 gradle-cache-fix = "3.0.3"
 gradle-retry = "1.6.4"
 haze = "1.7.1"
@@ -200,7 +200,6 @@ google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 gradle-cache-fix = { id = "org.gradle.android.cache-fix", version.ref = "gradle-cache-fix" }
 gradle-retry = { id = "org.gradle.test-retry", version.ref = "gradle-retry" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
