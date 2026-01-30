@@ -1,7 +1,7 @@
 [versions]
 app = "3.3.0"
 android-billing = "8.3.0"
-androidx-activity = "1.12.2"
+androidx-activity = "1.12.3"
 androidx-annotations = "1.9.1"
 androidx-browser = "1.9.0"
 androidx-compose-bom = "2026.01.01"
