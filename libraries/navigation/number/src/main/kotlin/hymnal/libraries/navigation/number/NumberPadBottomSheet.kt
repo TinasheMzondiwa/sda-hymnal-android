@@ -56,8 +56,7 @@ class NumberPadBottomSheet(private val hymns: Int) : Overlay<NumberPadBottomShee
                                 navigator.finish(result)
                             }
                         }
-                        is NavEvent.GoTo,
-                        is NavEvent.ResetRoot -> Unit
+                        else -> Unit
                     }
                 })
             },
