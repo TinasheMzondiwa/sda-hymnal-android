@@ -39,10 +39,10 @@ import hymnal.services.sabbath.impl.R as SabbathR
 
 @AssistedInject
 class SabbathStartWork(
-    @Assisted context: Context,
-    @Assisted params: WorkerParameters,
+    appContext: Context,
+    @Assisted workerParams: WorkerParameters,
     private val prefs: HymnalPrefs,
-) : CoroutineWorker(context, params) {
+) : CoroutineWorker(appContext, workerParams) {
 
     @WorkerKey(SabbathStartWork::class)
     @ContributesIntoMap(
@@ -50,7 +50,7 @@ class SabbathStartWork(
         binding = binding<AssistedWorkerFactory<out ListenableWorker>>(),
     )
     @AssistedFactory
-    fun interface Factory : AssistedWorkerFactory<SabbathStartWork>
+    abstract class Factory : AssistedWorkerFactory<SabbathStartWork>
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override suspend fun doWork(): Result {

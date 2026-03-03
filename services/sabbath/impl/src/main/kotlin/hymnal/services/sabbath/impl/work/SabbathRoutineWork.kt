@@ -28,12 +28,12 @@ import kotlin.time.toJavaDuration
 
 @AssistedInject
 class SabbathRoutineWork(
-    @Assisted context: Context,
-    @Assisted params: WorkerParameters,
+    appContext: Context,
+    @Assisted workerParams: WorkerParameters,
     private val sabbathTimesDao: SabbathTimesDao,
     private val dispatcherProvider: DispatcherProvider,
     private val workManager: WorkManager,
-) : CoroutineWorker(context, params) {
+) : CoroutineWorker(appContext, workerParams) {
 
     @WorkerKey(SabbathRoutineWork::class)
     @ContributesIntoMap(
@@ -41,7 +41,7 @@ class SabbathRoutineWork(
         binding = binding<AssistedWorkerFactory<out ListenableWorker>>(),
     )
     @AssistedFactory
-    fun interface Factory : AssistedWorkerFactory<SabbathRoutineWork>
+    abstract class Factory : AssistedWorkerFactory<SabbathRoutineWork>
 
     override suspend fun doWork(): Result {
         val entity = withContext(dispatcherProvider.io) { sabbathTimesDao.get() }
