@@ -24,9 +24,9 @@ import java.util.concurrent.TimeUnit
 
 @AssistedInject
 class SabbathUpdateWidgetWork(
-    @Assisted context: Context,
+    @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
-) : CoroutineWorker(context, params) {
+) : CoroutineWorker(appContext, params) {
 
     @WorkerKey(SabbathUpdateWidgetWork::class)
     @ContributesIntoMap(
