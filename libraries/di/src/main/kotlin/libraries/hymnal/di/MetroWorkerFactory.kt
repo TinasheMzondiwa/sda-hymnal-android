@@ -24,10 +24,10 @@ class MetroWorkerFactory(
         workerParameters: WorkerParameters,
     ): ListenableWorker? {
         val factory = assistedWorkerFactories[Class.forName(workerClassName).kotlin]
-        return factory?.createWorker(appContext, workerParameters)
+        return factory?.createWorker(workerParameters)
     }
 }
 
 fun interface AssistedWorkerFactory<T : ListenableWorker> {
-    fun createWorker(appContext: Context, workerParams: WorkerParameters): T
+    fun createWorker(workerParams: WorkerParameters): T
 }

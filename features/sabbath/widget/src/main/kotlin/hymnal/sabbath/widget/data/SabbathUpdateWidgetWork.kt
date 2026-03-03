@@ -24,9 +24,9 @@ import java.util.concurrent.TimeUnit
 
 @AssistedInject
 class SabbathUpdateWidgetWork(
-    @Assisted context: Context,
-    @Assisted params: WorkerParameters,
-) : CoroutineWorker(context, params) {
+    appContext: Context,
+    @Assisted workerParams: WorkerParameters,
+) : CoroutineWorker(appContext, workerParams) {
 
     @WorkerKey(SabbathUpdateWidgetWork::class)
     @ContributesIntoMap(
@@ -34,7 +34,7 @@ class SabbathUpdateWidgetWork(
         binding = binding<AssistedWorkerFactory<out ListenableWorker>>(),
     )
     @AssistedFactory
-    fun interface Factory : AssistedWorkerFactory<SabbathUpdateWidgetWork>
+    abstract class Factory : AssistedWorkerFactory<SabbathUpdateWidgetWork>
 
     override suspend fun doWork(): Result {
         SabbathAppWidget().updateAll(applicationContext)
