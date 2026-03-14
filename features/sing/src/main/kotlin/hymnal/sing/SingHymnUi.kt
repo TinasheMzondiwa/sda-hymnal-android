@@ -53,6 +53,7 @@ import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.libraries.navigation.key.HymnSharedTransitionKey
 import hymnal.sing.components.SingBottomAppBar
 import hymnal.sing.components.SingTopAppBar
+import hymnal.sing.components.HymnSwipeContainer
 import hymnal.sing.components.hymnInfo
 import hymnal.sing.components.hymnLyrics
 import hymnal.ui.circuit.BottomSheetOverlay
@@ -130,33 +131,63 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
             blurBottomBar = true,
             contentWindowInsets = WindowInsets.safeDrawing,
         ) { contentPadding ->
-            LazyColumn(
-                modifier = Modifier
-                    .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
-                state = listState,
-                contentPadding = contentPadding.plus(
-                    layoutDirection = layoutDirection,
-                    start = horizontalPadding,
-                    top = 16.dp,
-                    end = horizontalPadding,
-                    bottom = 0.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-            ) {
-                when (state) {
-                    is State.Content -> {
-                        hymnInfo(
-                            hymn = state.hymn,
-                            textStyle = state.textStyle,
-                            onAuthorLinkClicked = { state.eventSink(Event.OnAuthorLinkClick(it)) },
-                        )
-                        hymnLyrics(
-                            hymnIndex = state.hymn.index,
-                            lyrics = state.hymn.lyrics,
-                            textStyle = state.textStyle,
-                        )
+            val innerPadding = contentPadding.plus(
+                layoutDirection = layoutDirection,
+                start = horizontalPadding,
+                top = 16.dp,
+                end = horizontalPadding,
+                bottom = 0.dp
+            )
+            
+            when (state) {
+                is State.Content -> {
+                    HymnSwipeContainer(
+                        currentNumber = state.bottomBarState.number,
+                        previousEnabled = state.bottomBarState.previousEnabled,
+                        nextEnabled = state.bottomBarState.nextEnabled,
+                        textStyle = state.textStyle,
+                        onSwipePrevious = { state.bottomBarState.eventSink(BottomBarState.Event.OnPreviousHymn) },
+                        onSwipeNext = { state.bottomBarState.eventSink(BottomBarState.Event.OnNextHymn) }
+                    ) {
+                        LazyColumn(
+                            modifier = Modifier
+                                .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
+                            state = listState,
+                            contentPadding = innerPadding,
+                            verticalArrangement = Arrangement.spacedBy(20.dp),
+                        ) {
+                            hymnInfo(
+                                hymn = state.hymn,
+                                textStyle = state.textStyle,
+                                onAuthorLinkClicked = { state.eventSink(Event.OnAuthorLinkClick(it)) },
+                            )
+                            hymnLyrics(
+                                hymnIndex = state.hymn.index,
+                                lyrics = state.hymn.lyrics,
+                                textStyle = state.textStyle,
+                            )
+                            
+                            item {
+                                Spacer(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .height(48.dp)
+                                )
+                            }
+            
+                            item { Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars)) }
+                        }
                     }
-                    is State.Loading -> item("loading") {
+                }
+                is State.Loading -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
+                        state = listState,
+                        contentPadding = innerPadding,
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                    ) {
+                        item("loading") {
                         Box(
                             Modifier
                                 .fillMaxWidth()
@@ -167,18 +198,9 @@ fun SingHymnUi(state: State, modifier: Modifier = Modifier) {
                         }
                     }
                 }
-
-                item {
-                    Spacer(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(48.dp)
-                    )
-                }
-
-                item { Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars)) }
             }
         }
+    }
     }
 
     Overlay((state as? State.Content)?.overlayState)
