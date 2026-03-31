@@ -3,10 +3,8 @@
 
 package hymnal.services.playback.di
 
-import android.content.Context
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
-import dev.zacsweers.metro.Provides
 import hymnal.libraries.coroutines.DispatcherProvider
 
 @DependencyGraph(AppScope::class)
@@ -15,6 +13,6 @@ interface ServiceAppGraph {
 
     @DependencyGraph.Factory
     fun interface Factory {
-        fun create(@Provides context: Context): ServiceAppGraph
+        fun create(): ServiceAppGraph
     }
 }

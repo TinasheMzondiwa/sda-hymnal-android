@@ -113,6 +113,7 @@ interface HymnsDao : BaseDao<HymnEntity> {
     /**
      * Get recent hymns: Joins the tables and sorts by time
      */
+    @Transaction
     @Query(
         """
         SELECT hymns.* FROM hymns 

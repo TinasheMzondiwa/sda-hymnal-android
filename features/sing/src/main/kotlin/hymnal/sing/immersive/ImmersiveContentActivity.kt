@@ -50,7 +50,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import dev.zacsweers.metrox.android.ActivityKey
 
 @ContributesIntoMap(AppScope::class, binding<Activity>())
-@ActivityKey(ImmersiveContentActivity::class)
+@ActivityKey
 @Inject
 class ImmersiveContentActivity(
     private val circuit: Circuit,
