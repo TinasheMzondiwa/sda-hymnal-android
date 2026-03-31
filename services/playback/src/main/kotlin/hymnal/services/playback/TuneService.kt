@@ -35,7 +35,7 @@ class TuneService : Service() {
     lateinit var tunePlayer: TunePlayer
 
     private val serviceAppGraph: ServiceAppGraph by lazy {
-        createGraphFactory<ServiceAppGraph.Factory>().create(applicationContext)
+        createGraphFactory<ServiceAppGraph.Factory>().create()
     }
     private val serviceScope: CoroutineScope by lazy {
         CoroutineScope(SupervisorJob() + serviceAppGraph.dispatcherProvider.main)

@@ -46,7 +46,7 @@ import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
 
 @ContributesIntoMap(AppScope::class, binding<Activity>())
-@ActivityKey(MainActivity::class)
+@ActivityKey
 @Inject
 class MainActivity(
     private val circuit: Circuit,
