@@ -32,6 +32,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.binding
+import dev.zacsweers.metrox.android.ActivityKey
 import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.services.playback.LocalTunePlayer
 import hymnal.services.playback.TunePlayer
@@ -42,7 +43,6 @@ import hymnal.services.prefs.model.ThemeStyle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import libraries.hymnal.di.ActivityKey
 import timber.log.Timber
 
 @ContributesIntoMap(AppScope::class, binding<Activity>())

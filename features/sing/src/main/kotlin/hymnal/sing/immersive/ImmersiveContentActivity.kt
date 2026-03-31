@@ -47,7 +47,7 @@ import hymnal.services.prefs.model.AppTheme
 import hymnal.services.prefs.model.ThemeStyle
 import hymnal.ui.theme.HymnalTheme
 import kotlinx.coroutines.flow.MutableStateFlow
-import libraries.hymnal.di.ActivityKey
+import dev.zacsweers.metrox.android.ActivityKey
 
 @ContributesIntoMap(AppScope::class, binding<Activity>())
 @ActivityKey(ImmersiveContentActivity::class)

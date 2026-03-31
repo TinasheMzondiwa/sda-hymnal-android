@@ -8,5 +8,6 @@ foundry {
 }
 
 dependencies {
+    api(libs.metrox.android)
     implementation(libs.androidx.work)
 }

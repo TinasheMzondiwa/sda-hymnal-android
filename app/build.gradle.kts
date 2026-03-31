@@ -97,7 +97,6 @@ dependencies {
     implementation(libs.google.android.material)
     implementation(libs.kotlinx.immutable)
     implementation(libs.material3.adaptive.navigation.suite)
-    implementation(libs.metrox.android)
     implementation(libs.timber)
     implementation(projects.features.account)
     implementation(projects.features.collections)
