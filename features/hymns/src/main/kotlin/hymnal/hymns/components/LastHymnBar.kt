@@ -101,17 +101,6 @@ fun LastHymnBar(
             scrollBehavior = scrollBehavior,
         ) {
             ListItem(
-                headlineContent = {
-                    Text(
-                        text = state.title,
-                        modifier = Modifier,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontSize = 14.sp,
-                        ),
-                    )
-                },
                 modifier = Modifier
                     .weight(1f)
                     .clip(Shape)
@@ -142,7 +131,17 @@ fun LastHymnBar(
                     headlineColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     trailingIconColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.65f),
                 ),
-            )
+            ) {
+                Text(
+                    text = state.title,
+                    modifier = Modifier,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontSize = 14.sp,
+                    ),
+                )
+            }
         }
     }
 

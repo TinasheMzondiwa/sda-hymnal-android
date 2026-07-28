@@ -26,9 +26,6 @@ import hymnal.ui.theme.HymnalTheme
 fun InfoLinkItem(link: InfoLink, modifier: Modifier = Modifier) {
     Box(modifier = modifier) {
         ListItem(
-            headlineContent = {
-                Text(text = stringResource(link.title))
-            },
             modifier = Modifier,
             leadingContent = {
                 Icon(
@@ -42,7 +39,9 @@ fun InfoLinkItem(link: InfoLink, modifier: Modifier = Modifier) {
                     contentDescription = null
                 )
             }
-        )
+        ) {
+            Text(text = stringResource(link.title))
+        }
 
         HorizontalDivider(
             modifier = Modifier

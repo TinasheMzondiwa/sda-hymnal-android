@@ -98,24 +98,6 @@ private fun SharedElementTransitionScope.LoadingContent(modifier: Modifier = Mod
     val shape = RoundedCornerShape(24.dp)
 
     ListItem(
-        headlineContent = {
-            Spacer(
-                Modifier
-                    .sharedBounds(
-                        sharedContentState = rememberSharedContentState(
-                            AccountSharedTransitionKey(
-                                type = AccountSharedTransitionKey.ElementType.Name,
-                            )
-                        ),
-                        animatedVisibilityScope =
-                            requireAnimatedScope(
-                                SharedElementTransitionScope.AnimatedScope.Navigation,
-                            ),
-                    )
-                    .size(width = 160.dp, height = 16.dp)
-                    .placeholder(visible = true, shape = shape)
-            )
-        },
         modifier = modifier,
         supportingContent = {
             Spacer(
@@ -154,13 +136,68 @@ private fun SharedElementTransitionScope.LoadingContent(modifier: Modifier = Mod
                     .placeholder(visible = true, shape = CircleShape),
             )
         },
-    )
+    ) {
+        Spacer(
+            Modifier
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(
+                        AccountSharedTransitionKey(
+                            type = AccountSharedTransitionKey.ElementType.Name,
+                        )
+                    ),
+                    animatedVisibilityScope =
+                        requireAnimatedScope(
+                            SharedElementTransitionScope.AnimatedScope.Navigation,
+                        ),
+                )
+                .size(width = 160.dp, height = 16.dp)
+                .placeholder(visible = true, shape = shape)
+        )
+    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedElementTransitionScope.NotLoggedInContent(modifier: Modifier = Modifier) {
-    ListItem(headlineContent = {
+    ListItem(
+        modifier = modifier,
+        leadingContent = {
+            Icon(
+                painter = painterResource(AccountR.drawable.ic_account_circle),
+                contentDescription = null,
+                modifier = Modifier.sharedElement(
+                    sharedContentState = rememberSharedContentState(
+                        AccountSharedTransitionKey(
+                            type = AccountSharedTransitionKey.ElementType.Image,
+                        )
+                    ),
+                    animatedVisibilityScope =
+                        requireAnimatedScope(
+                            SharedElementTransitionScope.AnimatedScope.Navigation
+                        ),
+                ),
+            )
+        }, supportingContent = {
+            Text(
+                text = stringResource(L10nR.string.account_not_logged_in_message),
+                modifier = Modifier.sharedBounds(
+                    sharedContentState = rememberSharedContentState(
+                        AccountSharedTransitionKey(
+                            type = AccountSharedTransitionKey.ElementType.Email,
+                        )
+                    ),
+                    animatedVisibilityScope =
+                        requireAnimatedScope(
+                            SharedElementTransitionScope.AnimatedScope.Navigation
+                        ),
+                ),
+            )
+        }, trailingContent = {
+            Icon(
+                imageVector = Icons.Rounded.ChevronRight,
+                contentDescription = null,
+            )
+        }) {
         Text(
             text = stringResource(L10nR.string.account_not_logged_in_title),
             modifier = Modifier.sharedBounds(
@@ -172,43 +209,7 @@ private fun SharedElementTransitionScope.NotLoggedInContent(modifier: Modifier =
                 animatedVisibilityScope = requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
             )
         )
-    }, modifier = modifier, leadingContent = {
-        Icon(
-            painter = painterResource(AccountR.drawable.ic_account_circle),
-            contentDescription = null,
-            modifier = Modifier.sharedElement(
-                sharedContentState = rememberSharedContentState(
-                    AccountSharedTransitionKey(
-                        type = AccountSharedTransitionKey.ElementType.Image,
-                    )
-                ),
-                animatedVisibilityScope =
-                    requireAnimatedScope(
-                        SharedElementTransitionScope.AnimatedScope.Navigation
-                    ),
-            ),
-        )
-    }, supportingContent = {
-        Text(
-            text = stringResource(L10nR.string.account_not_logged_in_message),
-            modifier = Modifier.sharedBounds(
-                sharedContentState = rememberSharedContentState(
-                    AccountSharedTransitionKey(
-                        type = AccountSharedTransitionKey.ElementType.Email,
-                    )
-                ),
-                animatedVisibilityScope =
-                    requireAnimatedScope(
-                        SharedElementTransitionScope.AnimatedScope.Navigation
-                    ),
-            ),
-        )
-    }, trailingContent = {
-        Icon(
-            imageVector = Icons.Rounded.ChevronRight,
-            contentDescription = null,
-        )
-    })
+    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -218,22 +219,6 @@ private fun SharedElementTransitionScope.LoggedInContent(
     modifier: Modifier = Modifier,
 ) {
     ListItem(
-        headlineContent = {
-            Text(
-                text = state.name,
-                modifier = Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(
-                        AccountSharedTransitionKey(
-                            type = AccountSharedTransitionKey.ElementType.Name,
-                        )
-                    ),
-                    animatedVisibilityScope =
-                        requireAnimatedScope(
-                            SharedElementTransitionScope.AnimatedScope.Navigation,
-                        ),
-                ),
-            )
-        },
         modifier = modifier,
         leadingContent = {
             ContentBox(
@@ -293,7 +278,22 @@ private fun SharedElementTransitionScope.LoggedInContent(
                 contentDescription = null,
             )
         },
-    )
+    ) {
+        Text(
+            text = state.name,
+            modifier = Modifier.sharedBounds(
+                sharedContentState = rememberSharedContentState(
+                    AccountSharedTransitionKey(
+                        type = AccountSharedTransitionKey.ElementType.Name,
+                    )
+                ),
+                animatedVisibilityScope =
+                    requireAnimatedScope(
+                        SharedElementTransitionScope.AnimatedScope.Navigation,
+                    ),
+            ),
+        )
+    }
 }
 
 private val AvatarSize = 24.dp

@@ -82,9 +82,6 @@ private fun LastHymnItem(state: State, modifier: Modifier = Modifier) {
     }
 
     ListItem(
-        headlineContent = {
-            Text(text = stringResource(L10nR.string.pref_last_hymn_title))
-        },
         modifier = modifier
             .toggleable(
                 value = state.openLastViewedHymn,
@@ -106,7 +103,9 @@ private fun LastHymnItem(state: State, modifier: Modifier = Modifier) {
                 onCheckedChange = localCheckedChange
             )
         }
-    )
+    ) {
+        Text(text = stringResource(L10nR.string.pref_last_hymn_title))
+    }
 }
 
 @Composable
@@ -114,9 +113,6 @@ private fun ThemeItem(state: State, modifier: Modifier = Modifier) {
     val hapticFeedback = LocalAppHapticFeedback.current
 
     ListItem(
-        headlineContent = {
-            Text(text = stringResource(L10nR.string.pref_theme))
-        },
         modifier = modifier
             .clickable {
                 hapticFeedback.performClick()
@@ -143,7 +139,9 @@ private fun ThemeItem(state: State, modifier: Modifier = Modifier) {
                 contentDescription = null
             )
         }
-    )
+    ) {
+        Text(text = stringResource(L10nR.string.pref_theme))
+    }
 }
 
 @Composable

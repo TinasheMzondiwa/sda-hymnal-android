@@ -69,28 +69,6 @@ private fun SharedElementTransitionScope.CardContent(
     modifier: Modifier = Modifier,
 ) {
     ListItem(
-        headlineContent = {
-            Text(
-                text = hymn.title,
-                modifier = Modifier
-                    .sharedBounds(
-                        sharedContentState =
-                            rememberSharedContentState(
-                                HymnSharedTransitionKey(
-                                    id = hymn.index,
-                                    type = HymnSharedTransitionKey.ElementType.Title,
-                                )
-                            ),
-                        animatedVisibilityScope =
-                            requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                    ),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontSize = 18.sp
-                ),
-            )
-        },
         modifier = modifier,
         leadingContent = {
             AnimatedVisibility(visible = sortType == SortType.NUMBER) {
@@ -155,7 +133,28 @@ private fun SharedElementTransitionScope.CardContent(
                 )
             }
         }
-    )
+    ) {
+        Text(
+            text = hymn.title,
+            modifier = Modifier
+                .sharedBounds(
+                    sharedContentState =
+                        rememberSharedContentState(
+                            HymnSharedTransitionKey(
+                                id = hymn.index,
+                                type = HymnSharedTransitionKey.ElementType.Title,
+                            )
+                        ),
+                    animatedVisibilityScope =
+                        requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                ),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontSize = 18.sp
+            ),
+        )
+    }
 }
 
 internal val previewHymn = Hymn(

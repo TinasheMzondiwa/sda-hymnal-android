@@ -78,12 +78,6 @@ data class ReminderInfoItem(
         }
 
         ListItem(
-            headlineContent = {
-                Text(
-                    text = stringResource(L10nR.string.enable_sabbath_notifications),
-                    color = colors.text
-                )
-            },
             modifier = modifier
                 .padding(8.dp)
                 .clip(RoundedCornerShape(20.dp))
@@ -101,7 +95,12 @@ data class ReminderInfoItem(
             colors = ListItemDefaults.colors(
                 containerColor = Color.Transparent,
             )
-        )
+        ) {
+            Text(
+                text = stringResource(L10nR.string.enable_sabbath_notifications),
+                color = colors.text
+            )
+        }
     }
 }
 

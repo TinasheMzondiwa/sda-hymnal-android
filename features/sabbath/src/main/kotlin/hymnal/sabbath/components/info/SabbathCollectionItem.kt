@@ -37,9 +37,6 @@ data class SabbathCollectionItem(val eventSink: (Event.SabbathInfo) -> Unit) : S
         val hapticFeedback = LocalAppHapticFeedback.current
 
         ListItem(
-            headlineContent = {
-                Text(text = stringResource(L10nR.string.sabbath_playlist))
-            },
             modifier = modifier
                 .padding(horizontal = 16.dp)
                 .clip(RoundedCornerShape(16.dp))
@@ -68,6 +65,8 @@ data class SabbathCollectionItem(val eventSink: (Event.SabbathInfo) -> Unit) : S
                 supportingColor = colors.textSecondary,
                 leadingIconColor = colors.textSecondary
             )
-        )
+        ) {
+            Text(text = stringResource(L10nR.string.sabbath_playlist))
+        }
     }
 }

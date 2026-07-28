@@ -42,16 +42,6 @@ internal fun CollectionRow(
 ) {
     val collection = spec.collection
     ListItem(
-        headlineContent = {
-            Text(
-                text = collection.title,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = if (spec.isSelected) FontWeight.Bold else FontWeight.Normal
-                )
-            )
-        },
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
             .clickable(onClick = onClick),
@@ -81,7 +71,16 @@ internal fun CollectionRow(
                 }
             }
         },
-    )
+    ) {
+        Text(
+            text = collection.title,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = if (spec.isSelected) FontWeight.Bold else FontWeight.Normal
+            )
+        )
+    }
 }
 
 internal val sampleCollection = HymnsCollection(

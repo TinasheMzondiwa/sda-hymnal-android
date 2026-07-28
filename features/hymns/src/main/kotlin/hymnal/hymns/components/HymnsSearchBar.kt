@@ -262,7 +262,6 @@ private fun SearchResults(
 @Composable
 private fun SearchResultContent(result: SearchResult, modifier: Modifier = Modifier) {
     ListItem(
-        headlineContent = { Text(result.title) },
         leadingContent = {
             NumberText(
                 number = result.number,
@@ -273,7 +272,9 @@ private fun SearchResultContent(result: SearchResult, modifier: Modifier = Modif
         colors = ListItemDefaults.colors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         )
-    )
+    ) {
+        Text(result.title)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
