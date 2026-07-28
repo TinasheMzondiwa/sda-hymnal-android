@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetValue
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.SheetValue.Expanded
+import androidx.compose.material3.SheetValue.Hidden
+import androidx.compose.material3.SheetValue.PartiallyExpanded
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -38,14 +40,17 @@ class BottomSheetOverlay(
     @Composable
     override fun Content(navigator: OverlayNavigator<Result>) {
         val hapticFeedback = LocalHapticFeedback.current
-        val sheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = skipPartiallyExpanded
+        val sheetState = rememberBottomSheetState(
+            initialValue = Hidden,
+            enabledValues =
+                if (skipPartiallyExpanded) setOf(Hidden, Expanded)
+                else setOf(Hidden, PartiallyExpanded, Expanded),
         )
 
         ModalBottomSheet(
             onDismissRequest = {
                 navigator.finish(Result.Dismissed)
-                if (sheetState.targetValue == SheetValue.Hidden) {
+                if (sheetState.targetValue == Hidden) {
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureEnd)
                 }
             },

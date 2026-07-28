@@ -32,23 +32,6 @@ internal fun HymnItem(
 ) {
     SharedElementTransitionScope {
         ListItem(
-            headlineContent = {
-                Text(
-                    text = hymn.title,
-                    modifier = Modifier
-                        .sharedBounds(
-                            sharedContentState =
-                                rememberSharedContentState(
-                                    HymnSharedTransitionKey(
-                                        id = hymn.index,
-                                        type = HymnSharedTransitionKey.ElementType.Title,
-                                    )
-                                ),
-                            animatedVisibilityScope =
-                                requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
-                        )
-                )
-            },
             modifier = modifier
                 .clip(RoundedCornerShape(12.dp))
                 .clickable(onClick = onClick),
@@ -72,7 +55,23 @@ internal fun HymnItem(
             supportingContent = {
                 Text(text = hymn.year)
             }
-        )
+        ) {
+            Text(
+                text = hymn.title,
+                modifier = Modifier
+                    .sharedBounds(
+                        sharedContentState =
+                            rememberSharedContentState(
+                                HymnSharedTransitionKey(
+                                    id = hymn.index,
+                                    type = HymnSharedTransitionKey.ElementType.Title,
+                                )
+                            ),
+                        animatedVisibilityScope =
+                            requireAnimatedScope(SharedElementTransitionScope.AnimatedScope.Navigation),
+                    )
+            )
+        }
     }
 }
 

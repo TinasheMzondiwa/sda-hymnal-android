@@ -59,7 +59,6 @@ class ThemeOptionsOverlay(private val selectedTheme: AppTheme) :
                         }
 
                         ListItem(
-                            headlineContent = { Text(text = stringResource(theme.label)) },
                             modifier = Modifier
                                 .padding(horizontal = 6.dp, vertical = 2.dp)
                                 .clip(RoundedCornerShape(12.dp))
@@ -74,7 +73,9 @@ class ThemeOptionsOverlay(private val selectedTheme: AppTheme) :
                                     onClick = { onCheckedChange(!checked) }
                                 )
                             }
-                        )
+                        ) {
+                            Text(text = stringResource(theme.label))
+                        }
                     }
                 }
             }

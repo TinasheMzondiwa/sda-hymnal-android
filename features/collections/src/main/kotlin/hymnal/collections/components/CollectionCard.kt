@@ -56,12 +56,6 @@ internal fun CollectionCard(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
         ListItem(
-            headlineContent = {
-                Text(
-                    text = collection.title,
-                    modifier = Modifier,
-                )
-            },
             modifier = Modifier,
             supportingContent = {
                 Column(
@@ -126,7 +120,12 @@ internal fun CollectionCard(
                         onDelete()
                     })
                 }
-            })
+            }) {
+            Text(
+                text = collection.title,
+                modifier = Modifier,
+            )
+        }
     }
 }
 
