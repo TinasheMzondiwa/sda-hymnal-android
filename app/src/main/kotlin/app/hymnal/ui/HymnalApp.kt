@@ -53,7 +53,7 @@ fun HymnalApp(
                     val decoratorFactory = remember(navigator) {
                         // Something strange happening on Android 14
                         if (isAtLeastApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)) {
-                            GestureNavigationDecorationFactory(onBackInvoked = navigator::pop)
+                            GestureNavigationDecorationFactory()
                         } else {
                             null
                         }

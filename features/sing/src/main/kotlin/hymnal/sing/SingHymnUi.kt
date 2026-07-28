@@ -224,7 +224,7 @@ private fun Overlay(state: SingOverlayState?) {
                                     backStack = backstack,
                                     decoratorFactory =
                                         remember(navigator) {
-                                            GestureNavigationDecorationFactory(onBackInvoked = navigator::pop)
+                                            GestureNavigationDecorationFactory()
                                         },
                                 )
                             }
