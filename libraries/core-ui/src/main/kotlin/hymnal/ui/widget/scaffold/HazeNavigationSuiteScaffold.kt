@@ -15,7 +15,6 @@ import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationRailDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuite
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
