@@ -3,9 +3,9 @@
 
 package hymnal.libraries.navigation
 
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import kotlinx.parcelize.Parcelize
 
 
 @Parcelize
-data class AddToCollectionScreen(val hymnId: String): Screen
+data class AddToCollectionScreen(val hymnId: String): ParcelableScreen

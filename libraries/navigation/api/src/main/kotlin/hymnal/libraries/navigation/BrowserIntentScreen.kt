@@ -4,9 +4,9 @@
 package hymnal.libraries.navigation
 
 import android.net.Uri
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import kotlinx.parcelize.Parcelize
 
 /** A circuit [Screen] for launching an androidx-browser tab with the provided [url]. */
 @Parcelize
-data class BrowserIntentScreen(val url: Uri) : Screen
+data class BrowserIntentScreen(val url: Uri) : ParcelableScreen

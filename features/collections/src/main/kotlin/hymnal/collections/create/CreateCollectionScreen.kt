@@ -5,12 +5,12 @@ package hymnal.collections.create
 
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import hymnal.collections.components.CollectionColor
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class CreateCollectionScreen(val showUpNavigation: Boolean = false) : Screen {
+data class CreateCollectionScreen(val showUpNavigation: Boolean = false) : ParcelableScreen {
 
     data class State(
         val showUpNavigation: Boolean,

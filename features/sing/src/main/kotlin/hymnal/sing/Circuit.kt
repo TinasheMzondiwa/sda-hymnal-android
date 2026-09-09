@@ -7,7 +7,7 @@ import android.content.Context
 import androidx.annotation.StringRes
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.playback.TuneItem
 import hymnal.sing.components.HymnContent
@@ -32,7 +32,7 @@ sealed interface State : CircuitUiState {
 
 sealed interface SingOverlayState : CircuitUiState {
     data class BottomSheet(
-        val screen: Screen,
+        val screen: ParcelableScreen,
         val skipPartiallyExpanded: Boolean = false,
         val onResult: (BottomSheetOverlay.Result) -> Unit,
     ) : SingOverlayState

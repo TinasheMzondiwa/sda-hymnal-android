@@ -7,14 +7,14 @@ import android.os.Parcelable
 import com.slack.circuit.foundation.NavEvent
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class HomeScreen(
     val route: HomeRoute = HomeRoute.Hymns,
-) : Screen, Parcelable {
+) : ParcelableScreen, Parcelable {
     data class State(
         val currentRoute: HomeRoute,
         val routes: ImmutableList<HomeRoute>,

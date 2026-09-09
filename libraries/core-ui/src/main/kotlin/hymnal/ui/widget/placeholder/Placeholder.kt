@@ -10,6 +10,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -60,6 +61,7 @@ fun Modifier.placeholder(
  * @param shape The shape of the placeholder. Defaults to [MaterialTheme.shapes.small].
  */
 @Composable
+@ReadOnlyComposable
 fun Modifier.placeholder(
     visible: Boolean,
     shape: Shape = MaterialTheme.shapes.small,

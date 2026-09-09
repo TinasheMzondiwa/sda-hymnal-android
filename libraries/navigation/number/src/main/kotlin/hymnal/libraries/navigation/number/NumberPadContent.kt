@@ -42,8 +42,8 @@ import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
-import com.slack.circuit.runtime.screen.PopResult
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelablePopResult
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
@@ -56,7 +56,7 @@ import hymnal.libraries.navigation.number.PadContentScreen.Event as UiEvent
 import hymnal.libraries.navigation.number.PadContentScreen.State as UiState
 
 @Parcelize
-data class PadContentScreen(val hymns: Int) : Screen {
+data class PadContentScreen(val hymns: Int) : ParcelableScreen {
     data class State(
         val input: String,
         val eventSink: (Event) -> Unit,
@@ -72,7 +72,7 @@ data class PadContentScreen(val hymns: Int) : Screen {
 @Parcelize
 data class NumPadPopResult(
     val number: Int,
-) : PopResult
+) : ParcelablePopResult
 
 @AssistedInject
 class PadContentPresenter(

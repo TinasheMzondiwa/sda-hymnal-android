@@ -3,11 +3,11 @@
 
 package hymnal.libraries.navigation
 
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class SingHymnScreen(val index: String, val source: Source) : Screen {
+data class SingHymnScreen(val index: String, val source: Source) : ParcelableScreen {
 
     /** Source of the hymn for analytics. */
     enum class Source {

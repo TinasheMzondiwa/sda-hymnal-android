@@ -26,8 +26,9 @@ import app.hymnal.ui.home.HomeScreen
 import app.hymnal.ui.navigator.AndroidSupportingNavigator
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
+import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.rememberCircuitNavigator
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
@@ -74,43 +75,45 @@ class MainActivity(
         enableEdgeToEdge()
 
         setContent {
-            val themeStyle: ThemeStyle? by prefs.themeStyle()
-                .collectAsStateWithLifecycle(null)
-            val appTheme = themeStyle?.theme
-            val dynamicColors = themeStyle?.dynamicColors
+            CircuitCompositionLocals(circuit = circuit) {
+                val themeStyle: ThemeStyle? by prefs.themeStyle()
+                    .collectAsStateWithLifecycle(null)
+                val appTheme = themeStyle?.theme
+                val dynamicColors = themeStyle?.dynamicColors
 
-            val isSystemInDarkTheme = isSystemInDarkTheme()
-            val isDarkTheme by remember(appTheme) {
-                derivedStateOf {
-                    appTheme == AppTheme.DARK || (appTheme == AppTheme.FOLLOW_SYSTEM && isSystemInDarkTheme)
+                val isSystemInDarkTheme = isSystemInDarkTheme()
+                val isDarkTheme by remember(appTheme) {
+                    derivedStateOf {
+                        appTheme == AppTheme.DARK || (appTheme == AppTheme.FOLLOW_SYSTEM && isSystemInDarkTheme)
+                    }
                 }
-            }
 
-            val stackedScreens = parseDeepLink(intent) ?: persistentListOf(HomeScreen())
-            val backstack = rememberSaveableBackStack(stackedScreens)
-            val circuitNavigator = rememberCircuitNavigator(backstack)
-            val supportingNavigator = remember(circuitNavigator) {
-                navigatorFactory.create(circuitNavigator, this)
-            }
+                val stackedScreens = parseDeepLink(intent) ?: persistentListOf(HomeScreen())
+                val backstack = rememberSaveableBackStack(stackedScreens)
+                val circuitNavigator = rememberCircuitNavigator(backstack)
+                val supportingNavigator = remember(circuitNavigator) {
+                    navigatorFactory.create(circuitNavigator, this)
+                }
 
-            CompositionLocalProvider(LocalTunePlayer provides tunePlayer) {
-                HymnalApp(
-                    circuit = circuit,
-                    circuitNavigator = supportingNavigator,
-                    backstack = backstack,
-                    windowWidthSizeClass = calculateWindowSizeClass(this).widthSizeClass,
-                    isDarkTheme = isDarkTheme,
-                    dynamicColor = dynamicColors ?: false,
-                )
-            }
+                CompositionLocalProvider(LocalTunePlayer provides tunePlayer) {
+                    HymnalApp(
+                        circuit = circuit,
+                        circuitNavigator = supportingNavigator,
+                        backstack = backstack,
+                        windowWidthSizeClass = calculateWindowSizeClass(this).widthSizeClass,
+                        isDarkTheme = isDarkTheme,
+                        dynamicColor = dynamicColors ?: false,
+                    )
+                }
 
-            splashScreen.setKeepOnScreenCondition { themeStyle == null }
+                splashScreen.setKeepOnScreenCondition { themeStyle == null }
+            }
         }
     }
 
-    private fun parseDeepLink(intent: Intent): ImmutableList<Screen>? {
+    private fun parseDeepLink(intent: Intent): ImmutableList<ParcelableScreen>? {
         val dataUri = intent.data ?: return null
-        val screens = mutableListOf<Screen>()
+        val screens = mutableListOf<ParcelableScreen>()
 
         // Combine host and path segments to check for navigation targets
         val parts = mutableListOf<String>()

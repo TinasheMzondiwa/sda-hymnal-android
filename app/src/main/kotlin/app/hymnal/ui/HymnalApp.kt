@@ -16,7 +16,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.slack.circuit.backstack.SaveableBackStack
 import com.slack.circuit.foundation.Circuit
-import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuit.runtime.Navigator
@@ -41,31 +40,29 @@ fun HymnalApp(
         dynamicColor = dynamicColor,
         windowWidthSizeClass = windowWidthSizeClass,
     ) {
-        CircuitCompositionLocals(circuit = circuit) {
-            SharedElementTransitionLayout {
-                ContentWithOverlays {
-                    val navigator =
-                        rememberAndroidScreenAwareNavigator(
-                            delegate = circuitNavigator,
-                            context = LocalContext.current,
-                        )
-
-                    val decoratorFactory = remember(navigator) {
-                        // Something strange happening on Android 14
-                        if (isAtLeastApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)) {
-                            GestureNavigationDecorationFactory()
-                        } else {
-                            null
-                        }
-                    }
-
-                    NavigableCircuitContent(
-                        navigator = navigator,
-                        backStack = backstack,
-                        circuit = circuit,
-                        decoratorFactory = decoratorFactory,
+        SharedElementTransitionLayout {
+            ContentWithOverlays {
+                val navigator =
+                    rememberAndroidScreenAwareNavigator(
+                        delegate = circuitNavigator,
+                        context = LocalContext.current,
                     )
+
+                val decoratorFactory = remember(navigator) {
+                    // Something strange happening on Android 14
+                    if (isAtLeastApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)) {
+                        GestureNavigationDecorationFactory()
+                    } else {
+                        null
+                    }
                 }
+
+                NavigableCircuitContent(
+                    navigator = navigator,
+                    backStack = backstack,
+                    circuit = circuit,
+                    decoratorFactory = decoratorFactory,
+                )
             }
         }
     }
