@@ -6,6 +6,7 @@ package hymnal.sabbath.widget
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
@@ -75,6 +76,7 @@ fun SabbathAppWidgetContent(
 }
 
 @Composable
+@ReadOnlyComposable
 private fun showTitle(): Boolean {
     return LocalSize.current.width >= 260.dp
 }

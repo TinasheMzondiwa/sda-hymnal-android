@@ -5,7 +5,7 @@ package hymnal.collections
 
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import hymnal.services.model.HymnsCollection
 import hymnal.ui.circuit.BottomSheetOverlay
 import kotlinx.collections.immutable.ImmutableList
@@ -37,7 +37,7 @@ sealed interface Event: CircuitUiEvent {
 
 sealed interface CollectionOverlayState : CircuitUiState {
     data class BottomSheet(
-        val screen: Screen,
+        val screen: ParcelableScreen,
         val skipPartiallyExpanded: Boolean = false,
         val onResult: (BottomSheetOverlay.Result) -> Unit,
     ): CollectionOverlayState

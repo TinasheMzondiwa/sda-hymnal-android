@@ -6,14 +6,14 @@ package hymnal.sing.immersive
 import androidx.compose.runtime.Immutable
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import hymnal.libraries.navigation.number.NumberPadBottomSheet
 import hymnal.services.playback.TuneItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ImmersiveContentScreen(val hymnId: String, val showControls: Boolean) : Screen {
+data class ImmersiveContentScreen(val hymnId: String, val showControls: Boolean) : ParcelableScreen {
     data class State(
         val showControls: Boolean,
         val topBarState: TopBarState,

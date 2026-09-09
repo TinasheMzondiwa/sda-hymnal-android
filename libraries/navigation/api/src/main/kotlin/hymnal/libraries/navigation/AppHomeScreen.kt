@@ -3,9 +3,9 @@
 
 package hymnal.libraries.navigation
 
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import kotlinx.parcelize.Parcelize
 
 /** This is just used to reset the root of the backstack **/
 @Parcelize
-data object AppHomeScreen : Screen
+data object AppHomeScreen : ParcelableScreen

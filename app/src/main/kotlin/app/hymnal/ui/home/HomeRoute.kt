@@ -6,7 +6,7 @@ package app.hymnal.ui.home
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import app.hymnal.R
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import hymnal.libraries.navigation.CollectionsScreen
 import hymnal.libraries.navigation.HymnsScreen
 import hymnal.libraries.navigation.MoreScreen
@@ -66,7 +66,7 @@ data class RouteIcon(
     }
 }
 
-fun HomeRoute.screen(): Screen {
+fun HomeRoute.screen(): ParcelableScreen {
     return when (this) {
         HomeRoute.Hymns -> HymnsScreen
         HomeRoute.Collections -> CollectionsScreen

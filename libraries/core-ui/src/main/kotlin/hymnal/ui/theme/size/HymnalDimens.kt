@@ -5,6 +5,7 @@ package hymnal.ui.theme.size
 
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import hymnal.ui.extensions.LocalWindowWidthSizeClass
@@ -12,6 +13,7 @@ import hymnal.ui.extensions.LocalWindowWidthSizeClass
 object HymnalDimens {
 
     @Composable
+    @ReadOnlyComposable
     fun horizontalPadding(compatPadding: Dp = 16.dp): Dp {
         val windowWidthSizeClass = LocalWindowWidthSizeClass.current
 

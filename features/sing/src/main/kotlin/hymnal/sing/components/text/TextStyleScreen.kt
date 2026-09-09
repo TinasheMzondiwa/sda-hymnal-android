@@ -4,14 +4,14 @@
 package hymnal.sing.components.text
 
 import com.slack.circuit.runtime.CircuitUiState
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import hymnal.services.prefs.model.AppFont
 import hymnal.services.prefs.model.AppTheme
 import hymnal.services.prefs.model.ThemeStyle
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data object TextStyleScreen : Screen {
+data object TextStyleScreen : ParcelableScreen {
 
     data class State(
         val style: ThemeStyle,

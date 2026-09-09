@@ -3,11 +3,11 @@
 
 package hymnal.libraries.navigation
 
-import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.runtime.screen.ParcelableScreen
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data object AccountScreen : Screen
+data object AccountScreen : ParcelableScreen
 
 @Parcelize
-data object AccountCardScreen : Screen
+data object AccountCardScreen : ParcelableScreen
