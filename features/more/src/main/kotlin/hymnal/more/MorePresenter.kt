@@ -44,6 +44,9 @@ class MorePresenter(
             appVersion = appVersion,
             eventSink = { event ->
                 when (event) {
+                    Event.OnInfoClick -> {
+                        openPlayStore()
+                    }
                     is Event.OnDonateClick -> {
                         navigator.goTo(DonateScreen)
                     }

@@ -25,11 +25,11 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
 import dev.zacsweers.metro.AppScope
 import hymnal.libraries.navigation.AccountCardScreen
+import hymnal.libraries.navigation.MoreScreen
+import hymnal.libraries.navigation.SettingsScreen
 import hymnal.more.components.AboutCard
 import hymnal.more.components.InfoItemsCard
 import hymnal.more.components.MoreTopAppBar
-import hymnal.libraries.navigation.MoreScreen
-import hymnal.libraries.navigation.SettingsScreen
 import hymnal.ui.extensions.plus
 import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.size.HymnalDimens
@@ -70,7 +70,12 @@ fun MoreScreenUi(state: State, modifier: Modifier = Modifier) {
             ),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            item("version-info") { AboutCard(version = state.appVersion) }
+            item("version-info") {
+                AboutCard(
+                    version = state.appVersion,
+                    onClick = { state.eventSink(Event.OnInfoClick) }
+                )
+            }
 
             item(key = "account-card") {
                 CircuitContent(

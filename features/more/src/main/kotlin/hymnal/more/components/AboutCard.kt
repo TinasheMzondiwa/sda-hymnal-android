@@ -4,6 +4,7 @@
 package hymnal.more.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.more.R as MoreR
 import hymnal.libraries.l10n.R as L10nR
@@ -35,8 +37,10 @@ import hymnal.libraries.l10n.R as L10nR
 @Composable
 fun AboutCard(
     version: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
 ) {
+    val hapticFeedback = LocalAppHapticFeedback.current
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -59,6 +63,10 @@ fun AboutCard(
                     )
                 )
                 .clip(RoundedCornerShape(8.dp))
+                .clickable {
+                    hapticFeedback.performClick()
+                    onClick()
+                }
         )
 
         Text(

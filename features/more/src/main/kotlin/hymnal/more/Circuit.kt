@@ -14,6 +14,7 @@ data class State(
 ) : CircuitUiState
 
 sealed interface Event : CircuitUiEvent {
+    data object OnInfoClick : Event
     data object OnDonateClick : Event
     data class OnLinkClick(val link: InfoLink, val context: Context) : Event
     data class OnNavEvent(val navEvent: NavEvent) : Event
