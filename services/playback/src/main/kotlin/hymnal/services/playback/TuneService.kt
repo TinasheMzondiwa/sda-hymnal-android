@@ -11,10 +11,13 @@ import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.graphics.drawable.Icon
+import android.media.session.MediaSession
+import android.media.session.PlaybackState as SessionPlaybackState
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
 import dev.zacsweers.metro.createGraphFactory
@@ -32,6 +35,7 @@ import hymnal.services.playback.R as PlaybackR
 class TuneService : Service() {
 
     private val binder = LocalBinder()
+    private lateinit var mediaSession: MediaSession
     lateinit var tunePlayer: TunePlayer
 
     private val serviceAppGraph: ServiceAppGraph by lazy {
@@ -47,6 +51,22 @@ class TuneService : Service() {
         super.onCreate()
         tunePlayer = TunePlayerImpl(this, serviceAppGraph.dispatcherProvider)
 
+        mediaSession = MediaSession(this, "HymnalTuneService").apply {
+            setCallback(object : MediaSession.Callback() {
+                override fun onPlay() { tunePlayer.resume() }
+                override fun onPause() { tunePlayer.pause() }
+                override fun onStop() {
+                    tunePlayer.stop()
+                    ServiceCompat.stopForeground(
+                        this@TuneService,
+                        ServiceCompat.STOP_FOREGROUND_REMOVE
+                    )
+                    stopSelf()
+                }
+            })
+            isActive = true
+        }
+
         serviceScope.launch(exceptionLogger) {
             combine(tunePlayer.playbackState, tunePlayer.nowPlaying) { state, nowPlaying ->
                 state to nowPlaying
@@ -56,54 +76,49 @@ class TuneService : Service() {
                     when (state) {
                         PlaybackState.IDLE -> Unit
                         PlaybackState.ON_PLAY -> {
-                            // PROMOTE to Foreground Service (Non-dismissible notification)
+                            // Self-start so the service survives unbinding
+                            val selfIntent = Intent(this@TuneService, TuneService::class.java)
+                            ContextCompat.startForegroundService(this@TuneService, selfIntent)
+
+                            mediaSession.isActive = true
+                            updateMediaSessionState(SessionPlaybackState.STATE_PLAYING)
                             immediateForeground(nowPlaying)
                         }
 
                         PlaybackState.ON_PAUSE,
                         PlaybackState.ON_COMPLETE,
                         PlaybackState.ERROR -> {
+                            updateMediaSessionState(
+                                when (state) {
+                                    PlaybackState.ON_PAUSE -> SessionPlaybackState.STATE_PAUSED
+                                    PlaybackState.ON_COMPLETE -> SessionPlaybackState.STATE_STOPPED
+                                    else -> SessionPlaybackState.STATE_ERROR
+                                }
+                            )
+
+                            // Detach from foreground but keep notification visible
                             ServiceCompat.stopForeground(
                                 this@TuneService,
                                 ServiceCompat.STOP_FOREGROUND_DETACH
                             )
 
-                            // We still want to update the notification UI (e.g. to show "Pause" icon)
-                            // even though we are no longer "Foreground"
+                            // Update notification in-place (no re-promotion to foreground)
                             val notification =
                                 createNotification(isPlaying = false, item = nowPlaying)
-
-                            try {
-                                ServiceCompat.startForeground(
-                                    this@TuneService,
-                                    NOTIFICATION_ID,
-                                    notification,
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                        ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
-                                    } else {
-                                        0
-                                    }
-                                )
-                            } catch (e: Exception) {
-                                // Fallback for edge cases where service isn't allowed to start foreground
-                                Timber.w(e, "Failed to startForeground during pause update")
-                                getSystemService(NotificationManager::class.java)
-                                    .notify(NOTIFICATION_ID, notification)
-                            }
-
-                            ServiceCompat.stopForeground(
-                                this@TuneService,
-                                ServiceCompat.STOP_FOREGROUND_DETACH
-                            )
+                            getSystemService(NotificationManager::class.java)
+                                .notify(NOTIFICATION_ID, notification)
                         }
 
                         PlaybackState.ON_STOP -> {
+                            updateMediaSessionState(SessionPlaybackState.STATE_STOPPED)
+                            mediaSession.isActive = false
                             ServiceCompat.stopForeground(
                                 this@TuneService,
                                 ServiceCompat.STOP_FOREGROUND_REMOVE
                             )
                             getSystemService(NotificationManager::class.java)
                                 .cancel(NOTIFICATION_ID)
+                            stopSelf()
                         }
                     }
                 }
@@ -160,13 +175,34 @@ class TuneService : Service() {
         }
     }
 
+    private fun updateMediaSessionState(state: Int) {
+        val playbackState = SessionPlaybackState.Builder()
+            .setActions(
+                SessionPlaybackState.ACTION_PLAY or
+                    SessionPlaybackState.ACTION_PAUSE or
+                    SessionPlaybackState.ACTION_STOP
+            )
+            .setState(state, SessionPlaybackState.PLAYBACK_POSITION_UNKNOWN, 1f)
+            .build()
+        mediaSession.setPlaybackState(playbackState)
+    }
+
     override fun onBind(intent: Intent): IBinder {
         return binder
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        // User swiped the app from recents — stop playback
+        tunePlayer.stop()
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+        stopSelf()
+        super.onTaskRemoved(rootIntent)
+    }
+
     override fun onDestroy() {
-        // Clean up the MediaPlayer
+        // Clean up the MediaPlayer and MediaSession
         (tunePlayer as? TunePlayerImpl)?.release()
+        mediaSession.release()
         super.onDestroy()
     }
 
@@ -208,6 +244,7 @@ class TuneService : Service() {
             .setOngoing(isPlaying)
             .setStyle(
                 Notification.MediaStyle()
+                    .setMediaSession(mediaSession.sessionToken)
                     .setShowActionsInCompactView(0, 1)
             )
 
