@@ -4,6 +4,7 @@
 package hymnal.sing.components.text
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.animate
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -19,8 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.TextDecrease
 import androidx.compose.material.icons.rounded.TextIncrease
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,9 +27,10 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -65,7 +65,6 @@ import hymnal.libraries.l10n.R as L10nR
 import hymnal.sing.components.text.TextStyleScreen.Event as UiEvent
 import hymnal.sing.components.text.TextStyleScreen.State as UiState
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @CircuitInject(TextStyleScreen::class, AppScope::class)
 @Composable
 fun TextStyleScreenUi(state: UiState, modifier: Modifier = Modifier) {
@@ -115,13 +114,12 @@ fun TextStyleScreenUi(state: UiState, modifier: Modifier = Modifier) {
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AppThemeSelector(
     selectedTheme: AppTheme,
     dynamicColors: Boolean,
     modifier: Modifier = Modifier,
-    onSelected: (AppTheme, Boolean) -> Unit = { theme, colors -> },
+    onSelected: (AppTheme, Boolean) -> Unit = { _, _ -> },
 ) {
     val hapticFeedback = LocalAppHapticFeedback.current
 
@@ -180,7 +178,6 @@ private fun AppTheme.isDarkTheme(): Boolean? = when (this) {
     AppTheme.DARK -> true
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 @SuppressLint("DeprecatedCall")
 private fun AppFontSelector(
@@ -233,7 +230,6 @@ private fun AppFontSelector(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TextSizeSelector(
     selected: Float,
@@ -241,7 +237,6 @@ private fun TextSizeSelector(
     modifier: Modifier = Modifier,
 ) {
     val hapticFeedback = LocalAppHapticFeedback.current
-    var sliderPosition by rememberSaveable(selected) { mutableFloatStateOf(selected) }
 
     Column(modifier = modifier) {
         Text(
@@ -260,16 +255,32 @@ private fun TextSizeSelector(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Icon(Icons.Rounded.TextDecrease, contentDescription = null)
+
+            val sliderState = rememberSliderState(
+                value = selected,
+                steps = 5,
+                trackRange = MIN_FONT_SIZE..MAX_FONT_SIZE,
+            )
+
+            LaunchedEffect(selected) {
+                if (sliderState.value != selected) {
+                    // Animate smoothly across changes
+                    animate(
+                        initialValue = sliderState.value,
+                        targetValue = selected
+                    ) { value, _ ->
+                        sliderState.value = value
+                    }
+                }
+            }
+
             Slider(
-                value = sliderPosition,
+                state = sliderState,
+                modifier = Modifier.weight(1f),
                 onValueChange = {
-                    sliderPosition = it
                     hapticFeedback.performGestureEnd()
                     onSelected(it)
                 },
-                modifier = Modifier.weight(1f),
-                steps = 5,
-                valueRange = MIN_FONT_SIZE..MAX_FONT_SIZE,
             )
 
             Icon(
