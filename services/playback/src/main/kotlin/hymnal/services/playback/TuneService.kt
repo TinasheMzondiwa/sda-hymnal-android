@@ -17,7 +17,6 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.ServiceCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
 import dev.zacsweers.metro.createGraphFactory
@@ -49,6 +48,7 @@ class TuneService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        createNotificationChannel()
         tunePlayer = TunePlayerImpl(this, serviceAppGraph.dispatcherProvider)
 
         mediaSession = MediaSession(this, "HymnalTuneService").apply {
@@ -78,7 +78,7 @@ class TuneService : Service() {
                         PlaybackState.ON_PLAY -> {
                             // Self-start so the service survives unbinding
                             val selfIntent = Intent(this@TuneService, TuneService::class.java)
-                            ContextCompat.startForegroundService(this@TuneService, selfIntent)
+                            startService(selfIntent)
 
                             mediaSession.isActive = true
                             updateMediaSessionState(SessionPlaybackState.STATE_PLAYING)
@@ -126,8 +126,13 @@ class TuneService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent == null) {
+            stopSelf()
+            return START_NOT_STICKY
+        }
+
         // Handle Notification Button Clicks
-        when (intent?.action) {
+        when (intent.action) {
             ACTION_PAUSE -> tunePlayer.pause()
             ACTION_PLAY -> {
                 // Check if player lost its state (Service restart)
@@ -152,7 +157,7 @@ class TuneService : Service() {
             }
         }
 
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     private fun immediateForeground(item: TuneItem?) {
@@ -172,6 +177,7 @@ class TuneService : Service() {
             )
         } catch (e: Exception) {
             Timber.e(e, "Failed to start foreground immediately")
+            stopSelf()
         }
     }
 
@@ -210,7 +216,7 @@ class TuneService : Service() {
         fun getService(): TuneService = this@TuneService
     }
 
-    private fun createNotification(isPlaying: Boolean, item: TuneItem?): Notification {
+    private fun createNotificationChannel() {
         val manager = getSystemService(NotificationManager::class.java)
         val channel = NotificationChannel(
             CHANNEL_ID,
@@ -218,7 +224,9 @@ class TuneService : Service() {
             NotificationManager.IMPORTANCE_LOW
         )
         manager.createNotificationChannel(channel)
+    }
 
+    private fun createNotification(isPlaying: Boolean, item: TuneItem?): Notification {
         val pauseIntent = Intent(this, TuneService::class.java).apply {
             action = ACTION_PAUSE
             item?.let { putExtra(ARG_TUNE_ITEM, it) }
@@ -237,8 +245,14 @@ class TuneService : Service() {
         val stopPendingIntent =
             PendingIntent.getService(this, 102, stopIntent, flags)
 
+        val title = if (item != null) {
+            "${item.number} ${item.title}".trim()
+        } else {
+            getString(L10nR.string.app_name)
+        }
+
         val builder = Notification.Builder(this, CHANNEL_ID)
-            .setContentTitle("${item?.number ?: ""} ${item?.title.orEmpty()}")
+            .setContentTitle(title)
             .setContentText(item?.hymnal.orEmpty())
             .setSmallIcon(PlaybackR.drawable.ic_stat_sda)
             .setOngoing(isPlaying)
