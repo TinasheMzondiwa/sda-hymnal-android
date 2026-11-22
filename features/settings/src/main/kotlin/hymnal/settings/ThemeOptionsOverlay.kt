@@ -11,7 +11,6 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -31,7 +30,6 @@ import hymnal.ui.haptics.LocalAppHapticFeedback
 class ThemeOptionsOverlay(private val selectedTheme: AppTheme) :
     Overlay<ThemeOptionsOverlay.Result> {
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content(navigator: OverlayNavigator<Result>) {
         val hapticFeedback = LocalAppHapticFeedback.current

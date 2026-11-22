@@ -61,7 +61,6 @@ fun HymnCard(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedElementTransitionScope.CardContent(
     hymn: Hymn,

@@ -63,7 +63,6 @@ import hymnal.ui.theme.size.HymnalDimens
 import hymnal.hymns.R as HymnsR
 import hymnal.libraries.l10n.R as L10nR
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LastHymnBar(
     state: OpenedHymnState.Visible,
@@ -126,6 +125,7 @@ fun LastHymnBar(
                         modifier = Modifier.size(18.dp)
                     )
                 },
+                shapes = ListItemDefaults.shapes(shape = Shape),
                 colors = ListItemDefaults.colors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     headlineColor = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -211,7 +211,6 @@ private fun SupportingContent(modifier: Modifier = Modifier) {
 
 private const val INLINE_ICON_ID = "icon"
 
-@OptIn(ExperimentalMaterial3Api::class)
 @PreviewLightDark
 @Composable
 private fun Preview() {

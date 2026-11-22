@@ -6,7 +6,6 @@ package hymnal.hymns.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
@@ -22,7 +21,6 @@ import hymnal.hymns.Event
 import hymnal.hymns.State
 import hymnal.ui.haptics.LocalAppHapticFeedback
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HymnsTopAppBar(
     state: State,

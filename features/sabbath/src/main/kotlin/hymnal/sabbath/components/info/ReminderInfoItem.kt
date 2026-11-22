@@ -68,9 +68,8 @@ data class ReminderInfoItem(
                 if (checked) {
                     if (hasPostNotificationsPermission(context)) {
                         eventSink(Event.SabbathInfo.OnReminderToggled(true))
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    } else
                         permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    }
                 } else {
                     eventSink(Event.SabbathInfo.OnReminderToggled(false))
                 }
@@ -105,12 +104,10 @@ data class ReminderInfoItem(
 }
 
 private fun hasPostNotificationsPermission(context: Context): Boolean {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.POST_NOTIFICATIONS
-        ) == PackageManager.PERMISSION_GRANTED
-    } else true
+    return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.POST_NOTIFICATIONS
+    ) == PackageManager.PERMISSION_GRANTED
 }
 
 @PreviewLightDark
