@@ -27,6 +27,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Clear
@@ -45,10 +50,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -58,11 +61,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -82,7 +83,8 @@ import kotlinx.collections.immutable.persistentListOf
 import timber.log.Timber
 import hymnal.libraries.l10n.R as L10nR
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,
+@OptIn(
+    ExperimentalSharedTransitionApi::class,
     ExperimentalHazeMaterialsApi::class
 )
 @CircuitInject(SearchScreen::class, AppScope::class)
@@ -93,13 +95,20 @@ fun SearchUiScreen(state: State, modifier: Modifier = Modifier) {
         TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
 
-    var textFieldValueState by remember(state.query) {
-        mutableStateOf(
-            TextFieldValue(
-                text = state.query,
-                selection = TextRange(state.query.length)
-            )
-        )
+    val textFieldState = rememberTextFieldState(initialText = state.query)
+
+    LaunchedEffect(state.query) {
+        if (textFieldState.text.toString() != state.query) {
+            textFieldState.setTextAndPlaceCursorAtEnd(state.query)
+        }
+    }
+
+    LaunchedEffect(textFieldState) {
+        snapshotFlow { textFieldState.text.toString() }.collect { text ->
+            if (text != state.query) {
+                state.eventSink(Event.OnQueryChange(text))
+            }
+        }
     }
 
     SharedElementTransitionScope {
@@ -120,11 +129,7 @@ fun SearchUiScreen(state: State, modifier: Modifier = Modifier) {
                 TopAppBar(
                     title = {
                         SearchTextField(
-                            textFieldValueState = textFieldValueState,
-                            onValueChange = {
-                                textFieldValueState = it
-                                state.eventSink(Event.OnQueryChange(it.text))
-                            },
+                            textFieldState = textFieldState,
                             modifier = Modifier
                         )
                     },
@@ -154,20 +159,18 @@ fun SearchUiScreen(state: State, modifier: Modifier = Modifier) {
                     },
                     actions = {
                         SearchTrailingIcon(
-                            state = if (textFieldValueState.text.isEmpty()) {
+                            state = if (textFieldState.text.isEmpty()) {
                                 SearchState.Empty
                             } else {
                                 SearchState.Results
                             },
                             onVoiceQuery = { query ->
-                                textFieldValueState = TextFieldValue(
-                                    text = query,
-                                    selection = TextRange(query.length)
-                                )
+                                textFieldState.setTextAndPlaceCursorAtEnd(query)
                                 state.eventSink(Event.OnQueryChange(query))
                             },
                             onClearQuery = {
                                 hapticFeedback.performError()
+                                textFieldState.clearText()
                                 state.eventSink(Event.OnClearQuery)
                             }
                         )
@@ -192,15 +195,14 @@ fun SearchUiScreen(state: State, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SearchTextField(
-    textFieldValueState: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
+    textFieldState: TextFieldState,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
 
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart) {
         AnimatedVisibility(
-            visible = textFieldValueState.text.isEmpty(),
+            visible = textFieldState.text.isEmpty(),
             modifier = Modifier.fillMaxWidth(),
             enter = fadeIn(),
             exit = fadeOut(animationSpec = tween(durationMillis = 150)),
@@ -216,15 +218,14 @@ private fun SearchTextField(
         }
 
         BasicTextField(
-            value = textFieldValueState,
-            onValueChange = onValueChange,
+            state = textFieldState,
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester),
             textStyle = LocalTextStyle.current.copy(
                 color = MaterialTheme.colorScheme.onSurface
             ),
-            singleLine = true,
+            lineLimits = TextFieldLineLimits.SingleLine,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -443,7 +444,8 @@ private fun PreviewResults() {
                         FilterItem(selected = false, label = "Old hymnal", year = "1941"),
                         FilterItem(selected = false, label = "Choruses", year = "chorus")
                     ),
-                    hymns = persistentListOf(previewHymn), query = "sing"
+                    hymns = persistentListOf(previewHymn),
+                    query = "sing",
                 ) {}
             )
         }
