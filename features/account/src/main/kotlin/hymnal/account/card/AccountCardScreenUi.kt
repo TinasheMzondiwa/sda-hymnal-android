@@ -92,7 +92,6 @@ fun AccountCardScreenUi(state: AccountCardState, modifier: Modifier = Modifier) 
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedElementTransitionScope.LoadingContent(modifier: Modifier = Modifier) {
     val shape = RoundedCornerShape(24.dp)
@@ -156,7 +155,6 @@ private fun SharedElementTransitionScope.LoadingContent(modifier: Modifier = Mod
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedElementTransitionScope.NotLoggedInContent(modifier: Modifier = Modifier) {
     ListItem(
@@ -212,7 +210,6 @@ private fun SharedElementTransitionScope.NotLoggedInContent(modifier: Modifier =
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedElementTransitionScope.LoggedInContent(
     state: AccountCardState.LoggedIn,

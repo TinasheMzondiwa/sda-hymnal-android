@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChevronRight
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -38,7 +37,6 @@ import hymnal.ui.theme.HymnalTheme
 import hymnal.libraries.l10n.R as L10nR
 import hymnal.settings.R as SettingsR
 
-@OptIn(ExperimentalMaterial3Api::class)
 @CircuitInject(SettingsScreen::class, AppScope::class)
 @Composable
 fun SettingsUiScreen(state: State, modifier: Modifier = Modifier) {
