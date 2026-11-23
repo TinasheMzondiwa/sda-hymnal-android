@@ -214,7 +214,6 @@ private fun SharedElementTransitionScope.ChooseContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @PreviewLightDark
 @Composable
 private fun PreviewLoading() {
@@ -223,7 +222,6 @@ private fun PreviewLoading() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @PreviewLightDark
 @Composable
 private fun PreviewEmpty() {
@@ -232,7 +230,6 @@ private fun PreviewEmpty() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @PreviewLightDark
 @Composable
 private fun PreviewChoose() {

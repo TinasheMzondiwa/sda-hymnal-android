@@ -5,7 +5,6 @@ package hymnal.donate.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -24,7 +23,6 @@ import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.donate.R as DonateR
 import hymnal.libraries.l10n.R as L10nR
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DonateTopBar(
     state: State,

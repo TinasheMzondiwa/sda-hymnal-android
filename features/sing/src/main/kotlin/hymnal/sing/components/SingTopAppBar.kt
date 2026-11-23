@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.TextFormat
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -34,7 +33,6 @@ import hymnal.libraries.l10n.R as L10nR
 import hymnal.sing.R as SingR
 import hymnal.sing.TopBarState.Event as TopBarEvent
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SingTopAppBar(
     state: TopBarState,
@@ -109,7 +107,6 @@ fun SingTopAppBar(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @PreviewLightDark
 @Composable
 private fun Preview() {

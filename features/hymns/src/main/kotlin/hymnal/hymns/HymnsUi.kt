@@ -4,29 +4,25 @@
 package hymnal.hymns
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Dialpad
-import androidx.compose.material3.BottomAppBarDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -50,7 +46,7 @@ import com.slack.circuit.overlay.OverlayEffect
 import dev.zacsweers.metro.AppScope
 import hymnal.hymns.components.HymnCard
 import hymnal.hymns.components.HymnsTopAppBar
-import hymnal.hymns.components.LastHymnBar
+import hymnal.hymns.components.LastHymnCard
 import hymnal.hymns.components.filters.ChooseHymnalOverlayContent
 import hymnal.hymns.components.filters.ChooseSortOverlayContent
 import hymnal.hymns.components.filters.FiltersRow
@@ -64,10 +60,11 @@ import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.ui.theme.HymnalTheme
 import hymnal.ui.theme.size.HymnalDimens
 import hymnal.ui.widget.scaffold.HazeScaffold
+import hymnal.ui.widget.scaffold.LocalBottomBarVisible
 import kotlinx.collections.immutable.persistentListOf
 import hymnal.libraries.l10n.R as L10nR
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @CircuitInject(HymnsScreen::class, AppScope::class)
 @Composable
 fun HymnsUi(state: State, modifier: Modifier = Modifier) {
@@ -77,43 +74,28 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
     val horizontalPadding = HymnalDimens.horizontalPadding()
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-    val bottomAppBarScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
     val fabVisible by remember { derivedStateOf { !listState.isScrollInProgress } }
+    val isBarVisible = LocalBottomBarVisible.current
+    val fabOffset by animateDpAsState(
+        targetValue = if (isBarVisible) 80.dp else 0.dp,
+        animationSpec = spring(
+            stiffness = Spring.StiffnessMediumLow,
+            dampingRatio = Spring.DampingRatioNoBouncy,
+        ),
+        label = "fabOffset",
+    )
 
     HazeScaffold(
         modifier = modifier
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = { HymnsTopAppBar(state, Modifier, scrollBehavior) },
-        bottomBar = {
-            val barState = state.lastOpenedHymn
-            AnimatedVisibility(
-                visible = barState is OpenedHymnState.Visible,
-                modifier = Modifier.fillMaxWidth(),
-                enter = fadeIn(
-                    animationSpec = tween(
-                        durationMillis = 150,
-                        delayMillis = 50
-                    )
-                ) + slideInVertically { it },
-            ) {
-                when (barState) {
-                    OpenedHymnState.Hidden -> Unit
-                    is OpenedHymnState.Visible -> {
-                        LastHymnBar(
-                            state = barState,
-                            modifier = Modifier,
-                            scrollBehavior = bottomAppBarScrollBehavior,
-                        )
-                    }
-                }
-            }
-        },
         floatingActionButton = {
             AnimatedVisibility(
                 visible = fabVisible,
                 enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut()
+                exit = fadeOut() + scaleOut(),
+                modifier = Modifier.padding(bottom = fabOffset),
             ) {
                 FloatingActionButton(
                     onClick = {
@@ -132,7 +114,6 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
         blurTopBar = true,
     ) { contentPadding ->
         LazyColumn(
-            modifier = Modifier.nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
             state = listState,
             contentPadding = contentPadding.plus(
                 layoutDirection = layoutDirection,
@@ -148,6 +129,17 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                     onItemClick = { state.eventSink(Event.OnFilterItemClicked(it)) },
                     modifier = Modifier.animateItem()
                 )
+            }
+
+            if (state.lastOpenedHymn is OpenedHymnState.Visible) {
+                item("last_hymn", contentType = "last_hymn") {
+                    LastHymnCard(
+                        state = state.lastOpenedHymn,
+                        modifier = Modifier
+                            .animateItem()
+                            .padding(vertical = 4.dp),
+                    )
+                }
             }
 
             items(state.hymns, key = { it.index }) { hymn ->
@@ -180,11 +172,9 @@ fun HymnsUi(state: State, modifier: Modifier = Modifier) {
                 Spacer(
                     Modifier
                         .fillMaxWidth()
-                        .height(72.dp)
+                        .height(80.dp)
                 )
             }
-
-            item { Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars)) }
         }
     }
 

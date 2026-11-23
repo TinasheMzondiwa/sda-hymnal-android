@@ -17,7 +17,6 @@ import dev.zacsweers.metro.Inject
 import hymnal.libraries.navigation.SingHymnScreen
 import hymnal.services.content.HymnalContentProvider
 import hymnal.services.prefs.HymnalPrefs
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -53,7 +52,6 @@ class LastOpenedHymnStateProducerImpl(
     private val contentProvider: HymnalContentProvider,
 ) : LastOpenedHymnStateProducer {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Composable
     override fun invoke(navigator: Navigator): OpenedHymnState {
         val coroutineScope = rememberStableCoroutineScope()

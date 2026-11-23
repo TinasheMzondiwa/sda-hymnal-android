@@ -204,7 +204,6 @@ private fun SharedElementTransitionScope.CreateCollectionContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ColorPicker(
     selectedColor: CollectionColor,

@@ -27,7 +27,7 @@ import hymnal.libraries.navigation.key.DonateSharedTransitionKey
 import hymnal.more.R as InfoR
 import hymnal.libraries.l10n.R as L10nR
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MoreTopAppBar(
     modifier: Modifier = Modifier,

@@ -233,7 +233,6 @@ private fun DetectClickFromInteractionSource(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 private val SearchBarState.isExpanded
     get() = this.currentValue == SearchBarValue.Expanded
 

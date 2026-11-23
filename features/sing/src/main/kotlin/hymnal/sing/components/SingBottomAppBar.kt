@@ -252,7 +252,6 @@ private fun OverlayContent(state: BottomBarOverlayState?) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @PreviewLightDark
 @Composable
 private fun Preview() {
@@ -275,7 +274,6 @@ private fun Preview() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @PreviewLightDark
 @Composable
 private fun PreviewNoTune() {

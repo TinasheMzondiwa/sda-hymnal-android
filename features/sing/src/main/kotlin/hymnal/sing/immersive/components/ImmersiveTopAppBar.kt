@@ -20,7 +20,6 @@ import androidx.compose.material.icons.rounded.Dialpad
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,7 +54,6 @@ import hymnal.ui.haptics.LocalAppHapticFeedback
 import hymnal.libraries.l10n.R as L10nR
 import hymnal.sing.immersive.Event as UiEvent
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ImmersiveTopAppBar(
     state: TopBarState,
