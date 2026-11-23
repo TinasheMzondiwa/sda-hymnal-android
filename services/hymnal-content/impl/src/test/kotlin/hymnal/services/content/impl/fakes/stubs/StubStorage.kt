@@ -5,14 +5,22 @@ package hymnal.services.content.impl.fakes.stubs
 
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.SupabaseSerializer
+import io.github.jan.supabase.annotations.SupabaseExperimental
+import io.github.jan.supabase.annotations.SupabaseInternal
+import io.github.jan.supabase.auth.api.AuthenticatedSupabaseApi
 import io.github.jan.supabase.exceptions.RestException
+import io.github.jan.supabase.logging.SupabaseLogger
 import io.github.jan.supabase.storage.Bucket
 import io.github.jan.supabase.storage.BucketApi
 import io.github.jan.supabase.storage.BucketBuilder
+import io.github.jan.supabase.storage.PurgeCacheOptions
 import io.github.jan.supabase.storage.Storage
+import io.github.jan.supabase.storage.StorageListFilter
+import io.github.jan.supabase.storage.analytics.StorageAnalyticsClient
+import io.github.jan.supabase.storage.vectors.StorageVectorsClient
 import io.ktor.client.statement.HttpResponse
 
-open class StubStorage : Storage{
+open class StubStorage : Storage {
     override suspend fun createBucket(
         id: String,
         builder: BucketBuilder.() -> Unit
@@ -27,13 +35,32 @@ open class StubStorage : Storage{
         TODO("Not yet implemented")
     }
 
-    override suspend fun retrieveBuckets(): List<Bucket> {
+    override suspend fun listBuckets(filter: StorageListFilter.Buckets.() -> Unit): List<Bucket> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun retrieveBucketById(bucketId: String): Bucket? {
+    override suspend fun getBucket(bucketId: String): Bucket? {
         TODO("Not yet implemented")
     }
+
+    override suspend fun purgeBucketCache(id: String, options: PurgeCacheOptions.() -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    @OptIn(SupabaseExperimental::class)
+    override val analytics: StorageAnalyticsClient
+        get() = TODO("Not yet implemented")
+
+    @OptIn(SupabaseExperimental::class)
+    override val vectors: StorageVectorsClient
+        get() = TODO("Not yet implemented")
+
+    @OptIn(SupabaseInternal::class)
+    override val api: AuthenticatedSupabaseApi
+        get() = TODO("Not yet implemented")
+
+    override val logger: SupabaseLogger
+        get() = TODO("Not yet implemented")
 
     override suspend fun emptyBucket(bucketId: String) {
         TODO("Not yet implemented")

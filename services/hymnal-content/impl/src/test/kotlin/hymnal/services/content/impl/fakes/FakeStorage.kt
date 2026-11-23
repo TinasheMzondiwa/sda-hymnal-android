@@ -10,4 +10,8 @@ class FakeStorage : StubStorage() {
     override fun from(bucketId: String): BucketApi {
         return FakeBucketApi()
     }
+
+    override fun get(bucketId: String): BucketApi {
+        return FakeBucketApi()
+    }
 }

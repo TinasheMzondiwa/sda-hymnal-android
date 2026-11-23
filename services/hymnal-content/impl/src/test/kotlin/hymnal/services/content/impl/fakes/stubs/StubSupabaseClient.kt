@@ -5,14 +5,20 @@ package hymnal.services.content.impl.fakes.stubs
 
 import io.github.jan.supabase.AccessTokenProvider
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.SupabaseClientConfig
 import io.github.jan.supabase.SupabaseSerializer
 import io.github.jan.supabase.annotations.SupabaseInternal
+import io.github.jan.supabase.logging.SupabaseLogger
 import io.github.jan.supabase.network.KtorSupabaseHttpClient
 import io.github.jan.supabase.plugins.PluginManager
 import kotlinx.coroutines.CoroutineDispatcher
 
 open class StubSupabaseClient : SupabaseClient {
 
+    override val config: SupabaseClientConfig
+        get() = TODO("Not yet implemented")
+    override val logger: SupabaseLogger
+        get() = TODO("Not yet implemented")
     override val supabaseHttpUrl: String
         get() = TODO("Not yet implemented")
     override val supabaseUrl: String
