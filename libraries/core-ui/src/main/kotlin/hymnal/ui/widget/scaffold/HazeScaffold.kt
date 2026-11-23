@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Tinashe Mzondiwa
+// SPDX-License-Identifier: Apache-2.0
+
 package hymnal.ui.widget.scaffold
 
 import androidx.compose.foundation.layout.Box
